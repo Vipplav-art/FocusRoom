@@ -1,2541 +1,1125 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Cortex Hub — Focus. Learn. Grow.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,700&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --bg: #080808;
-  --bg2: #101010;
-  --bg3: #161616;
-  --border: rgba(255,255,255,0.08);
-  --border2: rgba(255,255,255,0.14);
-  --text: #F0ECE4;
-  --muted: #6B6760;
-  --muted2: #9A968F;
-  --gold: #C9A84C;
-  --gold2: #E8C97A;
-  --gold-dim: rgba(201,168,76,0.12);
-  --purple: #9B7FD4;
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-ui: 'Syne', sans-serif;
-  --font-mono: 'DM Mono', monospace;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:var(--font-ui);overflow-x:hidden;cursor:none;}
-
-/* ── CURSOR ─── */
-#cursor{position:fixed;top:0;left:0;width:10px;height:10px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:normal;}
-#cursor-ring{position:fixed;top:0;left:0;width:36px;height:36px;border:1px solid rgba(201,168,76,0.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .35s cubic-bezier(0.23,1,0.32,1),height .35s cubic-bezier(0.23,1,0.32,1),border-color .2s;}
-body.cursor-hover #cursor{width:6px;height:6px;}
-body.cursor-hover #cursor-ring{width:56px;height:56px;border-color:var(--gold);}
-
-/* ── NAV ─── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:22px 48px;border-bottom:1px solid transparent;transition:border-color .4s,background .4s,backdrop-filter .4s;}
-nav.scrolled{border-color:var(--border);background:rgba(8,8,8,0.88);backdrop-filter:blur(16px);}
-.nav-logo{font-family:var(--font-display);font-weight:700;font-size:22px;letter-spacing:-0.02em;color:var(--text);text-decoration:none;}
-.nav-logo span{color:var(--gold);font-style:italic;}
-.nav-links{display:flex;gap:32px;list-style:none;}
-.nav-links a{font-family:var(--font-ui);font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted2);text-decoration:none;transition:color .2s;}
-.nav-links a:hover{color:var(--text);}
-.nav-cta{font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--bg);background:var(--gold);border:none;padding:10px 24px;cursor:none;transition:background .2s,transform .15s;}
-.nav-cta:hover{background:var(--gold2);transform:translateY(-1px);}
-
-/* ── HERO ─── */
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 48px 80px;position:relative;overflow:hidden;}
-.hero-bg-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse 70% 70% at 50% 40%,black 30%,transparent 80%);pointer-events:none;}
-.hero-orb{position:absolute;top:15%;left:50%;transform:translateX(-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.07) 0%,transparent 70%);pointer-events:none;}
-.hero-eyebrow{font-family:var(--font-mono);font-size:11px;font-weight:300;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:28px;opacity:0;transform:translateY(20px);}
-.hero-title{font-family:var(--font-display);font-size:clamp(72px,10vw,148px);font-weight:300;line-height:.92;letter-spacing:-.03em;margin-bottom:0;}
-.hero-title .line{display:block;overflow:hidden;}
-.hero-title .word{display:inline-block;opacity:0;transform:translateY(110%);}
-.hero-title em{font-style:italic;color:var(--gold);font-weight:300;}
-.hero-bottom{display:flex;align-items:flex-end;justify-content:space-between;margin-top:56px;gap:32px;}
-.hero-desc{max-width:420px;font-size:15px;line-height:1.75;color:var(--muted2);font-weight:400;opacity:0;transform:translateY(24px);}
-.hero-desc strong{color:var(--text);font-weight:500;}
-.hero-cta-group{display:flex;align-items:center;gap:24px;opacity:0;transform:translateY(24px);flex-shrink:0;}
-.btn-primary{display:inline-block;font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;color:var(--bg);background:var(--gold);border:none;padding:16px 36px;transition:background .2s,transform .15s;cursor:none;}
-.btn-primary:hover{background:var(--gold2);transform:translateY(-2px);}
-.btn-ghost{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-ui);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--muted2);transition:color .2s;cursor:none;}
-.btn-ghost:hover{color:var(--text);}
-.btn-ghost svg{transition:transform .2s;}
-.btn-ghost:hover svg{transform:translateX(4px);}
-.hero-stats{display:flex;gap:40px;opacity:0;transform:translateY(24px);}
-.stat{text-align:right;}
-.stat-num{display:block;font-family:var(--font-display);font-size:36px;font-weight:400;line-height:1;letter-spacing:-.02em;color:var(--text);}
-.stat-label{display:block;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
-
-/* ── MARQUEE ─── */
-.marquee-section{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 0;overflow:hidden;background:var(--bg2);}
-.marquee-track{display:flex;gap:0;white-space:nowrap;}
-.marquee-inner{display:flex;gap:0;animation:marquee 28s linear infinite;flex-shrink:0;}
-.marquee-inner:nth-child(2){animation-delay:-14s;}
-@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-100%);}}
-.marquee-item{display:inline-flex;align-items:center;gap:20px;padding:0 40px;font-family:var(--font-mono);font-size:12px;font-weight:300;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
-.marquee-item .dot{width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0;}
-
-/* ── SECTION COMMONS ─── */
-section{padding:140px 48px;}
-.section-label{font-family:var(--font-mono);font-size:11px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:flex;align-items:center;gap:16px;}
-.section-label::before{content:'';display:block;width:40px;height:1px;background:var(--gold);flex-shrink:0;}
-.section-title{font-family:var(--font-display);font-size:clamp(42px,5vw,72px);font-weight:300;line-height:1.05;letter-spacing:-.025em;}
-.section-title em{font-style:italic;color:var(--gold);}
-
-/* ── ARENAS (PACKS STYLE) ─── */
-.arenas-section{background:var(--bg);}
-.arenas-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:72px;gap:32px;}
-.arenas-header-left{max-width:560px;}
-.arenas-header-right{font-size:13px;line-height:1.8;color:var(--muted2);max-width:320px;text-align:right;}
-.arenas-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);}
-.arena-card{background:var(--bg);padding:36px 32px 32px;position:relative;overflow:hidden;transition:background .3s;cursor:none;}
-.arena-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(0.23,1,0.32,1);}
-.arena-card:hover{background:var(--bg2);}
-.arena-card:hover::before{transform:scaleX(1);}
-.arena-num{font-family:var(--font-mono);font-size:11px;font-weight:300;color:var(--muted);letter-spacing:.1em;margin-bottom:32px;}
-.arena-icon{width:48px;height:48px;margin-bottom:24px;display:flex;align-items:center;justify-content:center;}
-.arena-icon svg{width:100%;height:100%;}
-.arena-name{font-family:var(--font-display);font-size:22px;font-weight:400;line-height:1.2;letter-spacing:-.01em;margin-bottom:12px;color:var(--text);}
-.arena-desc{font-size:13px;line-height:1.75;color:var(--muted2);margin-bottom:28px;}
-.arena-meta{display:flex;align-items:center;justify-content:space-between;margin-top:auto;}
-.arena-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);padding:4px 10px;border:1px solid rgba(201,168,76,0.3);}
-.arena-live{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.06em;}
-.arena-live .pulse{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:livePulse 2s infinite;}
-@keyframes livePulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-
-/* Arena featured (full width) */
-.arena-featured{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:0;}
-.arena-featured-left{background:var(--bg2);padding:56px;border-right:1px solid var(--border);}
-.arena-featured-right{background:var(--bg2);padding:56px;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
-.demo-area{width:100%;height:260px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;position:relative;}
-.demo-line{height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transform-origin:left;border-radius:2px;animation:scan 2.4s ease-in-out infinite;}
-.demo-line:nth-child(1){width:80%;animation-delay:0s;}
-.demo-line:nth-child(2){width:60%;animation-delay:.3s;}
-.demo-line:nth-child(3){width:70%;animation-delay:.6s;}
-.demo-line:nth-child(4){width:45%;animation-delay:.9s;}
-@keyframes scan{0%{transform:scaleX(0);opacity:0;transform-origin:left;}10%{opacity:1;}50%{transform:scaleX(1);transform-origin:left;}51%{transform-origin:right;}90%{transform:scaleX(0);opacity:1;transform-origin:right;}100%{opacity:0;}}
-.demo-text-preview{position:absolute;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:20px;}
-.preview-word{font-family:var(--font-display);font-size:52px;font-weight:700;letter-spacing:-.04em;color:var(--text);opacity:.08;animation:wordPulse 3.6s ease-in-out infinite;}
-.preview-word:nth-child(2){animation-delay:1.2s;font-size:36px;}
-.preview-word:nth-child(3){animation-delay:2.4s;font-size:28px;}
-@keyframes wordPulse{0%,100%{opacity:.05;transform:translateY(0);}50%{opacity:.18;transform:translateY(-4px);}}
-
-/* ── HOW IT WORKS (STEPS) ─── */
-.how-section{background:var(--bg2);}
-.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:72px;}
-.step{background:var(--bg2);padding:48px 40px;position:relative;}
-.step-num{font-family:var(--font-display);font-size:96px;font-weight:300;line-height:1;letter-spacing:-.05em;color:var(--border2);margin-bottom:8px;transition:color .3s;}
-.step:hover .step-num{color:rgba(201,168,76,0.15);}
-.step-title{font-family:var(--font-display);font-size:26px;font-weight:400;letter-spacing:-.01em;margin-bottom:14px;line-height:1.2;}
-.step-title em{font-style:italic;color:var(--gold);}
-.step-body{font-size:14px;line-height:1.8;color:var(--muted2);}
-.step-arrow{position:absolute;top:48px;right:40px;color:var(--border2);font-size:24px;transition:color .3s,transform .3s;}
-.step:hover .step-arrow{color:var(--gold);transform:translate(4px,-4px);}
-
-/* Pomodoro preview in step 2 */
-.pom-preview{margin-top:28px;display:flex;align-items:center;gap:16px;}
-.pom-ring{width:72px;height:72px;position:relative;flex-shrink:0;}
-.pom-ring svg{transform:rotate(-90deg);}
-.pom-ring .pom-time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:13px;font-weight:300;color:var(--gold);}
-.pom-dots{display:flex;flex-direction:column;gap:6px;}
-.pom-dot-row{display:flex;gap:6px;}
-.pom-dot{width:8px;height:8px;border-radius:50%;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.2);}
-.pom-dot.done{background:var(--gold);border-color:var(--gold);}
-
-/* Rooms preview in step 3 */
-.rooms-preview{margin-top:24px;display:flex;flex-direction:column;gap:8px;}
-.room-preview-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);}
-.room-preview-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:livePulse 2s infinite;}
-.room-preview-name{font-size:12px;color:var(--muted2);font-family:var(--font-mono);font-weight:300;letter-spacing:.05em;}
-.room-preview-count{font-size:11px;color:var(--muted);margin-left:auto;font-family:var(--font-mono);}
-
-/* ── PRICING ─── */
-.pricing-section{background:var(--bg);}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:72px;}
-.price-card{background:var(--bg);padding:48px 40px;position:relative;transition:background .3s;}
-.price-card.featured{background:var(--bg3);border:1px solid rgba(201,168,76,0.25);margin:-1px;z-index:1;}
-.price-badge{display:inline-block;font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--bg);background:var(--gold);padding:4px 12px;margin-bottom:28px;}
-.price-name{font-family:var(--font-display);font-size:32px;font-weight:300;letter-spacing:-.02em;margin-bottom:8px;}
-.price-name em{font-style:italic;color:var(--gold);}
-.price-sub{font-size:13px;color:var(--muted2);line-height:1.6;margin-bottom:36px;}
-.price-amount{display:flex;align-items:baseline;gap:6px;margin-bottom:36px;}
-.price-amount .currency{font-family:var(--font-ui);font-size:20px;font-weight:400;color:var(--muted2);}
-.price-amount .amount{font-family:var(--font-display);font-size:64px;font-weight:300;line-height:1;letter-spacing:-.04em;color:var(--text);}
-.price-amount .period{font-size:13px;color:var(--muted);font-family:var(--font-mono);font-weight:300;}
-.price-features{list-style:none;margin-bottom:40px;display:flex;flex-direction:column;gap:12px;}
-.price-features li{display:flex;align-items:flex-start;gap:12px;font-size:13px;color:var(--muted2);line-height:1.5;}
-.price-features li .check{width:16px;height:16px;border:1px solid rgba(201,168,76,0.4);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
-.price-features li .check svg{width:9px;height:9px;color:var(--gold);}
-.price-features li.dim{color:var(--muted);}
-.price-features li.dim .check{border-color:var(--border2);}
-.price-features li.dim .check svg{color:var(--muted);}
-.price-btn{display:block;width:100%;text-align:center;font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:16px 24px;transition:all .2s;cursor:none;}
-.price-btn.outline{color:var(--muted2);border:1px solid var(--border2);}
-.price-btn.outline:hover{color:var(--text);border-color:var(--text);}
-.price-btn.solid{color:var(--bg);background:var(--gold);border:1px solid var(--gold);}
-.price-btn.solid:hover{background:var(--gold2);border-color:var(--gold2);transform:translateY(-1px);}
-
-/* ── TESTIMONIALS ─── */
-.testi-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
-.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:64px;}
-.testi-card{background:var(--bg2);padding:40px;}
-.testi-quote{font-family:var(--font-display);font-size:18px;font-weight:300;line-height:1.65;letter-spacing:-.01em;color:var(--text);margin-bottom:28px;}
-.testi-quote::before{content:'\201C';color:var(--gold);}
-.testi-quote::after{content:'\201D';color:var(--gold);}
-.testi-author{display:flex;align-items:center;gap:14px;}
-.testi-avatar{width:40px;height:40px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;font-weight:400;color:var(--gold);flex-shrink:0;}
-.testi-name{font-size:13px;font-weight:600;color:var(--text);letter-spacing:.02em;}
-.testi-role{font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--font-mono);font-weight:300;letter-spacing:.05em;}
-
-/* ── FOOTER ─── */
-footer{background:var(--bg2);border-top:1px solid var(--border);padding:80px 48px 48px;}
-.footer-top{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:48px;padding-bottom:64px;border-bottom:1px solid var(--border);margin-bottom:48px;}
-.footer-brand .logo{font-family:var(--font-display);font-size:28px;font-weight:700;letter-spacing:-.02em;color:var(--text);margin-bottom:16px;display:block;}
-.footer-brand .logo span{color:var(--gold);font-style:italic;}
-.footer-brand p{font-size:13px;line-height:1.75;color:var(--muted2);}
-.footer-col h4{font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
-.footer-col ul a{font-size:13px;color:var(--muted2);text-decoration:none;transition:color .2s;}
-.footer-col ul a:hover{color:var(--text);}
-.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
-.footer-copy{font-family:var(--font-mono);font-size:11px;font-weight:300;letter-spacing:.08em;color:var(--muted);}
-.footer-socials{display:flex;gap:20px;}
-.footer-socials a{font-size:12px;font-family:var(--font-mono);font-weight:300;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
-.footer-socials a:hover{color:var(--gold);}
-
-/* ── SCROLL REVEAL ─── */
-.reveal{opacity:0;transform:translateY(40px);}
-.reveal-left{opacity:0;transform:translateX(-40px);}
-.reveal-scale{opacity:0;transform:scale(0.95);}
-
-/* ── APP SHELL ─── */
-#app-shell{display:none;height:100vh;overflow:hidden;background:var(--bg);}
-#app-shell.active{display:flex;}
-.app-sidebar{width:72px;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:24px 0;gap:4px;flex-shrink:0;background:var(--bg);position:relative;z-index:10;}
-.app-sidebar-wide{width:240px;align-items:flex-start;padding:24px 16px;}
-.app-logo-s{display:flex;align-items:center;justify-content:center;margin-bottom:32px;}
-.app-logo-s .logo-icon{width:40px;height:40px;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--bg);}
-.app-logo-wide{display:flex;align-items:center;gap:12px;padding:0 8px;margin-bottom:32px;}
-.app-logo-wide .logo-name{font-family:var(--font-display);font-size:20px;color:var(--text);letter-spacing:-.01em;}
-.app-logo-wide .logo-name em{font-style:italic;color:var(--gold);}
-.app-nav-item{width:100%;display:flex;align-items:center;justify-content:center;padding:12px;border:1px solid transparent;color:var(--muted2);transition:all .2s;cursor:none;font-family:var(--font-ui);font-size:12px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;gap:12px;}
-.app-nav-item.wide{justify-content:flex-start;padding:10px 16px;}
-.app-nav-item:hover{color:var(--text);background:rgba(255,255,255,0.04);}
-.app-nav-item.active{color:var(--gold);background:var(--gold-dim);border-color:rgba(201,168,76,0.2);}
-.app-user{margin-top:auto;padding:16px 0 0;border-top:1px solid var(--border);width:100%;display:flex;align-items:center;justify-content:center;}
-.app-user.wide{justify-content:flex-start;padding:16px 8px 0;gap:10px;}
-.app-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--purple),#5b21b6);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;color:#fff;border:1px solid rgba(155,127,212,0.3);flex-shrink:0;}
-.app-user-info{display:none;}
-.app-user-info.show{display:block;}
-.app-user-info .uname{font-size:13px;font-weight:600;color:var(--text);}
-.app-user-info .uexam{font-size:10px;color:var(--gold);font-family:var(--font-mono);letter-spacing:.1em;text-transform:uppercase;margin-top:2px;}
-.app-main{flex:1;overflow-y:auto;background:var(--bg);}
-.app-main::-webkit-scrollbar{width:4px;}
-.app-main::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.2);}
-.app-content{max-width:900px;margin:0 auto;padding:48px 40px 80px;}
-.app-page-header{margin-bottom:56px;}
-.app-page-label{font-family:var(--font-mono);font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
-.app-page-label::before{content:'';width:24px;height:1px;background:var(--gold);}
-.app-page-title{font-family:var(--font-display);font-size:clamp(36px,4vw,56px);font-weight:300;line-height:1.05;letter-spacing:-.025em;}
-.app-page-title em{font-style:italic;color:var(--gold);}
-
-/* ── ROOMS GRID ─── */
-.rooms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
-.room-card{background:var(--bg);padding:32px 28px;position:relative;overflow:hidden;transition:background .3s;cursor:none;}
-.room-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(0.23,1,0.32,1);}
-.room-card:hover{background:var(--bg2);}
-.room-card:hover::after{transform:scaleX(1);}
-.room-card-num{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.1em;margin-bottom:24px;}
-.room-card-icon{width:44px;height:44px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;}
-.room-card-icon svg{width:100%;height:100%;}
-.room-card-name{font-family:var(--font-display);font-size:20px;font-weight:400;letter-spacing:-.01em;margin-bottom:10px;color:var(--text);}
-.room-card-desc{font-size:13px;line-height:1.7;color:var(--muted2);margin-bottom:24px;}
-.room-card-footer{display:flex;align-items:center;justify-content:space-between;}
-.room-live{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.06em;}
-
-/* ── GOAL SETUP ─── */
-.glass-panel{background:rgba(255,255,255,0.025);border:1px solid var(--border2);border-radius:0;padding:32px;margin-bottom:16px;}
-.glass-panel:last-child{margin-bottom:0;}
-.field-label{font-family:var(--font-mono);font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
-.field-label::before{content:'';width:20px;height:1px;background:var(--gold);}
-.field-input{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:14px 18px;color:var(--text);font-family:var(--font-ui);font-size:14px;transition:border-color .2s;resize:none;outline:none;}
-.field-input:focus{border-color:rgba(201,168,76,0.4);}
-.field-input::placeholder{color:var(--muted);}
-.toggle-row{display:flex;gap:1px;background:var(--border);}
-.toggle-btn{flex:1;padding:12px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:300;color:var(--muted2);background:var(--bg);border:none;cursor:none;transition:all .2s;}
-.toggle-btn.active{background:var(--gold-dim);color:var(--gold);}
-
-/* ── SESSION TIMER ─── */
-#session-view{display:none;height:100%;flex-direction:column;align-items:center;justify-content:center;padding:40px;position:relative;background:var(--bg);}
-#session-view.active{display:flex;}
-.session-grid{display:grid;grid-template-columns:1fr;max-width:560px;width:100%;gap:20px;}
-.session-header{display:flex;justify-content:space-between;align-items:center;}
-.session-room-name{font-family:var(--font-display);font-size:22px;font-weight:300;letter-spacing:-.01em;}
-.session-phase{font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-top:4px;}
-.end-btn{font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#f87171;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);padding:8px 20px;cursor:none;transition:all .2s;}
-.end-btn:hover{background:rgba(248,113,113,0.15);}
-.timer-wrap{display:flex;justify-content:center;align-items:center;position:relative;}
-.timer-svg{transform:rotate(-90deg);}
-.timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
-.timer-display{font-family:var(--font-display);font-size:72px;font-weight:300;line-height:1;letter-spacing:-.04em;color:var(--gold);}
-.timer-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
-.timer-controls{display:flex;justify-content:center;}
-.play-btn{display:flex;align-items:center;gap:12px;font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--bg);border:none;padding:14px 40px;cursor:none;transition:all .2s;}
-.play-btn:hover{background:var(--gold2);}
-.play-btn.paused{background:rgba(255,255,255,0.06);color:var(--text);}
-.session-footer{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
-.session-panel{background:var(--bg2);padding:24px;}
-.session-panel-label{font-family:var(--font-mono);font-size:10px;font-weight:300;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
-.ambient-opts{display:flex;flex-direction:column;gap:2px;}
-.ambient-opt{display:flex;align-items:center;gap:10px;padding:8px 12px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--muted2);cursor:none;transition:all .2s;border:1px solid transparent;}
-.ambient-opt:hover{background:rgba(255,255,255,0.04);color:var(--text);}
-.ambient-opt.active{background:var(--gold-dim);color:var(--gold);border-color:rgba(201,168,76,0.2);}
-.peer-stack{display:flex;margin-bottom:8px;}
-.peer-av{width:32px;height:32px;border-radius:50%;border:2px solid var(--bg2);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:12px;margin-left:-8px;}
-.peer-av:first-child{margin-left:0;}
-.peer-count{font-size:12px;color:var(--muted);font-family:var(--font-mono);font-weight:300;}
-
-/* ── ACCOUNTABILITY ─── */
-.account-view{max-width:640px;margin:0 auto;}
-.account-heading{font-family:var(--font-display);font-size:clamp(40px,5vw,64px);font-weight:300;line-height:1;letter-spacing:-.03em;margin-bottom:16px;}
-.account-heading em{font-style:italic;color:var(--gold);}
-.stated-goal-box{background:var(--gold-dim);border-left:3px solid var(--gold);padding:16px 20px;margin-top:16px;font-size:14px;color:var(--text);line-height:1.7;}
-.submit-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:18px;font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--bg);border:none;cursor:none;transition:all .2s;margin-top:16px;}
-.submit-btn:hover{background:var(--gold2);}
-.submit-btn:disabled{background:rgba(201,168,76,0.2);color:var(--muted);cursor:not-allowed;}
-
-/* ── DASHBOARD ─── */
-.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:40px;}
-.stat-box{background:var(--bg2);padding:32px 28px;}
-.stat-box-num{font-family:var(--font-display);font-size:48px;font-weight:300;line-height:1;letter-spacing:-.03em;color:var(--text);}
-.stat-box-num span{color:var(--gold);}
-.stat-box-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
-.sessions-list{background:var(--bg2);border:1px solid var(--border);}
-.session-row{display:flex;align-items:center;gap:16px;padding:18px 24px;border-bottom:1px solid var(--border);transition:background .2s;}
-.session-row:last-child{border-bottom:none;}
-.session-row:hover{background:rgba(255,255,255,0.02);}
-.session-status{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.session-status.ok{background:#4ade80;}
-.session-status.fail{background:#f87171;}
-.session-goal-text{flex:1;font-size:13px;color:var(--muted2);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.session-meta{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.05em;flex-shrink:0;}
-
-/* ── JOIN ROOM ─── */
-.jr-search{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:14px 18px;color:var(--text);font-family:var(--font-ui);font-size:14px;outline:none;transition:border-color .2s;margin-bottom:20px;}
-.jr-search:focus{border-color:rgba(201,168,76,0.4);}
-.jr-search::placeholder{color:var(--muted);}
-.tag-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px;}
-.tag-chip{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:6px 14px;border:1px solid var(--border);color:var(--muted2);cursor:none;transition:all .2s;}
-.tag-chip:hover{border-color:var(--border2);color:var(--text);}
-.tag-chip.active{border-color:rgba(201,168,76,0.4);color:var(--gold);background:var(--gold-dim);}
-.jr-rooms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);}
-.jr-room-card{background:var(--bg2);padding:28px;position:relative;transition:background .2s;}
-.jr-room-card:hover{background:var(--bg3);}
-.jr-room-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);padding:3px 10px;border:1px solid rgba(201,168,76,0.25);display:inline-block;margin-bottom:16px;}
-.jr-room-name{font-family:var(--font-display);font-size:20px;font-weight:300;letter-spacing:-.01em;margin-bottom:8px;color:var(--text);}
-.jr-room-topic{font-size:12px;color:var(--muted2);margin-bottom:20px;line-height:1.6;}
-.join-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,168,76,0.2);cursor:none;transition:all .2s;}
-.join-btn:hover{background:rgba(201,168,76,0.2);}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:500;align-items:center;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal-box{background:var(--bg3);border:1px solid rgba(201,168,76,0.25);padding:48px;width:100%;max-width:480px;position:relative;}
-.modal-close{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--muted2);font-size:20px;cursor:none;line-height:1;transition:color .2s;}
-.modal-close:hover{color:var(--text);}
-.modal-title{font-family:var(--font-display);font-size:36px;font-weight:300;letter-spacing:-.02em;margin-bottom:32px;}
-
-/* ── SETUP SCREEN ─── */
-#setup-screen{display:none;min-height:100vh;background:var(--bg);align-items:center;justify-content:center;padding:40px;}
-#setup-screen.active{display:flex;}
-.setup-wrap{width:100%;max-width:480px;}
-.setup-logo{font-family:var(--font-display);font-size:28px;font-weight:700;letter-spacing:-.02em;color:var(--text);margin-bottom:48px;display:block;}
-.setup-logo span{font-style:italic;color:var(--gold);}
-.setup-progress{display:flex;gap:6px;margin-bottom:48px;}
-.setup-bar{flex:1;height:2px;background:var(--border);}
-.setup-bar.done{background:var(--gold);}
-.setup-q{font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
-.setup-title{font-family:var(--font-display);font-size:clamp(36px,5vw,52px);font-weight:300;line-height:1.1;letter-spacing:-.025em;margin-bottom:32px;}
-.setup-title em{font-style:italic;color:var(--gold);}
-.setup-opts-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);margin-bottom:32px;}
-.setup-opt{background:var(--bg2);padding:18px 20px;text-align:center;font-family:var(--font-ui);font-size:13px;font-weight:500;letter-spacing:.04em;color:var(--muted2);cursor:none;transition:all .2s;border:1px solid transparent;}
-.setup-opt:hover{background:var(--bg3);color:var(--text);}
-.setup-opt.active{background:var(--gold-dim);color:var(--gold);border-color:rgba(201,168,76,0.25);}
-.setup-style-opts{display:flex;flex-direction:column;gap:1px;background:var(--border);margin-bottom:32px;}
-.setup-style-opt{background:var(--bg2);padding:20px 24px;display:flex;align-items:center;gap:16px;cursor:none;transition:all .2s;border:1px solid transparent;}
-.setup-style-opt:hover{background:var(--bg3);}
-.setup-style-opt.active{background:var(--gold-dim);border-color:rgba(201,168,76,0.2);}
-.setup-style-opt .opt-label{font-size:14px;font-weight:500;color:var(--text);}
-.setup-style-opt .opt-desc{font-size:12px;color:var(--muted2);margin-top:2px;font-family:var(--font-mono);font-weight:300;letter-spacing:.04em;}
-.setup-next{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:16px;font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--gold);color:var(--bg);border:none;cursor:none;transition:all .2s;}
-.setup-next:hover{background:var(--gold2);}
-.setup-next:disabled{background:rgba(201,168,76,0.2);color:var(--muted);cursor:not-allowed;}
-.setup-back{background:none;border:none;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:none;margin-top:16px;transition:color .2s;width:100%;text-align:center;padding:12px;}
-.setup-back:hover{color:var(--text);}
-
-/* ── NOTIF ─── */
-#notif{position:fixed;top:24px;right:24px;z-index:9000;background:var(--bg3);border:1px solid rgba(201,168,76,0.25);padding:14px 20px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--text);transition:all .3s;display:flex;align-items:center;gap:10px;max-width:320px;}
-#notif.hide{opacity:0;transform:translateX(12px);}
-#notif .notif-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;}
-
-/* ── LEADERBOARD ─── */
-.lb-carousel-wrap{overflow:hidden;position:relative;}
-.lb-carousel{display:flex;gap:1px;background:var(--border);overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
-.lb-carousel::-webkit-scrollbar{display:none;}
-.lb-card{background:var(--bg2);padding:28px 24px;min-width:220px;flex-shrink:0;position:relative;border-bottom:3px solid transparent;transition:all .3s;cursor:none;}
-.lb-card.gold-rank{border-bottom-color:#FFD700;}
-.lb-card.silver-rank{border-bottom-color:#C0C0C0;}
-.lb-card.bronze-rank{border-bottom-color:#CD7F32;}
-.lb-card.me{border-bottom-color:var(--gold);background:rgba(201,168,76,0.04);}
-.lb-rank-num{font-family:var(--font-display);font-size:56px;font-weight:300;line-height:1;letter-spacing:-.04em;color:var(--border2);margin-bottom:6px;}
-.lb-card.gold-rank .lb-rank-num{color:rgba(255,215,0,0.25);}
-.lb-card.silver-rank .lb-rank-num{color:rgba(192,192,192,0.2);}
-.lb-card.bronze-rank .lb-rank-num{color:rgba(205,127,50,0.2);}
-.lb-card.me .lb-rank-num{color:rgba(201,168,76,0.2);}
-.lb-medal{font-size:18px;position:absolute;top:20px;right:20px;}
-.lb-uname{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;}
-.lb-uexam{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
-.lb-stats{display:flex;flex-direction:column;gap:5px;}
-.lb-stat-row{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:10px;color:var(--muted);}
-.lb-stat-row strong{color:var(--text);font-weight:400;}
-.lb-nav-btns{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.lb-nav-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--muted2);font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:8px 18px;cursor:none;transition:all .2s;}
-.lb-nav-btn:hover{border-color:var(--border2);color:var(--text);}
-.lb-position-badge{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:.06em;}
-.lb-carousel-dots{display:flex;gap:6px;justify-content:center;margin-top:14px;}
-.lb-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);cursor:none;transition:all .2s;}
-.lb-dot.active{background:var(--gold);width:20px;border-radius:3px;}
-
-/* ── STUDY HOURS GRAPH ─── */
-.study-graph-wrap{background:var(--bg2);border:1px solid var(--border);padding:24px;margin-top:8px;}
-.graph-canvas{display:flex;align-items:flex-end;gap:6px;height:120px;margin-bottom:8px;padding:0 2px;}
-.graph-bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;height:100%;}
-.g-bar-outer{flex:1;display:flex;align-items:flex-end;width:100%;}
-.g-bar{width:100%;border-radius:2px 2px 0 0;transition:height .4s ease;min-height:2px;position:relative;}
-.g-bar.empty{background:rgba(255,255,255,0.04);border:1px solid var(--border);}
-.g-bar.has-data{background:rgba(201,168,76,0.35);border:1px solid rgba(201,168,76,0.45);}
-.g-bar.today-bar{background:var(--gold);border:1px solid var(--gold2);}
-.g-bar-tip{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:9px;color:var(--gold);white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;}
-.g-bar:hover .g-bar-tip{opacity:1;}
-.g-bar.has-data:hover,.g-bar.today-bar:hover{background:var(--gold2);}
-.g-date-label{font-family:var(--font-mono);font-size:8px;color:var(--muted);letter-spacing:.03em;text-align:center;white-space:nowrap;}
-.graph-no-data{display:flex;align-items:center;justify-content:center;height:80px;font-family:var(--font-display);font-size:18px;font-weight:300;color:var(--border2);}
-
-/* ── CONTRIBUTION HEATMAP ─── */
-.contrib-section{background:var(--bg2);border:1px solid var(--border);padding:24px;margin-top:8px;overflow-x:auto;}
-.contrib-inner{min-width:660px;}
-.contrib-month-row{display:flex;gap:2px;margin-bottom:4px;padding-left:28px;}
-.contrib-month-lbl{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;flex:none;}
-.contrib-body{display:flex;gap:8px;align-items:flex-start;}
-.contrib-day-labels{display:flex;flex-direction:column;gap:2px;padding-top:0;}
-.contrib-day-lbl{font-family:var(--font-mono);font-size:9px;color:var(--muted);height:13px;line-height:13px;width:24px;}
-.contrib-weeks{display:flex;gap:2px;}
-.contrib-week{display:flex;flex-direction:column;gap:2px;}
-.c-cell{width:13px;height:13px;border-radius:2px;background:rgba(255,255,255,0.04);position:relative;cursor:none;transition:transform .1s;}
-.c-cell:hover{transform:scale(1.3);z-index:5;}
-.c-cell.l1{background:rgba(201,168,76,0.18);}
-.c-cell.l2{background:rgba(201,168,76,0.38);}
-.c-cell.l3{background:rgba(201,168,76,0.65);}
-.c-cell.l4{background:var(--gold);}
-.c-cell.future{background:transparent;border:none;}
-.contrib-tooltip{display:none;position:fixed;background:var(--bg3);border:1px solid var(--border2);padding:6px 10px;font-family:var(--font-mono);font-size:10px;color:var(--text);z-index:999;pointer-events:none;white-space:nowrap;}
-.contrib-legend{display:flex;align-items:center;gap:6px;margin-top:12px;justify-content:flex-end;}
-.contrib-legend-label{font-family:var(--font-mono);font-size:9px;color:var(--muted);}
-.c-leg{width:13px;height:13px;border-radius:2px;}
-
-/* ── BADGES ─── */
-.badges-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
-.badge-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 12px;min-width:88px;background:var(--bg2);border:1px solid var(--border);position:relative;transition:all .3s;}
-.badge-item.earned{border-color:rgba(201,168,76,0.35);background:rgba(201,168,76,0.05);}
-.badge-item.locked{opacity:.3;filter:grayscale(1);}
-.badge-emoji{font-size:26px;line-height:1;}
-.badge-name{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);text-align:center;}
-.badge-item.earned .badge-name{color:var(--gold);}
-.badge-cond{font-family:var(--font-mono);font-size:8px;color:var(--muted);text-align:center;line-height:1.4;margin-top:2px;}
-.badge-new{position:absolute;top:-6px;right:-6px;background:var(--gold);color:var(--bg);font-family:var(--font-mono);font-size:8px;letter-spacing:.06em;padding:2px 5px;border-radius:2px;}
-
-/* ── ARENA SCORES ─── */
-.score-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);transition:background .2s;}
-.score-row:last-child{border-bottom:none;}
-.score-row:hover{background:rgba(255,255,255,0.02);}
-.score-grade-box{width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;font-weight:700;flex-shrink:0;border-radius:2px;}
-.score-grade-box.grA{background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2);}
-.score-grade-box.grB{background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid rgba(201,168,76,0.2);}
-.score-grade-box.grC{background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.2);}
-.score-grade-box.grD{background:rgba(248,113,113,0.1);color:#f87171;border:1px solid rgba(248,113,113,0.2);}
-.score-info{flex:1;min-width:0;}
-.score-goal-txt{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
-.score-meta-txt{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.04em;}
-.score-pts-val{font-family:var(--font-display);font-size:24px;font-weight:300;color:var(--gold);flex-shrink:0;letter-spacing:-.02em;}
-.score-pts-label{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:2px;text-align:right;}
-
-/* ── RESPONSIVE ─── */
-@media (max-width:1100px){
-  .arenas-grid{grid-template-columns:repeat(2,1fr);}
-  .arena-featured{grid-template-columns:1fr;}
-  .arena-featured-right{display:none;}
-  .rooms-grid{grid-template-columns:repeat(2,1fr);}
-  .jr-rooms-grid{grid-template-columns:repeat(2,1fr);}
-}
-@media (max-width:768px){
-  nav{padding:20px 24px;}
-  .nav-links{display:none;}
-  .hero{padding:0 24px 64px;}
-  section{padding:80px 24px;}
-  .arenas-grid,.steps-grid,.pricing-grid,.testimonials-grid{grid-template-columns:1fr;}
-  .footer-top{grid-template-columns:1fr 1fr;}
-  .hero-stats{display:none;}
-  .dash-stats,.rooms-grid,.jr-rooms-grid{grid-template-columns:1fr;}
-  .app-content{padding:32px 20px 60px;}
-  .session-footer{grid-template-columns:1fr;}
-}
-
-/* ── AI ACCOUNTABILITY CHAT ─── */
-#ai-account-screen{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);flex-direction:column;}
-#ai-account-screen.active{display:flex;}
-.ai-chat-header{padding:20px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg);}
-.ai-chat-header-left{display:flex;align-items:center;gap:14px;}
-.ai-avatar-bot{width:40px;height:40px;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0;}
-.ai-chat-title{font-family:var(--font-display);font-size:20px;font-weight:400;letter-spacing:-.01em;color:var(--text);}
-.ai-chat-title em{font-style:italic;color:var(--gold);}
-.ai-chat-subtitle{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:3px;}
-.ai-chat-messages{flex:1;overflow-y:auto;padding:32px 40px;display:flex;flex-direction:column;gap:20px;max-width:820px;width:100%;margin:0 auto;}
-.ai-chat-messages::-webkit-scrollbar{width:4px;}
-.ai-chat-messages::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.2);}
-.chat-msg{display:flex;gap:12px;max-width:78%;}
-.chat-msg.ai-msg{align-self:flex-start;}
-.chat-msg.user-msg{align-self:flex-end;flex-direction:row-reverse;}
-.chat-msg-av{width:32px;height:32px;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.25);display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0;margin-top:4px;font-size:11px;}
-.chat-msg.user-msg .chat-msg-av{background:rgba(155,127,212,0.12);border-color:rgba(155,127,212,0.25);color:var(--purple);}
-.chat-bubble{background:var(--bg2);border:1px solid rgba(201,168,76,0.12);padding:16px 20px;font-size:14px;line-height:1.75;color:var(--muted2);}
-.chat-bubble strong{color:var(--text);font-weight:500;}
-.chat-bubble .goal-q{font-family:var(--font-display);font-size:15px;font-style:italic;color:var(--gold);display:block;margin:8px 0 2px;line-height:1.4;}
-.chat-msg.user-msg .chat-bubble{background:var(--bg3);border-color:rgba(155,127,212,0.18);color:var(--text);}
-.chat-bubble img{max-width:220px;max-height:160px;object-fit:cover;border:1px solid var(--border2);display:block;margin-top:10px;}
-.chat-typing-dots{display:flex;align-items:center;gap:5px;padding:6px 4px;}
-.chat-typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.3;animation:tdot 1.2s infinite;}
-.chat-typing-dots span:nth-child(2){animation-delay:.2s;}
-.chat-typing-dots span:nth-child(3){animation-delay:.4s;}
-@keyframes tdot{0%,60%,100%{opacity:.2;transform:translateY(0);}30%{opacity:1;transform:translateY(-4px);}}
-.ai-score-card{background:var(--bg3);border:1px solid rgba(201,168,76,0.3);padding:24px 28px;margin-top:4px;}
-.ai-score-row{display:flex;align-items:center;gap:16px;margin-bottom:14px;}
-.ai-score-num{font-family:var(--font-display);font-size:56px;font-weight:300;line-height:1;letter-spacing:-.04em;color:var(--gold);}
-.ai-score-grade-box{font-family:var(--font-display);font-size:38px;font-weight:400;color:var(--text);border:1px solid var(--border2);width:60px;height:60px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.ai-score-meta{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
-.ai-score-bar-wrap{height:3px;background:var(--border);margin-bottom:20px;overflow:hidden;}
-.ai-score-bar{height:100%;background:var(--gold);width:0;transition:width 1.4s cubic-bezier(0.23,1,0.32,1);}
-.ai-done-btn{display:block;width:100%;text-align:center;font-family:var(--font-ui);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--bg);background:var(--gold);border:none;padding:14px 24px;cursor:none;transition:background .2s;margin-top:4px;}
-.ai-done-btn:hover{background:var(--gold2);}
-.upload-prev-wrap{padding:0 40px 8px;max-width:820px;width:100%;margin:0 auto;flex-shrink:0;}
-.upload-prev-inner{background:var(--bg2);border:1px solid var(--border2);padding:10px 14px;display:flex;align-items:center;gap:12px;}
-.upload-prev-img{width:44px;height:44px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;}
-.upload-prev-name{font-family:var(--font-mono);font-size:11px;color:var(--muted2);letter-spacing:.04em;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.upload-rm-btn{background:none;border:none;color:var(--muted);cursor:none;font-size:14px;transition:color .2s;padding:4px;}
-.upload-rm-btn:hover{color:var(--text);}
-.ai-input-area{padding:14px 40px 26px;border-top:1px solid var(--border);flex-shrink:0;background:var(--bg);}
-.ai-input-row{max-width:820px;margin:0 auto;display:flex;align-items:flex-end;gap:10px;background:var(--bg2);border:1px solid var(--border2);padding:10px 12px;transition:border-color .2s;}
-.ai-input-row:focus-within{border-color:rgba(201,168,76,0.35);}
-.ai-text-inp{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:var(--font-ui);font-size:14px;resize:none;min-height:24px;max-height:120px;overflow-y:auto;line-height:1.6;padding:4px 0;}
-.ai-text-inp::placeholder{color:var(--muted);}
-.ai-upload-lbl{display:flex;align-items:center;justify-content:center;width:36px;height:36px;color:var(--muted2);cursor:none;transition:color .2s;border:1px solid transparent;flex-shrink:0;}
-.ai-upload-lbl:hover{color:var(--gold);border-color:rgba(201,168,76,0.2);}
-.ai-send-btn{width:36px;height:36px;background:var(--gold);border:none;cursor:none;display:flex;align-items:center;justify-content:center;color:var(--bg);flex-shrink:0;transition:background .2s;}
-.ai-send-btn:hover{background:var(--gold2);}
-.ai-send-btn:disabled{background:var(--border2);color:var(--muted);}
-.ai-hints{max-width:820px;margin:8px auto 0;display:flex;flex-wrap:wrap;gap:12px;font-family:var(--font-mono);font-size:10px;letter-spacing:.07em;color:var(--muted);}
-.ai-hints span{display:flex;align-items:center;gap:5px;}
-.ai-hint-dot{width:3px;height:3px;border-radius:50%;background:var(--gold);flex-shrink:0;}
-</style>
-</head>
-<body>
-
-<!-- ─── CURSOR ─── -->
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
-
-<!-- ─── NOTIFICATION ─── -->
-<div id="notif" class="hide"></div>
-
-<!-- ════════════════════════════════════════════
-     LANDING PAGE
-════════════════════════════════════════════ -->
-<div id="landing">
-
-<!-- NAV -->
-<nav id="main-nav">
-  <a href="#" class="nav-logo">Cortex<span>Hub</span></a>
-  <ul class="nav-links">
-    <li><a href="#arenas">Arenas</a></li>
-    <li><a href="#how">How it works</a></li>
-    <li><a href="#pricing">Pricing</a></li>
-  </ul>
-  <button class="nav-cta" id="enter-hub-btn">Enter Hub</button>
-</nav>
-
-<!-- HERO -->
-<section class="hero" id="home">
-  <div class="hero-bg-grid"></div>
-  <div class="hero-orb"></div>
-  <p class="hero-eyebrow">AI-powered accountability platform — v1.0</p>
-  <h1 class="hero-title">
-    <span class="line"><span class="word">Focus.</span></span>
-    <span class="line"><span class="word">Learn.</span>&nbsp;<span class="word"><em>Grow.</em></span></span>
-  </h1>
-  <div class="hero-bottom">
-    <p class="hero-desc">
-      <strong>The study platform that holds you accountable.</strong> Set your intent, run deep-focus sessions, submit proof to AI, and climb the leaderboard. No shortcuts.
-    </p>
-    <div class="hero-cta-group">
-      <a href="#arenas" class="btn-primary">Browse Arenas</a>
-      <a href="#how" class="btn-ghost">
-        How it works
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-      </a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><span class="stat-num">6</span><span class="stat-label">Arenas</span></div>
-      <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Focus</span></div>
-      <div class="stat"><span class="stat-num">A+</span><span class="stat-label">Graded</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- MARQUEE -->
-<div class="marquee-section">
-  <div class="marquee-track">
-    <div class="marquee-inner">
-      <span class="marquee-item"><span class="dot"></span>Deep Focus</span>
-      <span class="marquee-item"><span class="dot"></span>Pomodoro Timer</span>
-      <span class="marquee-item"><span class="dot"></span>AI Accountability</span>
-      <span class="marquee-item"><span class="dot"></span>Live Rooms</span>
-      <span class="marquee-item"><span class="dot"></span>JEE Prep</span>
-      <span class="marquee-item"><span class="dot"></span>UPSC Grind</span>
-      <span class="marquee-item"><span class="dot"></span>Exam Blitz</span>
-      <span class="marquee-item"><span class="dot"></span>Leaderboard</span>
-      <span class="marquee-item"><span class="dot"></span>NEET Mode</span>
-      <span class="marquee-item"><span class="dot"></span>Code Lab</span>
-    </div>
-    <div class="marquee-inner">
-      <span class="marquee-item"><span class="dot"></span>Deep Focus</span>
-      <span class="marquee-item"><span class="dot"></span>Pomodoro Timer</span>
-      <span class="marquee-item"><span class="dot"></span>AI Accountability</span>
-      <span class="marquee-item"><span class="dot"></span>Live Rooms</span>
-      <span class="marquee-item"><span class="dot"></span>JEE Prep</span>
-      <span class="marquee-item"><span class="dot"></span>UPSC Grind</span>
-      <span class="marquee-item"><span class="dot"></span>Exam Blitz</span>
-      <span class="marquee-item"><span class="dot"></span>Leaderboard</span>
-      <span class="marquee-item"><span class="dot"></span>NEET Mode</span>
-      <span class="marquee-item"><span class="dot"></span>Code Lab</span>
-    </div>
-  </div>
-</div>
-
-<!-- ARENAS -->
-<section class="arenas-section" id="arenas">
-  <div class="arenas-header">
-    <div class="arenas-header-left">
-      <p class="section-label">Choose your arena</p>
-      <h2 class="section-title reveal">Six arenas.<br><em>One mission.</em></h2>
-    </div>
-    <p class="arenas-header-right reveal">Every arena is tuned to a specific cognitive mode. Pick the environment that matches your task, set your intent, and let the timer do the rest.</p>
-  </div>
-
-  <div class="arenas-grid">
-    <!-- Featured: Silent Zone -->
-    <div class="arena-featured">
-      <div class="arena-featured-left">
-        <div class="arena-num">01 / 06</div>
-        <div class="arena-name">Silent Zone</div>
-        <p class="arena-desc" style="max-width:440px;margin-bottom:32px;">Library-grade focus. Zero tolerance for distraction. This is where serious students come when they need to eliminate every variable except the work itself. Pomodoro by default, no noise, no compromise.</p>
-        <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
-          <button class="btn-primary" onclick="enterHub()">Start session</button>
-          <div style="font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:.06em;">25 + 5 min · Pomodoro native</div>
-        </div>
-      </div>
-      <div class="arena-featured-right">
-        <div class="demo-area">
-          <div class="demo-text-preview">
-            <span class="preview-word">FOCUS</span>
-            <span class="preview-word">LEARN</span>
-            <span class="preview-word">GROW</span>
-          </div>
-          <div class="demo-line"></div>
-          <div class="demo-line"></div>
-          <div class="demo-line"></div>
-          <div class="demo-line"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Arena 2 -->
-    <div class="arena-card reveal-scale">
-      <div class="arena-num">02 / 06</div>
-      <div class="arena-icon">
-        <svg viewBox="0 0 48 48" fill="none" stroke="var(--gold)" stroke-width="1.2" stroke-linecap="round">
-          <rect x="6" y="10" width="36" height="28" rx="3"/>
-          <rect x="14" y="18" width="20" height="12" rx="1"/>
-          <path d="M18 34v4M30 34v4M14 38h20"/>
-        </svg>
-      </div>
-      <div class="arena-name">Deep Work</div>
-      <p class="arena-desc">The hardest problems deserve unbroken attention. Extended sessions, minimal UI, maximum signal-to-noise ratio.</p>
-      <div class="arena-meta">
-        <span class="arena-tag">Extended</span>
-        <div class="arena-live"><span class="pulse"></span>14 active</div>
-      </div>
-    </div>
-
-    <!-- Arena 3 -->
-    <div class="arena-card reveal-scale">
-      <div class="arena-num">03 / 06</div>
-      <div class="arena-icon">
-        <svg viewBox="0 0 48 48" fill="none" stroke="var(--gold)" stroke-width="1.2" stroke-linecap="round">
-          <circle cx="24" cy="24" r="18"/>
-          <circle cx="24" cy="24" r="10"/>
-          <circle cx="24" cy="24" r="3" fill="var(--gold)" fill-opacity=".5"/>
-          <path d="M24 6v4M24 38v4M6 24h4M38 24h4"/>
-        </svg>
-      </div>
-      <div class="arena-name">Exam Blitz</div>
-      <p class="arena-desc">High-intensity MCQ grind. Competitive exam mode for JEE, NEET, UPSC, GATE aspirants who need pressure to perform.</p>
-      <div class="arena-meta">
-        <span class="arena-tag">High Intensity</span>
-        <div class="arena-live"><span class="pulse"></span>31 active</div>
-      </div>
-    </div>
-
-    <!-- Arena 4 -->
-    <div class="arena-card reveal-scale">
-      <div class="arena-num">04 / 06</div>
-      <div class="arena-icon">
-        <svg viewBox="0 0 48 48" fill="none" stroke="var(--gold)" stroke-width="1.2" stroke-linecap="round">
-          <path d="M8 34c4-8 8-12 16-12s12 4 16 12"/>
-          <circle cx="24" cy="16" r="6"/>
-          <path d="M16 40h16"/>
-        </svg>
-      </div>
-      <div class="arena-name">Revision Room</div>
-      <p class="arena-desc">Reinforce what you know. Spaced repetition friendly. Built for the night before the exam when repetition is everything.</p>
-      <div class="arena-meta">
-        <span class="arena-tag">Reinforcement</span>
-        <div class="arena-live"><span class="pulse"></span>22 active</div>
-      </div>
-    </div>
-
-    <!-- Arena 5 -->
-    <div class="arena-card reveal-scale">
-      <div class="arena-num">05 / 06</div>
-      <div class="arena-icon">
-        <svg viewBox="0 0 48 48" fill="none" stroke="var(--gold)" stroke-width="1.2" stroke-linecap="round">
-          <rect x="6" y="6" width="36" height="36" rx="4"/>
-          <rect x="16" y="16" width="16" height="16" rx="2"/>
-          <path d="M16 6v4M32 6v4M16 38v4M32 38v4M6 16h4M38 16h4M6 32h4M38 32h4"/>
-        </svg>
-      </div>
-      <div class="arena-name">Code Lab</div>
-      <p class="arena-desc">For programmers, DSA grinders and CS students. Track your LeetCode grind, project builds, and system design prep.</p>
-      <div class="arena-meta">
-        <span class="arena-tag">Tech</span>
-        <div class="arena-live"><span class="pulse"></span>18 active</div>
-      </div>
-    </div>
-
-    <!-- Arena 6 -->
-    <div class="arena-card reveal-scale">
-      <div class="arena-num">06 / 06</div>
-      <div class="arena-icon">
-        <svg viewBox="0 0 48 48" fill="none" stroke="var(--gold)" stroke-width="1.2" stroke-linecap="round">
-          <path d="M8 18v-6a16 16 0 0 1 32 0v6"/>
-          <path d="M38 21a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4h-2a4 4 0 0 1-4-4v-4a4 4 0 0 1 4-4z"/>
-          <path d="M10 21a4 4 0 0 0-4 4v4a4 4 0 0 0 4 4h2a4 4 0 0 0 4-4v-4a4 4 0 0 0-4-4z"/>
-        </svg>
-      </div>
-      <div class="arena-name">Chill & Study</div>
-      <p class="arena-desc">Light material, podcasts, reading. Low pressure mode with ambient sound. For when you need to show up, not grind.</p>
-      <div class="arena-meta">
-        <span class="arena-tag">Low Pressure</span>
-        <div class="arena-live"><span class="pulse"></span>9 active</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="how-section" id="how">
-  <p class="section-label reveal">The method</p>
-  <h2 class="section-title reveal">Three steps to <em>mastery.</em></h2>
-
-  <div class="steps-grid">
-    <!-- Step 1 -->
-    <div class="step reveal-scale">
-      <div class="step-num">01</div>
-      <h3 class="step-title">Pick your <em>arena</em></h3>
-      <p class="step-body">Six focus environments, each calibrated for a specific cognitive mode. Silent Zone for deep reading. Exam Blitz for MCQ drills. Code Lab for DSA. Choose the arena that matches your intent today — not tomorrow.</p>
-      <div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:6px;">
-        <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;padding:4px 10px;border:1px solid var(--border);color:var(--muted);">Silent Zone</span>
-        <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;padding:4px 10px;border:1px solid var(--border);color:var(--muted);">Exam Blitz</span>
-        <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;padding:4px 10px;border:1px solid rgba(201,168,76,0.3);color:var(--gold);">Code Lab</span>
-        <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;padding:4px 10px;border:1px solid var(--border);color:var(--muted);">Deep Work</span>
-      </div>
-      <span class="step-arrow">↗</span>
-    </div>
-
-    <!-- Step 2 -->
-    <div class="step reveal-scale">
-      <div class="step-num">02</div>
-      <h3 class="step-title"><em>Pomodoro</em> the grind</h3>
-      <p class="step-body">25 minutes on, 5 minutes off. The Pomodoro Technique isn't just a timer — it's a commitment device. Set your intent before each block. When the timer ends, you don't stop. You log proof.</p>
-      <div class="pom-preview">
-        <div class="pom-ring">
-          <svg width="72" height="72" viewBox="0 0 72 72">
-            <circle cx="36" cy="36" r="30" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4"/>
-            <circle cx="36" cy="36" r="30" fill="none" stroke="var(--gold)" stroke-width="4" stroke-linecap="round"
-              stroke-dasharray="188.5" stroke-dashoffset="47" style="transition:stroke-dashoffset 1s linear;"/>
-          </svg>
-          <div class="pom-time">18:42</div>
-        </div>
-        <div class="pom-dots">
-          <div class="pom-dot-row">
-            <div class="pom-dot done"></div><div class="pom-dot done"></div><div class="pom-dot done"></div>
-          </div>
-          <div class="pom-dot-row">
-            <div class="pom-dot done"></div><div class="pom-dot"></div><div class="pom-dot"></div>
-          </div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.05em;margin-top:4px;">4 / 8 pomodoros</div>
-        </div>
-      </div>
-      <span class="step-arrow">↗</span>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="step reveal-scale">
-      <div class="step-num">03</div>
-      <h3 class="step-title"><em>Join</em> live rooms</h3>
-      <p class="step-body">You study harder when others are watching. Join live study rooms, see who's grinding right now, and let social accountability do the heavy lifting. Create your own room and build your own study circle.</p>
-      <div class="rooms-preview">
-        <div class="room-preview-item">
-          <div class="room-preview-dot"></div>
-          <div class="room-preview-name">JEE Advanced Grind</div>
-          <div class="room-preview-count">12 studying</div>
-        </div>
-        <div class="room-preview-item">
-          <div class="room-preview-dot"></div>
-          <div class="room-preview-name">UPSC Ethics Paper</div>
-          <div class="room-preview-count">8 studying</div>
-        </div>
-        <div class="room-preview-item">
-          <div class="room-preview-dot"></div>
-          <div class="room-preview-name">DSA + LeetCode</div>
-          <div class="room-preview-count">5 studying</div>
-        </div>
-      </div>
-      <span class="step-arrow">↗</span>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="pricing-section" id="pricing">
-  <p class="section-label reveal">Simple pricing</p>
-  <h2 class="section-title reveal">Invest in your <em>future.</em></h2>
-  <div style="margin-top:16px;margin-bottom:0;" class="reveal">
-    <p style="font-size:14px;color:var(--muted2);line-height:1.75;max-width:560px;">Every plan unlocks the full focus engine. Upgrade when you need AI grading, live rooms, and priority review. Cancel anytime.</p>
-  </div>
-
-  <div class="pricing-grid">
-    <!-- Free -->
-    <div class="price-card reveal-scale">
-      <div class="price-name">Free <em>Scholar</em></div>
-      <p class="price-sub">Start your journey. No credit card required. Core focus engine and 3 arenas unlocked forever.</p>
-      <div class="price-amount">
-        <span class="currency">₹</span>
-        <span class="amount">0</span>
-        <span class="period">/ forever</span>
-      </div>
-      <ul class="price-features">
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Public study rooms (20–50 users)
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Limited arenas (3 only)
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Session history (last 5 only)
-        </li>
-        <li class="dim">
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Ads or wait timer before joining rooms
-        </li>
-        <li class="dim">
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          No room creation
-        </li>
-      </ul>
-      <button class="price-btn outline" onclick="enterHub()">Start for free</button>
-    </div>
-
-    <!-- Scholar Pro (featured) -->
-    <div class="price-card featured reveal-scale">
-      <div class="price-badge">Most Popular</div>
-      <div class="price-name">Cortex <em>Scholar</em></div>
-      <p class="price-sub">For serious aspirants. All 6 arenas, unlimited AI grading, and live room access. Your competitive edge.</p>
-      <div class="price-amount">
-        <span class="currency">₹</span>
-        <span class="amount">149</span>
-        <span class="period">/ month</span>
-      </div>
-      <ul class="price-features">
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Medium rooms (5–10 users)
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Create Private Rooms
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          All Arenas Unlocked
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Performance Analytics
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Notes Review
-        </li>
-      </ul>
-      <button class="price-btn solid" onclick="enterHub()">Get Scholar — ₹149/mo</button>
-    </div>
-
-    <!-- Elite -->
-    <div class="price-card reveal-scale">
-      <div class="price-name">Cortex <em>Elite</em></div>
-      <p class="price-sub">For toppers, coaching centres, and study groups. Includes team management and priority AI review.</p>
-      <div class="price-amount">
-        <span class="currency">₹</span>
-        <span class="amount">349</span>
-        <span class="period">/ month</span>
-      </div>
-      <ul class="price-features">
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Extra Small Rooms
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Solo Deep work rooms
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Elite Badge
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Priority AI Coach
-        </li>
-        <li>
-          <div class="check"><svg viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M1.5 4.5l2 2 4-4"/></svg></div>
-          Elite Only Rooms
-        </li>
-      </ul>
-      <button class="price-btn outline" onclick="enterHub()">Contact for Elite</button>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="testi-section">
-  <p class="section-label reveal">What students say</p>
-  <h2 class="section-title reveal">Our,<br><em>Future</em> Goal.</h2>
-  <div class="testimonials-grid">
-    <div class="testi-card reveal-scale">
-      <p class="testi-quote">Cortex Hub aims to build the world's most effective digital study infrastructure, combining AI accountability, focus science, and peer motivation to measurably improve student productivity.</p>
-      <div class="testi-author">
-        <div class="testi-avatar">A</div>
-        <div>
-          <div class="testi-name">Aryan Mehta</div>
-          <div class="testi-role">JEE Advanced 2024 — AIR 847</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card reveal-scale">
-      <p class="testi-quote">Our goal is to create structured virtual study environments where social accountability and deep focus coexist, proven to increase consistency, concentration, and academic outcomes.</p>
-      <div class="testi-author">
-        <div class="testi-avatar">R</div>
-        <div>
-          <div class="testi-name">Riya Sharma</div>
-          <div class="testi-role">UPSC CSE Aspirant — Delhi</div>
-        </div>
-      </div>
-    </div>
-    <div class="testi-card reveal-scale">
-      <p class="testi-quote">The Code Lab arena is exactly what DSA grinders need. No fluff, just the timer and your screen. Cleared my Amazon SDE interview using this.</p>
-      <div class="testi-author">
-        <div class="testi-avatar">K</div>
-        <div>
-          <div class="testi-name">Karan Verma</div>
-          <div class="testi-role">SDE @ Amazon — Bangalore</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-top">
-    <div class="footer-brand">
-      <span class="logo">Cortex<span>Hub</span></span>
-      <p>The study platform that holds you accountable. Focus deep, prove your work, grow every day.</p>
-    </div>
-    <div class="footer-col">
-      <h4>Arenas</h4>
-      <ul>
-        <li><a href="#">Silent Zone</a></li>
-        <li><a href="#">Deep Work</a></li>
-        <li><a href="#">Exam Blitz</a></li>
-        <li><a href="#">Code Lab</a></li>
-        <li><a href="#">Chill &amp; Study</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Platform</h4>
-      <ul>
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Live Rooms</a></li>
-        <li><a href="#">Leaderboard</a></li>
-        <li><a href="#">Pricing</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Company</h4>
-      <ul>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Privacy</a></li>
-        <li><a href="#">Terms</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span class="footer-copy">© 2025 Cortex Hub. All rights reserved.</span>
-    <div class="footer-socials">
-      <a href="#">Twitter</a>
-      <a href="#">Instagram</a>
-      <a href="#">Discord</a>
-    </div>
-  </div>
-</footer>
-
-</div><!-- /landing -->
-
-
-<!-- ════════════════════════════════════════════
-     SETUP SCREEN
-════════════════════════════════════════════ -->
-<div id="setup-screen">
-  <div class="setup-wrap">
-    <span class="setup-logo">Cortex<span>Hub</span></span>
-    <div class="setup-progress" id="setup-progress"></div>
-    <div id="setup-body"></div>
-  </div>
-</div>
-
-
-<!-- ════════════════════════════════════════════
-     APP SHELL
-════════════════════════════════════════════ -->
-<div id="app-shell">
-  <!-- Sidebar -->
-  <nav class="app-sidebar app-sidebar-wide" id="app-sidebar">
-    <div class="app-logo-wide">
-      <div class="logo-icon" style="width:36px;height:36px;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--bg);">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      </div>
-      <div class="logo-name">Cortex<em>Hub</em></div>
-    </div>
-
-    <button class="app-nav-item wide active" data-nav="rooms" id="nav-rooms">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Arenas
-    </button>
-    <button class="app-nav-item wide" data-nav="join" id="nav-join">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-      Live Rooms
-    </button>
-    <button class="app-nav-item wide" data-nav="dashboard" id="nav-dashboard">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Dashboard
-    </button>
-    <button class="app-nav-item wide" data-nav="leaderboard" id="nav-leaderboard">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-      Leaderboard
-    </button>
-
-    <div class="app-user wide">
-      <div class="app-avatar" id="app-avatar">U</div>
-      <div class="app-user-info show" id="app-user-info">
-        <div class="uname" id="app-uname">Scholar</div>
-        <div class="uexam" id="app-uexam">Focus Mode</div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Main -->
-  <main class="app-main" id="app-main">
-    <!-- ROOMS VIEW -->
-    <div id="view-rooms" class="app-content" style="animation:none;">
-      <div class="app-page-header">
-        <div class="app-page-label">Choose your arena</div>
-        <h1 class="app-page-title">Focus <em>Arenas</em></h1>
-      </div>
-      <div class="rooms-grid" id="rooms-grid"></div>
-    </div>
-
-    <!-- GOAL SETUP VIEW -->
-    <div id="view-goal" class="app-content" style="display:none;max-width:640px;">
-      <button style="background:none;border:none;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);cursor:none;display:flex;align-items:center;gap:8px;margin-bottom:40px;transition:color .2s;" id="back-to-rooms" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">
-        ← Back to Arenas
-      </button>
-      <div id="selected-room-banner" class="glass-panel" style="margin-bottom:32px;"></div>
-      <div class="glass-panel">
-        <div class="field-label">Set your intent</div>
-        <textarea class="field-input" rows="4" id="goal-input" placeholder="What exactly will you accomplish in this session? Be specific — AI will grade you on this."></textarea>
-      </div>
-      <div class="glass-panel">
-        <div class="field-label">Timer mode</div>
-        <div class="toggle-row" id="timer-toggle">
-          <button class="toggle-btn active" data-mode="pomodoro">Pomodoro (25 + 5)</button>
-          <button class="toggle-btn" data-mode="custom">Custom</button>
-        </div>
-        <div id="custom-time-wrap" style="display:none;margin-top:16px;display:none;">
-          <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02);border:1px solid var(--border);padding:14px 18px;width:fit-content;">
-            <input type="number" id="custom-minutes" value="45" min="5" max="180" style="width:56px;background:transparent;border:none;color:var(--gold);font-family:var(--font-display);font-size:32px;font-weight:300;text-align:center;outline:none;"/>
-            <span style="font-family:var(--font-mono);font-size:12px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;">minutes</span>
-          </div>
-        </div>
-      </div>
-      <button class="price-btn solid" id="start-session-btn" style="margin-top:8px;">
-        ↗ Start Session
-      </button>
-    </div>
-
-    <!-- JOIN ROOMS VIEW -->
-    <div id="view-join" class="app-content" style="display:none;">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px;gap:16px;flex-wrap:wrap;">
-        <div>
-          <div class="app-page-label">Collaborative Focus</div>
-          <h1 class="app-page-title">Live <em>Rooms</em></h1>
-        </div>
-        <button class="price-btn solid" id="create-room-btn" style="width:auto;padding:12px 28px;font-size:11px;">+ Create Room</button>
-      </div>
-      <input class="jr-search" id="jr-search" placeholder="Search topics, exams, interests…"/>
-      <div class="tag-filters" id="tag-filters"></div>
-      <div class="jr-rooms-grid" id="jr-rooms-grid"></div>
-    </div>
-
-    <!-- DASHBOARD VIEW -->
-    <div id="view-dashboard" class="app-content" style="display:none;">
-      <div class="app-page-header">
-        <div class="app-page-label">Your progress</div>
-        <h1 class="app-page-title"><em>Dashboard</em></h1>
-      </div>
-      <div class="dash-stats" id="dash-stats"></div>
-
-      <!-- Study Hours Graph -->
-      <div class="field-label" style="margin-bottom:8px;margin-top:8px;">Study Hours — Last 14 Days</div>
-      <div class="study-graph-wrap" id="study-graph-wrap"></div>
-
-      <!-- Contribution Heatmap -->
-      <div class="field-label" style="margin-bottom:8px;margin-top:32px;">Activity Heatmap — This Year</div>
-      <div class="contrib-section" id="contrib-section"></div>
-      <div id="contrib-tooltip" class="contrib-tooltip"></div>
-
-      <!-- Badges -->
-      <div class="field-label" style="margin-bottom:8px;margin-top:32px;">Badges &amp; Streaks</div>
-      <div class="badges-row" id="badges-row"></div>
-
-      <!-- Arena Scores -->
-      <div class="field-label" style="margin-bottom:8px;margin-top:32px;">Arena Assignment Scores</div>
-      <div class="sessions-list" id="arena-scores-list"></div>
-
-      <!-- Recent sessions -->
-      <div class="field-label" style="margin-bottom:16px;margin-top:32px;">Recent Sessions</div>
-      <div class="sessions-list" id="sessions-list"></div>
-    </div>
-
-    <!-- LEADERBOARD VIEW -->
-    <div id="view-leaderboard" class="app-content" style="display:none;">
-      <div class="app-page-header">
-        <div class="app-page-label">Global Rankings</div>
-        <h1 class="app-page-title">Leader<em>board</em></h1>
-      </div>
-      <div class="lb-nav-btns">
-        <button class="lb-nav-btn" id="lb-prev">← Prev</button>
-        <div class="lb-position-badge" id="lb-my-rank"></div>
-        <button class="lb-nav-btn" id="lb-next">Next →</button>
-      </div>
-      <div class="lb-carousel-wrap">
-        <div class="lb-carousel" id="lb-carousel"></div>
-      </div>
-      <div class="lb-carousel-dots" id="lb-dots"></div>
-
-      <!-- This week's stats panel -->
-      <div style="margin-top:40px;">
-        <div class="field-label" style="margin-bottom:16px;">Your Performance This Week</div>
-        <div class="dash-stats" id="lb-my-stats"></div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Session overlay (full screen, shown over app) -->
-  <div id="session-view">
-    <div class="session-grid">
-      <div class="session-header">
-        <div>
-          <div class="session-room-name" id="sess-room-name">Silent Zone</div>
-          <div class="session-phase" id="sess-phase">Deep Work · 0 pomodoros</div>
-        </div>
-        <button class="end-btn" id="end-session-btn">■ End Session</button>
-      </div>
-
-      <div class="timer-wrap">
-        <svg class="timer-svg" width="280" height="280" viewBox="0 0 200 200">
-          <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="5"/>
-          <circle id="timer-circle" cx="100" cy="100" r="88" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round"
-            stroke-dasharray="552.9" stroke-dashoffset="0"/>
-        </svg>
-        <div class="timer-center">
-          <div class="timer-display" id="timer-display">25:00</div>
-          <div class="timer-label" id="timer-phase-label">Focus</div>
-        </div>
-      </div>
-
-      <div class="timer-controls">
-        <button class="play-btn" id="play-pause-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Start Timer
-        </button>
-      </div>
-
-      <div class="glass-panel" style="margin-bottom:0;padding:20px 24px;">
-        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Your Intent</div>
-        <div style="font-size:14px;color:var(--muted2);line-height:1.65;" id="sess-goal-display"></div>
-      </div>
-
-      <div class="session-footer">
-        <div class="session-panel">
-          <div class="session-panel-label">Ambient</div>
-          <div class="ambient-opts">
-            <div class="ambient-opt" data-ambient="rain">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>
-              Rain
-            </div>
-            <div class="ambient-opt" data-ambient="cafe">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/></svg>
-              Café
-            </div>
-            <div class="ambient-opt" data-ambient="white">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 12c.5-3 2.5-5 5-5s4.5 2 5 5 2.5 5 5 5 4.5-2 5-5"/></svg>
-              White Noise
-            </div>
-          </div>
-        </div>
-        <div class="session-panel">
-          <div class="session-panel-label">Peers Studying</div>
-          <div class="peer-stack">
-            <div class="peer-av" style="background:hsl(200,40%,30%);">A</div>
-            <div class="peer-av" style="background:hsl(270,40%,30%);">R</div>
-            <div class="peer-av" style="background:hsl(140,40%,25%);">K</div>
-            <div class="peer-av" style="background:hsl(30,40%,25%);">S</div>
-          </div>
-          <div class="peer-count">+7 others focusing right now</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div><!-- /app-shell -->
-
-
-<!-- ════════════════════════════════════════════
-     AI ACCOUNTABILITY CHAT SCREEN
-════════════════════════════════════════════ -->
-<div id="ai-account-screen">
-  <!-- Header -->
-  <div class="ai-chat-header">
-    <div class="ai-chat-header-left">
-      <div class="ai-avatar-bot">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/></svg>
-      </div>
-      <div>
-        <div class="ai-chat-title">Cortex <em>AI</em> Coach</div>
-        <div class="ai-chat-subtitle">Accountability · Proof Analysis</div>
-      </div>
-    </div>
-    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px;">
-      <span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block;animation:livePulse 2s infinite;"></span>Online
-    </div>
-  </div>
-
-  <!-- Messages container -->
-  <div class="ai-chat-messages" id="ai-messages"></div>
-
-  <!-- Upload preview (hidden until file picked) -->
-  <div class="upload-prev-wrap" id="ai-upload-prev" style="display:none;">
-    <div class="upload-prev-inner">
-      <img class="upload-prev-img" id="ai-prev-img" src="" alt="preview"/>
-      <span class="upload-prev-name" id="ai-prev-name">file.png</span>
-      <button class="upload-rm-btn" id="ai-rm-upload">✕</button>
-    </div>
-  </div>
-
-  <!-- Input area -->
-  <div class="ai-input-area">
-    <div class="ai-input-row">
-      <textarea class="ai-text-inp" id="ai-text-inp" placeholder="Write your notes, paste questions solved, describe what you accomplished…" rows="1"></textarea>
-      <label class="ai-upload-lbl" for="ai-file-inp" title="Upload screenshot / photo of notes">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-      </label>
-      <input type="file" id="ai-file-inp" accept="image/*" style="display:none;"/>
-      <button class="ai-send-btn" id="ai-send-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </div>
-    <div class="ai-hints">
-      <span><span class="ai-hint-dot"></span>Notes &amp; key points</span>
-      <span><span class="ai-hint-dot"></span>LeetCode screenshot</span>
-      <span><span class="ai-hint-dot"></span>Photo of written work</span>
-      <span><span class="ai-hint-dot"></span>Questions completed</span>
-    </div>
-  </div>
-</div>
-
-
-<!-- ─── CREATE ROOM MODAL ─── -->
-<div class="modal-overlay" id="create-modal">
-  <div class="modal-box">
-    <button class="modal-close" id="modal-close">✕</button>
-    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">New Room</div>
-    <div class="modal-title">Create <em style="font-style:italic;color:var(--gold);">Arena</em></div>
-    <div class="field-label">Room name</div>
-    <input class="field-input" id="cr-name" placeholder="e.g. JEE Chemistry Grind" style="margin-bottom:24px;"/>
-    <div class="field-label">Interest tag</div>
-    <div class="tag-filters" id="cr-tags" style="margin-bottom:32px;"></div>
-    <button class="price-btn solid" id="confirm-create-btn">↗ Launch Room</button>
-  </div>
-</div>
-
-
-<!-- GSAP -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script>
 'use strict';
 
-// ─── CURSOR ───────────────────────────────────────────────────────────────────
-const cur = document.getElementById('cursor');
-const curRing = document.getElementById('cursor-ring');
-let cx = 0, cy = 0, rx = 0, ry = 0;
-document.addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; });
-(function animCursor() {
-  rx += (cx - rx) * 0.12;
-  ry += (cy - ry) * 0.12;
-  cur.style.left = cx + 'px'; cur.style.top = cy + 'px';
-  curRing.style.left = rx + 'px'; curRing.style.top = ry + 'px';
-  requestAnimationFrame(animCursor);
-})();
-document.querySelectorAll('a,button,[data-nav]').forEach(el => {
-  el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-  el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-});
-
-// ─── NAV SCROLL ───────────────────────────────────────────────────────────────
-window.addEventListener('scroll', () => {
-  const nav = document.getElementById('main-nav');
-  if (nav) nav.classList.toggle('scrolled', window.scrollY > 40);
-});
-
-// ─── GSAP HERO ANIMATIONS ─────────────────────────────────────────────────────
-gsap.registerPlugin(ScrollTrigger);
-
-window.addEventListener('load', () => {
-  // Hero entrance
-  gsap.to('.hero-eyebrow', { opacity:1, y:0, duration:1, delay:.3, ease:'power3.out' });
-  gsap.to('.hero-title .word', {
-    opacity:1, y:'0%', duration:1.1, stagger:.12, delay:.5, ease:'power4.out'
-  });
-  gsap.to('.hero-desc', { opacity:1, y:0, duration:1, delay:1.1, ease:'power3.out' });
-  gsap.to('.hero-cta-group', { opacity:1, y:0, duration:1, delay:1.25, ease:'power3.out' });
-  gsap.to('.hero-stats', { opacity:1, y:0, duration:1, delay:1.35, ease:'power3.out' });
-
-  // Scroll reveals
-  document.querySelectorAll('.reveal').forEach(el => {
-    gsap.to(el, { opacity:1, y:0, duration:.9, ease:'power3.out',
-      scrollTrigger:{ trigger:el, start:'top 85%', once:true }
-    });
-  });
-  document.querySelectorAll('.reveal-left').forEach(el => {
-    gsap.to(el, { opacity:1, x:0, duration:.9, ease:'power3.out',
-      scrollTrigger:{ trigger:el, start:'top 85%', once:true }
-    });
-  });
-  document.querySelectorAll('.reveal-scale').forEach((el, i) => {
-    gsap.to(el, { opacity:1, scale:1, duration:.8, delay: (i%4)*0.08, ease:'power3.out',
-      scrollTrigger:{ trigger:el, start:'top 88%', once:true }
-    });
-  });
-});
-
-// ─── STATE ────────────────────────────────────────────────────────────────────
-const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
-const lsSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
-
-const ROOMS = [
-  { id:'quiet',     name:'Silent Zone',   desc:'Library-grade focus. Zero tolerance for distraction.',    icon:'book',   color:'#C9A84C' },
-  { id:'deep-work', name:'Deep Work',     desc:'The hardest problems deserve unbroken attention.',         icon:'cpu',    color:'#9B7FD4' },
-  { id:'exam-blitz',name:'Exam Blitz',    desc:'High-intensity MCQ grind. Competitive exam mode.',         icon:'target', color:'#f87171' },
-  { id:'revision',  name:'Revision Room', desc:'Reinforce what you know. Spaced repetition friendly.',     icon:'loop',   color:'#4ade80' },
-  { id:'code-lab',  name:'Code Lab',      desc:'For programmers, DSA grinders and CS students.',           icon:'cpu',    color:'#fbbf24' },
-  { id:'chill',     name:'Chill & Study', desc:'Light material, podcasts, reading. Low pressure mode.',   icon:'head',   color:'#a78bfa' },
-];
-const ICONS = {
-  book: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
-  cpu:  `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>`,
-  target:`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
-  loop: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.41"/></svg>`,
-  head: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>`,
+// ─── SVG ICONS ────────────────────────────────────────────────────────────────
+const I = {
+    bolt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    grid: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>`,
+    chart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+    trophy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-2"/><rect x="6" y="18" width="12" height="4"/><path d="M6 9a6 6 0 0 0 12 0"/></svg>`,
+    clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    target: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+    headphones: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>`,
+    users: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+    xcirc: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+    fire: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z"/></svg>`,
+    star: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    arrowL: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
+    arrowR: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`,
+    play: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
+    pause: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`,
+    stop: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>`,
+    eye: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
+    refresh: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.41"/></svg>`,
+    edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+    sparkles: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M12 3L13.5 8.5L19 10L13.5 11.5L12 17L10.5 11.5L5 10L10.5 8.5L12 3Z"/><path d="M5 3L5.8 5.2L8 6L5.8 6.8L5 9L4.2 6.8L2 6L4.2 5.2L5 3Z"/><path d="M19 15L19.5 16.5L21 17L19.5 17.5L19 19L18.5 17.5L17 17L18.5 16.5L19 15Z"/></svg>`,
+    rain: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>`,
+    coffee: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`,
+    wave: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M2 12c.5-3 2.5-5 5-5s4.5 2 5 5 2.5 5 5 5 4.5-2 5-5"/></svg>`,
+    robot: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/><line x1="8" y1="15" x2="8" y2="15"/><line x1="16" y1="15" x2="16" y2="15"/><path d="M8 19h8"/></svg>`,
+    video: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>`,
+    plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+    hash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>`,
+    x: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+    book: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+    cpu: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>`,
 };
 
-const INTERESTS = ['Mathematics','Physics','Chemistry','Biology','History','Economics','Computer Science','Law','Medicine','Engineering','UPSC','JEE','NEET','GATE','Languages','Business','DSA','Full Stack'];
+// ─── CONFIG & STATE ────────────────────────────────────────────────────────────
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+// Kinetica Design Token
+const GOLD = '#C9A84C';
+const PURPLE = '#9B7FD4';
+
+const ROOMS = [
+    { id:'quiet',     name:'Silent Zone',   desc:'Library-grade focus. Zero tolerance for distraction.',      icon:'book',       color:'text-[#C9A84C]',   bg:'bg-[#C9A84C]/10'  },
+    { id:'deep-work', name:'Deep Work',     desc:'The hardest problems deserve unbroken attention.',           icon:'cpu',        color:'text-[#9B7FD4]',   bg:'bg-[#9B7FD4]/10'  },
+    { id:'exam-blitz',name:'Exam Blitz',    desc:'High-intensity MCQ grind. Competitive exam mode.',           icon:'target',     color:'text-red-400',     bg:'bg-red-500/10'    },
+    { id:'revision',  name:'Revision Room', desc:'Reinforce what you know. Spaced repetition friendly.',       icon:'refresh',    color:'text-emerald-400', bg:'bg-emerald-500/10'},
+    { id:'code-lab',  name:'Code Lab',      desc:'For programmers, DSA grinders and CS students.',             icon:'cpu',        color:'text-amber-400',   bg:'bg-amber-500/10'  },
+    { id:'chill',     name:'Chill & Study', desc:'Light material, podcasts, reading. Low pressure mode.',     icon:'headphones', color:'text-purple-400',  bg:'bg-purple-500/10' },
+];
+
+const INTEREST_TAGS = ['Mathematics','Physics','Chemistry','Biology','History','Geography','Economics','Literature','Computer Science','Law','Medicine','Engineering','UPSC','JEE','NEET','GATE','Languages','Business'];
 
 const S = {
-  screen: 'landing',
-  user: null,
-  setupStep: 0,
-  setupData: { name:'', examType:'', studyStyle:'' },
-  activeNav: 'rooms',
-  selectedRoom: null,
-  timerMode: 'pomodoro',
-  goal: '',
-  timer: 25*60,
-  timerRunning: false,
-  pomPhase: 'work',
-  pomCount: 0,
-  sessionStart: null,
-  customTime: 45,
-  sessions: [],
-  ambient: null,
-  proof: '',
-  joinFilter: '',
-  createRoomTag: '',
+    screen: 'landing',
+    activeNav: 'rooms',
+    user: null,
+    sessions: [],
+    leaderboard: [],
+
+    setupStep: 0,
+    setupData: { name: '', examType: '', studyStyle: '' },
+
+    selectedRoom: null,
+    goal: '',
+    timer: 25 * 60,
+    timerRunning: false,
+    pomPhase: 'work',
+    pomCount: 0,
+    sessionStart: null,
+    customTime: 25,
+    timerMode: 'pomodoro',
+
+    joinRoomFilter: '',
+    showCreateModal: false,
+    createRoomData: { name: '', topic: '', interest: '' },
+    activeJoinRoom: null,
+
+    proof: '',
+    aiResult: null,
+    ambient: null,
+    notification: null,
 };
 
 let timerIv = null;
-let audioCtx = null, gainNode = null, sourceNode = null;
-
-// ─── NOTIFICATIONS ─────────────────────────────────────────────────────────────
 let notifTO = null;
-function showNotif(msg) {
-  const el = document.getElementById('notif');
-  el.innerHTML = `<div class="notif-dot"></div>${msg}`;
-  el.classList.remove('hide');
-  clearTimeout(notifTO);
-  notifTO = setTimeout(() => el.classList.add('hide'), 4000);
-}
+let landingScrollTween = null;
 
-// ─── AUDIO ────────────────────────────────────────────────────────────────────
-function ensureAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    gainNode = audioCtx.createGain(); gainNode.connect(audioCtx.destination); gainNode.gain.value = 0.35;
-  }
-}
-function stopAudio() { if (sourceNode) { try { sourceNode.stop(); } catch(e){} sourceNode = null; } }
-function startAudio(type) {
-  ensureAudio(); stopAudio();
-  const buf = audioCtx.createBuffer(1, audioCtx.sampleRate*3, audioCtx.sampleRate);
-  const d = buf.getChannelData(0);
-  for (let i = 0; i < d.length; i++) {
-    if (type === 'rain') d[i] = (Math.random()*2-1) * 0.6 * (Math.random()>.98 ? 3 : 1);
-    else if (type === 'cafe') d[i] = (Math.random()*2-1) * 0.25 + Math.sin(i*.001)*.04;
-    else d[i] = (Math.random()*2-1) * 0.45;
-  }
-  sourceNode = audioCtx.createBufferSource();
-  sourceNode.buffer = buf; sourceNode.loop = true;
-  sourceNode.connect(gainNode); sourceNode.start();
-}
+// ─── LIQUID PARTICLE CURSOR (Gold Edition) ───────────────────────────────────
+function initLiquidCursor() {
+    const container = document.getElementById('cursor-container');
+    const numTrails = 12;
+    const trails = [];
 
-// ─── ENTER HUB ────────────────────────────────────────────────────────────────
-function enterHub() {
-  const u = lsGet('cx_user');
-  if (u) { S.user = u; S.sessions = lsGet('cx_sessions') || []; showApp(); }
-  else { showSetup(); }
-}
-document.getElementById('enter-hub-btn').addEventListener('click', enterHub);
-
-function showLanding() {
-  document.getElementById('landing').style.display = '';
-  document.getElementById('setup-screen').classList.remove('active');
-  document.getElementById('app-shell').classList.remove('active');
-  document.getElementById('ai-account-screen').classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-function showSetup() {
-  document.getElementById('landing').style.display = 'none';
-  const ss = document.getElementById('setup-screen');
-  ss.classList.add('active');
-  S.setupStep = 0;
-  renderSetup();
-}
-
-function showApp() {
-  document.getElementById('landing').style.display = 'none';
-  document.getElementById('setup-screen').classList.remove('active');
-  document.getElementById('ai-account-screen').classList.remove('active');
-  const shell = document.getElementById('app-shell');
-  shell.classList.add('active');
-  document.body.style.overflow = 'hidden';
-  // Update user display
-  const av = document.getElementById('app-avatar');
-  const un = document.getElementById('app-uname');
-  const ue = document.getElementById('app-uexam');
-  if (av) av.textContent = (S.user?.name?.[0] || 'U').toUpperCase();
-  if (un) un.textContent = S.user?.name || 'Scholar';
-  if (ue) ue.textContent = S.user?.examType || 'Focus Mode';
-  setActiveNav('rooms');
-}
-
-// ─── SETUP ────────────────────────────────────────────────────────────────────
-function renderSetup() {
-  const d = S.setupData;
-  const examOpts = ['JEE','UPSC','NEET','College','GATE','Custom'];
-  const styleOpts = [
-    { id:'visual', label:'Visual Learner', desc:'Diagrams & structured notes' },
-    { id:'revision', label:'Revision Mode', desc:'Repeat & reinforce concepts' },
-    { id:'problem', label:'Problem Solver', desc:'Practice questions & mocks' },
-  ];
-
-  const prog = document.getElementById('setup-progress');
-  prog.innerHTML = [0,1,2].map(i => `<div class="setup-bar${i<=S.setupStep?' done':''}"></div>`).join('');
-
-  const body = document.getElementById('setup-body');
-
-  if (S.setupStep === 0) {
-    body.innerHTML = `
-      <div class="setup-q">Step 1 of 3</div>
-      <div class="setup-title">What's your <em>name?</em></div>
-      <input class="field-input" id="name-inp" value="${d.name}" placeholder="Enter your name…" style="margin-bottom:32px;"/>
-      <button class="setup-next" id="setup-next" ${d.name.trim().length>1?'':'disabled'}>Continue →</button>
-    `;
-    const ni = document.getElementById('name-inp');
-    ni.focus();
-    ni.addEventListener('input', e => {
-      d.name = e.target.value;
-      document.getElementById('setup-next').disabled = d.name.trim().length < 2;
-    });
-  } else if (S.setupStep === 1) {
-    body.innerHTML = `
-      <div class="setup-q">Step 2 of 3</div>
-      <div class="setup-title">Preparing <em>for?</em></div>
-      <div class="setup-opts-grid" style="margin-bottom:32px;">
-        ${examOpts.map(e => `<button class="setup-opt${d.examType===e?' active':''}" data-exam="${e}">${e}</button>`).join('')}
-      </div>
-      <button class="setup-next" id="setup-next" ${d.examType?'':'disabled'}>Continue →</button>
-      <button class="setup-back" id="setup-back">← Back</button>
-    `;
-    body.querySelectorAll('[data-exam]').forEach(btn => btn.addEventListener('click', () => {
-      d.examType = btn.dataset.exam;
-      body.querySelectorAll('[data-exam]').forEach(b => b.classList.toggle('active', b.dataset.exam===d.examType));
-      document.getElementById('setup-next').disabled = false;
-    }));
-    document.getElementById('setup-back').addEventListener('click', () => { S.setupStep--; renderSetup(); });
-  } else {
-    body.innerHTML = `
-      <div class="setup-q">Step 3 of 3</div>
-      <div class="setup-title">How do you <em>study?</em></div>
-      <div class="setup-style-opts" style="margin-bottom:32px;">
-        ${styleOpts.map(s => `<div class="setup-style-opt${d.studyStyle===s.id?' active':''}" data-style="${s.id}">
-          <div>
-            <div class="opt-label">${s.label}</div>
-            <div class="opt-desc">${s.desc}</div>
-          </div>
-        </div>`).join('')}
-      </div>
-      <button class="setup-next" id="setup-next" ${d.studyStyle?'':'disabled'}>Enter Cortex Hub ↗</button>
-      <button class="setup-back" id="setup-back">← Back</button>
-    `;
-    body.querySelectorAll('[data-style]').forEach(btn => btn.addEventListener('click', () => {
-      d.studyStyle = btn.dataset.style;
-      body.querySelectorAll('[data-style]').forEach(b => b.classList.toggle('active', b.dataset.style===d.studyStyle));
-      document.getElementById('setup-next').disabled = false;
-    }));
-    document.getElementById('setup-back').addEventListener('click', () => { S.setupStep--; renderSetup(); });
-  }
-
-  document.getElementById('setup-next').addEventListener('click', () => {
-    if (S.setupStep < 2) { S.setupStep++; renderSetup(); }
-    else {
-      S.user = { name: d.name, examType: d.examType, studyStyle: d.studyStyle, streak:1 };
-      lsSet('cx_user', S.user);
-      S.sessions = [];
-      showApp();
+    for (let i = 0; i < numTrails; i++) {
+        const div = document.createElement('div');
+        div.className = 'cursor-trail';
+        const size = 28 - (i * 1.8);
+        div.style.width  = `${Math.max(size, 4)}px`;
+        div.style.height = `${Math.max(size, 4)}px`;
+        div.style.opacity = (1 - (i / numTrails)) * 0.85;
+        container.appendChild(div);
+        trails.push(div);
     }
-  });
-}
 
-// ─── APP NAV ──────────────────────────────────────────────────────────────────
-function setActiveNav(nav) {
-  S.activeNav = nav;
-  ['rooms','join','dashboard','leaderboard'].forEach(n => {
-    const btn = document.getElementById('nav-'+n);
-    const view = document.getElementById('view-'+n);
-    if (btn) btn.classList.toggle('active', n===nav);
-    if (view) view.style.display = n===nav ? '' : 'none';
-  });
-  document.getElementById('view-goal').style.display = 'none';
-  if (nav === 'rooms') renderRoomsGrid();
-  if (nav === 'join') renderJoinRooms();
-  if (nav === 'dashboard') renderDashboard();
-  if (nav === 'leaderboard') renderLeaderboard();
-}
+    let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    let pos = Array.from({ length: numTrails }, () => ({ x: mouse.x, y: mouse.y }));
 
-document.querySelectorAll('[data-nav]').forEach(btn => {
-  btn.addEventListener('click', () => setActiveNav(btn.dataset.nav));
-  btn.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));
-  btn.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));
-});
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
-// ─── ROOMS GRID ───────────────────────────────────────────────────────────────
-function renderRoomsGrid() {
-  const grid = document.getElementById('rooms-grid');
-  grid.innerHTML = ROOMS.map((r, i) => `
-    <div class="room-card" data-room="${r.id}" style="cursor:none;">
-      <div class="room-card-num">0${i+1} / 0${ROOMS.length}</div>
-      <div class="room-card-icon" style="color:${r.color};">${ICONS[r.icon]}</div>
-      <div class="room-card-name">${r.name}</div>
-      <div class="room-card-desc">${r.desc}</div>
-      <div class="room-card-footer">
-        <div class="room-live"><span class="pulse" style="background:#4ade80;"></span>${Math.floor(Math.random()*20)+5} studying</div>
-        <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);padding:3px 10px;border:1px solid rgba(201,168,76,0.25);">Enter →</span>
-      </div>
-    </div>
-  `).join('');
-
-  grid.querySelectorAll('.room-card').forEach(card => {
-    card.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-    card.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
-    card.addEventListener('click', () => {
-      S.selectedRoom = ROOMS.find(r => r.id === card.dataset.room);
-      showGoalView();
+    gsap.ticker.add(() => {
+        pos[0].x += (mouse.x - pos[0].x) * 0.4;
+        pos[0].y += (mouse.y - pos[0].y) * 0.4;
+        gsap.set(trails[0], { x: pos[0].x, y: pos[0].y });
+        for (let i = 1; i < numTrails; i++) {
+            pos[i].x += (pos[i - 1].x - pos[i].x) * 0.35;
+            pos[i].y += (pos[i - 1].y - pos[i].y) * 0.35;
+            gsap.set(trails[i], { x: pos[i].x, y: pos[i].y });
+        }
     });
-  });
+}
+initLiquidCursor();
+
+// ─── AUDIO SYSTEM ─────────────────────────────────────────────────────────────
+let audioCtx = null, gainNode = null, sourceNode = null;
+function ensureAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        gainNode = audioCtx.createGain();
+        gainNode.connect(audioCtx.destination);
+        gainNode.gain.value = 0.4;
+    }
+}
+function stopAudio() {
+    if (sourceNode) { try { sourceNode.stop(); } catch(e){} sourceNode = null; }
+}
+function startAudio(type) {
+    ensureAudio(); stopAudio();
+    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 3, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+        if (type === 'rain') data[i] = (Math.random()*2-1) * 0.6 * (Math.random() > 0.98 ? 3 : 1);
+        else if (type === 'cafe') data[i] = (Math.random()*2-1) * 0.3 + Math.sin(i*0.001)*0.05;
+        else data[i] = (Math.random()*2-1) * 0.5;
+    }
+    sourceNode = audioCtx.createBufferSource();
+    sourceNode.buffer = buf; sourceNode.loop = true;
+    sourceNode.connect(gainNode); sourceNode.start();
 }
 
-// ─── GOAL VIEW ────────────────────────────────────────────────────────────────
-function showGoalView() {
-  const room = S.selectedRoom;
-  document.getElementById('view-rooms').style.display = 'none';
-  const gv = document.getElementById('view-goal');
-  gv.style.display = '';
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+const fmt = s => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+const getJoinRooms = () => (lsGet('ch_join_rooms') || []).filter(r => Date.now() - r.createdAt < 4*60*60*1000);
 
-  const banner = document.getElementById('selected-room-banner');
-  banner.innerHTML = `
-    <div style="display:flex;align-items:center;gap:16px;">
-      <div style="color:${room.color};width:40px;height:40px;">${ICONS[room.icon]}</div>
-      <div>
-        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Selected Arena</div>
-        <div style="font-family:var(--font-display);font-size:24px;font-weight:300;">${room.name}</div>
-        <div style="font-size:12px;color:var(--muted2);margin-top:2px;">${room.desc}</div>
-      </div>
+function showNotif(msg) {
+    S.notification = msg;
+    clearTimeout(notifTO);
+    let el = document.getElementById('notif-el');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'notif-el';
+        el.className = 'fixed top-6 right-6 bg-[#0D0D0D] border border-[#C9A84C]/30 rounded-xl px-5 py-3 text-sm shadow-[0_0_24px_rgba(201,168,76,0.12)] z-[10000] flex items-center gap-3 transition-all duration-300 translate-x-0 opacity-100';
+        document.body.appendChild(el);
+    }
+    el.innerHTML = `<span class="text-[#C9A84C] w-4 h-4 shrink-0">${I.bolt}</span><span class="text-[#FAFAF5]/90">${msg}</span>`;
+    notifTO = setTimeout(() => {
+        if (el) { el.classList.add('opacity-0', 'translate-x-4'); setTimeout(() => el.remove(), 300); }
+    }, 4000);
+}
+
+// ─── RENDER DISPATCH ──────────────────────────────────────────────────────────
+const app = document.getElementById('app');
+function render() {
+    if (S.screen === 'landing')       renderLanding();
+    else if (S.screen === 'setup')    renderSetup();
+    else if (S.screen === 'session')  renderSession();
+    else if (S.screen === 'accountability') renderAccountability();
+    else renderAppShell();
+}
+
+// ─── VIEW: LANDING — KINETICA HORIZONTAL ──────────────────────────────────────
+function renderLanding() {
+    app.innerHTML = `
+    <!-- ─── Kinetica Nav ─── -->
+    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 md:px-16 py-5 bg-[#080808]/85 backdrop-blur-md border-b border-[#C9A84C]/10">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-[#C9A84C] text-[#080808] flex items-center justify-center">${I.bolt}</div>
+            <span class="font-bold text-lg tracking-[0.08em] text-[#FAFAF5]">CORTEX HUB</span>
+        </div>
+        <ul class="hidden md:flex gap-8 font-medium uppercase text-xs tracking-[0.3em] text-[#FAFAF5]/40">
+            <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="0">Focus</a></li>
+            <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="1">Prove It</a></li>
+            <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="2">Live Rooms</a></li>
+            <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="3">Join</a></li>
+        </ul>
+        <ul class="flex items-center gap-1">
+          <li><button data-auth-trigger="login" class="border border-[#C9A84C] text-[#C9A84C] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#C9A84C] hover:text-[#080808] transition-all duration-300">Log in</button></li>
+          <li><button data-auth-trigger="signup" class="ml-4 bg-[#C9A84C] text-[#080808] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] hover:text-[#080808] transition-all duration-300">Sign up</button></li>
+        </ul>
+    </nav>
+
+
+    <!-- ─── Horizontal Panels ─── -->
+    <section id="horizontal" class="h-screen overflow-hidden bg-[#080808]">
+        <div id="scroll-container" class="flex h-screen w-max">
+
+            <!-- Panel 01: FOCUS -->
+            <div class="panel w-screen h-screen shrink-0 bg-[#080808] text-[#FAFAF5] flex flex-col items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.07),transparent_60%)]"></div>
+                <div class="panel-vline left-[12%]"></div>
+                <div class="panel-vline right-[12%]"></div>
+                <div class="panel-hline top-[15%]"></div>
+                <div class="panel-hline bottom-[15%]"></div>
+                <span class="text-[#C9A84C]/50 text-[10px] tracking-[0.5em] uppercase font-medium mb-8 relative z-10">01 — Focus</span>
+                <h1 class="text-[13vw] font-display leading-none tracking-tight relative z-10">FOCUS.</h1>
+                <div class="w-12 h-[1px] bg-[#C9A84C] mt-8 mb-8 relative z-10"></div>
+                <p class="text-lg text-[#FAFAF5]/40 font-light max-w-xl text-center px-6 leading-relaxed relative z-10">The study platform that actually holds you accountable. No shortcuts, no excuses.</p>
+            </div>
+
+            <!-- Panel 02: PROVE IT -->
+            <div class="panel w-screen h-screen shrink-0 bg-[#0A0A0A] text-[#FAFAF5] flex flex-col items-center justify-center border-l border-[#C9A84C]/10 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(155,127,212,0.05),transparent_60%)]"></div>
+                <span class="text-[#C9A84C]/50 text-[10px] tracking-[0.5em] uppercase font-medium mb-8 relative z-10">02 — Prove</span>
+                <h1 class="text-[13vw] font-display leading-none tracking-tight relative z-10">PROVE IT.</h1>
+                <div class="w-12 h-[1px] bg-[#C9A84C] mt-8 mb-10 relative z-10"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl px-6 relative z-10">
+                    <div class="glass-panel p-8 text-center">
+                        <div class="text-[#C9A84C] mb-4 flex justify-center w-8 h-8 mx-auto">${I.robot}</div>
+                        <h3 class="font-bold text-lg mb-2 tracking-wide">AI Accountability</h3>
+                        <p class="text-[#FAFAF5]/40 text-sm">Every session graded by AI.</p>
+                    </div>
+                    <div class="glass-panel p-8 text-center">
+                        <div class="text-[#9B7FD4] mb-4 flex justify-center w-8 h-8 mx-auto">${I.clock}</div>
+                        <h3 class="font-bold text-lg mb-2 tracking-wide">Pomodoro Native</h3>
+                        <p class="text-[#FAFAF5]/40 text-sm">Built-in 25+5 focus cycles.</p>
+                    </div>
+                    <div class="glass-panel p-8 text-center">
+                        <div class="text-emerald-400 mb-4 flex justify-center w-8 h-8 mx-auto">${I.trophy}</div>
+                        <h3 class="font-bold text-lg mb-2 tracking-wide">Live Leaderboard</h3>
+                        <p class="text-[#FAFAF5]/40 text-sm">Compete globally.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 03: LIVE ROOMS -->
+            <div class="panel w-screen h-screen shrink-0 bg-[#0C0C0C] text-[#FAFAF5] flex flex-col items-center justify-center border-l border-[#C9A84C]/10 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_50%,rgba(201,168,76,0.04),transparent_50%)]"></div>
+                <div class="panel-vline left-[12%]"></div>
+                <div class="panel-vline right-[12%]"></div>
+                <span class="text-[#C9A84C]/50 text-[10px] tracking-[0.5em] uppercase font-medium mb-8 relative z-10">03 — Rooms</span>
+                <h1 class="text-[13vw] font-display leading-none tracking-tight relative z-10">LIVE ROOMS</h1>
+                <div class="w-12 h-[1px] bg-[#C9A84C] mt-8 mb-8 relative z-10"></div>
+                <p class="text-lg text-[#FAFAF5]/40 relative z-10">Study live with peers. JEE, NEET, UPSC, & More.</p>
+            </div>
+
+            <!-- Panel 04: GROW -->
+            <div class="panel w-screen h-screen shrink-0 bg-[#080808] text-[#FAFAF5] flex flex-col items-center justify-center border-l border-[#C9A84C]/10 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.06),transparent_55%)]"></div>
+                <div class="panel-hline top-[15%]"></div>
+                <div class="panel-hline bottom-[15%]"></div>
+                <span class="text-[#C9A84C]/50 text-[10px] tracking-[0.5em] uppercase font-medium mb-8 relative z-10">04 — Grow</span>
+                <h1 class="text-[13vw] font-display leading-none tracking-tight relative z-10">GROW.</h1>
+                <div class="w-12 h-[1px] bg-[#C9A84C] mt-8 mb-10 relative z-10"></div>
+                <a href="hubpremier.html" class="bg-[#C9A84C] text-[#080808] px-10 py-4 rounded-full font-bold text-lg hover:scale-105 hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] transition-all duration-300 flex items-center gap-3 relative z-10">
+                    Launch Cortex Hub <span class="w-5 h-5">${I.arrowR}</span>
+                </a>
+            </div>
+
+        </div>
+    </section>
+    
+    <div id="auth-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 invisible opacity-0" aria-hidden="true"></div>
+
+<div id="auth-panel" class="fixed top-0 right-0 h-full w-full max-w-md bg-[#080808] shadow-2xl z-50 translate-x-full flex flex-col border-l border-gray-800">
+  
+  <div class="flex justify-end p-6">
+    <button id="close-auth" class="text-gray-500 hover:text-[#C9A84C] transition-colors p-2" aria-label="Close">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="px-10 pb-10 overflow-y-auto flex-grow">
+    
+    <div class="flex gap-8 border-b border-gray-800 mb-8">
+      <button id="tab-login" class="pb-3 font-bold uppercase tracking-widest text-xs transition-all border-b-2 border-[#C9A84C] text-[#C9A84C]">Log in</button>
+      <button id="tab-signup" class="pb-3 font-bold uppercase tracking-widest text-xs transition-all border-b-2 border-transparent text-gray-500 hover:text-[#FAFAF5]">Sign up</button>
     </div>
-  `;
 
-  document.getElementById('back-to-rooms').addEventListener('click', () => {
-    gv.style.display = 'none';
-    document.getElementById('view-rooms').style.display = '';
-    S.selectedRoom = null;
-    renderRoomsGrid();
-  }, { once:true });
+    <form id="view-login" class="flex flex-col gap-5">
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Email address</label>
+        <input type="email" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="you@example.com">
+      </div>
+      <div>
+        <div class="flex justify-between items-center mb-2">
+           <label class="block text-xs font-bold uppercase tracking-widest text-gray-400">Password</label>
+           <a href="#" class="text-[10px] text-gray-500 hover:text-[#C9A84C] uppercase tracking-wider transition-colors">Forgot?</a>
+        </div>
+        <input type="password" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="••••••••">
+      </div>
+      <a href="hubpremier.html" class="w-full mt-4 bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] transition-all duration-300">Access Account</a>
+    </form>
+
+    <form id="view-signup" class="flex flex-col gap-5 hidden">
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Full Name</label>
+        <input type="text" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="John Doe">
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Email address</label>
+        <input type="email" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="you@example.com">
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Password</label>
+        <input type="password" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="Create a password">
+      </div>
+      <a href="hubpremier.html" class="w-full mt-4 bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] transition-all duration-300">Create Account</a>
+    </form>
+
+  </div>
+</div>
+
+    `;
+
+    // ── GSAP Horizontal Scroll ──
+    const container = document.querySelector('#scroll-container');
+    const panels    = gsap.utils.toArray('.panel');
+    const navLinks  = gsap.utils.toArray('.nav-link');
+
+    ScrollTrigger.getAll().forEach(t => t.kill());
+
+    landingScrollTween = gsap.to(panels, {
+        xPercent: -100 * (panels.length - 1),
+        ease: 'none',
+        scrollTrigger: {
+            trigger: '#horizontal',
+            pin: true,
+            scrub: 1,
+            end: () => '+=' + (container.offsetWidth - window.innerWidth),
+            onUpdate(self) {
+                const idx = Math.round(self.progress * (panels.length - 1));
+                navLinks.forEach((l, i) => {
+                    i === idx ? l.classList.add('active') : l.classList.remove('active');
+                });
+            }
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const index = parseInt(link.getAttribute('data-index'));
+            const totalScroll = container.offsetWidth - window.innerWidth;
+            const targetPos = landingScrollTween.scrollTrigger.start + (index / (panels.length - 1)) * totalScroll;
+            gsap.to(window, { duration: 1, scrollTo: targetPos, ease: 'power2.inOut' });
+        });
+    });
 }
 
-// Timer mode toggle
-document.getElementById('timer-toggle').addEventListener('click', e => {
-  const btn = e.target.closest('.toggle-btn');
-  if (!btn) return;
-  S.timerMode = btn.dataset.mode;
-  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === S.timerMode));
-  const cw = document.getElementById('custom-time-wrap');
-  cw.style.display = S.timerMode === 'custom' ? '' : 'none';
-});
+// ─── VIEW: SETUP ──────────────────────────────────────────────────────────────
+function renderSetup() {
+    ScrollTrigger.getAll().forEach(t => t.kill());
+    window.scrollTo(0, 0);
 
-// Start session
-document.getElementById('start-session-btn').addEventListener('click', () => {
-  const gi = document.getElementById('goal-input');
-  S.goal = gi ? gi.value.trim() : '';
-  if (!S.goal) { showNotif('Please set your intent first.'); return; }
-  if (S.timerMode === 'custom') {
-    S.customTime = parseInt(document.getElementById('custom-minutes').value) || 45;
-  }
-  S.timer = S.timerMode === 'pomodoro' ? 25*60 : S.customTime*60;
-  S.timerRunning = false;
-  S.pomPhase = 'work'; S.pomCount = 0;
-  S.sessionStart = Date.now();
+    const d = S.setupData;
+    const step = S.setupStep;
 
-  document.getElementById('sess-room-name').textContent = S.selectedRoom?.name || 'Focus';
-  document.getElementById('sess-goal-display').textContent = S.goal;
-  updateSessionPhaseLabel();
-  updateTimerDOM();
+    const examOpts = ['JEE','UPSC','NEET','College','GATE','Custom'];
+    const styleOpts = [
+        { id:'visual',   icon: I.eye,     title:'Visual Learner',  desc:'Diagrams & structured notes' },
+        { id:'revision', icon: I.refresh, title:'Revision Mode',   desc:'Repeat & reinforce concepts' },
+        { id:'problem',  icon: I.target,  title:'Problem Solver',  desc:'Practice questions & mocks' }
+    ];
 
-  document.getElementById('view-goal').style.display = 'none';
-  document.getElementById('view-rooms').style.display = 'none';
-  document.getElementById('session-view').classList.add('active');
-  document.getElementById('app-main').style.display = 'none';
-});
+    const steps = [
+        {
+            title: "What's your name?",
+            ok: d.name.trim().length > 1,
+            body: `<input id="inp-name" value="${d.name}" placeholder="Enter your name…"
+                class="w-full bg-[#FAFAF5]/5 border border-[#C9A84C]/20 rounded-xl px-5 py-4 text-lg focus:border-[#C9A84C] focus:shadow-[0_0_0_1px_rgba(201,168,76,0.25)] outline-none transition-all text-[#FAFAF5] placeholder-[#FAFAF5]/30">`
+        },
+        {
+            title: 'What are you preparing for?',
+            ok: !!d.examType,
+            body: `<div class="grid grid-cols-2 gap-3">
+                ${examOpts.map(e => `
+                <button class="p-4 rounded-xl border text-sm font-semibold tracking-wide transition-all ${d.examType===e
+                    ? 'bg-[#C9A84C]/15 border-[#C9A84C] text-[#C9A84C] shadow-[0_0_12px_rgba(201,168,76,0.15)]'
+                    : 'bg-[#FAFAF5]/5 border-[#FAFAF5]/10 text-[#FAFAF5]/60 hover:bg-[#FAFAF5]/8 hover:text-[#FAFAF5]'}"
+                    data-action="exam" data-val="${e}">${e}</button>`).join('')}
+            </div>`
+        },
+        {
+            title: 'How do you study best?',
+            ok: !!d.studyStyle,
+            body: `<div class="flex flex-col gap-3">
+                ${styleOpts.map(s => `
+                <button class="flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${d.studyStyle===s.id
+                    ? 'bg-[#C9A84C]/12 border-[#C9A84C] shadow-[0_0_12px_rgba(201,168,76,0.12)]'
+                    : 'bg-[#FAFAF5]/5 border-[#FAFAF5]/10 hover:bg-[#FAFAF5]/8'}"
+                    data-action="style" data-val="${s.id}">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${d.studyStyle===s.id
+                        ? 'bg-[#C9A84C]/25 text-[#C9A84C]'
+                        : 'bg-[#FAFAF5]/8 text-[#FAFAF5]/40'}">${s.icon}</div>
+                    <div>
+                        <div class="font-bold text-lg text-[#FAFAF5]">${s.title}</div>
+                        <div class="text-sm text-[#FAFAF5]/40 mt-0.5">${s.desc}</div>
+                    </div>
+                </button>`).join('')}
+            </div>`
+        }
+    ];
 
-// ─── TIMER ────────────────────────────────────────────────────────────────────
-function fmt(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+    const cur = steps[step];
 
-function updateSessionPhaseLabel() {
-  const el = document.getElementById('sess-phase');
-  if (el) el.textContent = `${S.pomPhase==='work'?'Deep Work':'Break'} · ${S.pomCount} pomodoro${S.pomCount!==1?'s':''}`;
-  const lbl = document.getElementById('timer-phase-label');
-  if (lbl) lbl.textContent = S.pomPhase === 'work' ? 'Focus' : 'Rest';
+    app.innerHTML = `
+    <div class="min-h-screen bg-[#080808] flex items-center justify-center p-6 relative">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_50%,rgba(201,168,76,0.04),transparent_60%)]"></div>
+        <div class="w-full max-w-md relative z-10" style="animation: fadeIn 0.5s ease">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#9B7FD4] flex items-center justify-center text-[#080808]">${I.bolt}</div>
+                <span class="font-display text-2xl tracking-[0.08em] text-[#FAFAF5]">CORTEX HUB</span>
+            </div>
+
+            <!-- Progress -->
+            <div class="flex gap-2 mb-10">
+                ${steps.map((_, i) => `
+                <div class="flex-1 h-[2px] rounded-full ${i <= step
+                    ? 'bg-gradient-to-r from-[#C9A84C] to-[#9B7FD4]'
+                    : 'bg-[#FAFAF5]/10'}"></div>`).join('')}
+            </div>
+
+            <div class="mb-2">
+                <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.4em] uppercase">Step ${step + 1} of ${steps.length}</span>
+            </div>
+            <h2 class="font-display text-5xl mb-8 text-[#FAFAF5]">${cur.title}</h2>
+
+            ${cur.body}
+
+            <button id="setup-next" data-action="setup-next" ${cur.ok ? '' : 'disabled'}
+                class="w-full mt-8 p-4 rounded-xl font-bold flex justify-center items-center gap-2 transition-all tracking-wide ${cur.ok
+                    ? 'bg-[#C9A84C] text-[#080808] hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(201,168,76,0.3)]'
+                    : 'bg-[#FAFAF5]/8 text-[#FAFAF5]/25 cursor-not-allowed'}">
+                ${step < steps.length - 1 ? `Continue <span class="w-5 h-5">${I.arrowR}</span>` : `<span class="w-5 h-5">${I.bolt}</span> Enter Cortex Hub`}
+            </button>
+
+            ${step > 0 ? `<button data-action="setup-back" class="w-full mt-4 p-3 text-sm text-[#FAFAF5]/40 hover:text-[#FAFAF5] flex justify-center items-center gap-2 transition-colors">
+                <span class="w-5 h-5">${I.arrowL}</span> Back
+            </button>` : ''}
+        </div>
+    </div>`;
+
+    const nameInp = document.getElementById('inp-name');
+    if (nameInp) {
+        nameInp.addEventListener('input', e => {
+            S.setupData.name = e.target.value;
+            const ok = S.setupData.name.trim().length > 1;
+            const btn = document.getElementById('setup-next');
+            btn.disabled = !ok;
+            btn.className = `w-full mt-8 p-4 rounded-xl font-bold flex justify-center items-center gap-2 transition-all tracking-wide ${ok
+                ? 'bg-[#C9A84C] text-[#080808] hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(201,168,76,0.3)]'
+                : 'bg-[#FAFAF5]/8 text-[#FAFAF5]/25 cursor-not-allowed'}`;
+        });
+        nameInp.focus();
+    }
 }
 
-function updateTimerDOM() {
-  const td = document.getElementById('timer-display');
-  if (td) td.textContent = fmt(S.timer);
-  const tc = document.getElementById('timer-circle');
-  if (tc) {
-    const total = S.timerMode === 'pomodoro'
-      ? (S.pomPhase === 'work' ? 25*60 : 5*60)
-      : S.customTime*60;
-    const prog = Math.min((total - S.timer) / total, 1);
-    const circ = 2 * Math.PI * 88;
-    tc.style.strokeDasharray = circ;
-    tc.style.strokeDashoffset = circ * (1 - prog);
-  }
+// ─── VIEW: APP SHELL ──────────────────────────────────────────────────────────
+function renderAppShell() {
+    ScrollTrigger.getAll().forEach(t => t.kill());
+    window.scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
+
+    const navItems = [
+        { id:'rooms',     icon: I.grid,  label:'Rooms'     },
+        { id:'join-room', icon: I.video, label:'Join Room'  },
+        { id:'dashboard', icon: I.chart, label:'Dashboard'  },
+    ];
+
+    let content = '';
+    if (S.activeNav === 'rooms'    && !S.selectedRoom) content = renderRooms();
+    if (S.activeNav === 'goalset'  &&  S.selectedRoom) content = renderGoalSet();
+    if (S.activeNav === 'join-room')                   content = renderJoinRoom();
+    if (S.activeNav === 'dashboard')                   content = renderDashboard();
+
+    app.innerHTML = `
+    <div class="flex h-screen bg-[#080808] text-[#FAFAF5] overflow-hidden">
+
+        <!-- Sidebar -->
+        <nav class="w-20 md:w-64 border-r border-[#C9A84C]/10 flex flex-col p-4 bg-[#080808] z-20 shrink-0 relative">
+            <!-- Subtle vertical gold accent -->
+            <div class="absolute right-0 top-1/4 bottom-1/4 w-[1px] bg-gradient-to-b from-transparent via-[#C9A84C]/15 to-transparent pointer-events-none"></div>
+
+            <div class="flex items-center gap-3 mb-10 md:px-2">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#9B7FD4] flex items-center justify-center shrink-0 shadow-[0_0_18px_rgba(201,168,76,0.35)]">${I.bolt}</div>
+                <div class="hidden md:block">
+                    <div class="font-display text-2xl leading-none text-[#FAFAF5]">CORTEX</div>
+                    <div class="text-[9px] tracking-[0.35em] text-[#C9A84C]/60 uppercase mt-0.5">Hub</div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                ${navItems.map(n => `
+                <button class="flex items-center gap-4 p-3 md:px-4 rounded-xl transition-all text-sm font-semibold ${
+                    S.activeNav === n.id || (S.activeNav === 'goalset' && n.id === 'rooms')
+                        ? 'bg-[#C9A84C]/12 text-[#C9A84C] border border-[#C9A84C]/20'
+                        : 'text-[#FAFAF5]/50 hover:bg-[#FAFAF5]/5 hover:text-[#FAFAF5] border border-transparent'
+                }" data-action="nav" data-nav="${n.id}">
+                    <div class="w-5 h-5 shrink-0">${n.icon}</div>
+                    <span class="hidden md:block">${n.label}</span>
+                </button>`).join('')}
+            </div>
+
+            <!-- User avatar -->
+            <div class="mt-auto pt-4 border-t border-[#C9A84C]/10 md:px-2 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#9B7FD4] to-purple-700 flex items-center justify-center font-bold shrink-0 border border-[#9B7FD4]/30 text-[#FAFAF5]">
+                    ${(S.user?.name?.[0] || 'U').toUpperCase()}
+                </div>
+                <div class="hidden md:block">
+                    <div class="text-sm font-semibold text-[#FAFAF5] truncate">${S.user?.name || 'User'}</div>
+                    <div class="text-[10px] text-[#C9A84C]/60 tracking-widest uppercase">${S.user?.examType || 'Scholar'}</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="flex-1 overflow-y-auto relative bg-[#080808]" id="mc">
+            <div class="max-w-5xl mx-auto p-6 md:p-12 pb-24" style="animation: fadeIn 0.3s ease">
+                ${content}
+            </div>
+        </main>
+    </div>
+    ${S.showCreateModal ? renderCreateRoomModal() : ''}`;
+
+    const filterInp = document.getElementById('jr-filter');
+    if (filterInp) filterInp.addEventListener('input', e => { S.joinRoomFilter = e.target.value; renderAppShell(); });
+    const rnInput = document.getElementById('cr-name');
+    if (rnInput) rnInput.addEventListener('input', e => { S.createRoomData.name = e.target.value; });
+}
+
+// ─── PARTIAL: ROOMS ───────────────────────────────────────────────────────────
+function renderRooms() {
+    return `
+    <div class="mb-12">
+        <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.5em] uppercase font-medium block mb-3">Choose your arena</span>
+        <h2 class="font-display text-6xl mb-2 text-[#FAFAF5]">FOCUS ARENAS</h2>
+        <p class="text-[#FAFAF5]/40 text-sm">Choose an environment that matches your cognitive load.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        ${ROOMS.map(room => `
+        <button class="glass-panel p-6 text-left hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] transition-all duration-300 group ${room.bg} relative overflow-hidden" data-action="select-room" data-room="${room.id}">
+            <!-- Corner accent -->
+            <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl ${room.bg} opacity-60 rounded-bl-full pointer-events-none"></div>
+            <div class="w-12 h-12 rounded-xl bg-[#FAFAF5]/8 flex items-center justify-center mb-5 ${room.color}">${I[room.icon]}</div>
+            <h3 class="font-bold text-lg text-[#FAFAF5] mb-2 tracking-wide">${room.name}</h3>
+            <p class="text-sm text-[#FAFAF5]/50 mb-6 leading-relaxed">${room.desc}</p>
+            <div class="flex items-center gap-2 text-xs text-[#FAFAF5]/35 font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse"></span>
+                ${Math.floor(Math.random()*20)+5} studying now
+            </div>
+        </button>`).join('')}
+    </div>`;
+}
+
+// ─── PARTIAL: GOAL SET ────────────────────────────────────────────────────────
+function renderGoalSet() {
+    const room = S.selectedRoom;
+    return `
+    <div class="max-w-2xl mx-auto">
+        <button class="text-[#FAFAF5]/40 hover:text-[#C9A84C] flex items-center gap-2 mb-10 text-sm transition-colors font-medium" data-action="back-rooms">
+            <span class="w-5 h-5">${I.arrowL}</span> Back to Arenas
+        </button>
+
+        <!-- Room identity card -->
+        <div class="glass-panel p-6 mb-6 ${room.bg} flex items-center gap-5">
+            <div class="w-14 h-14 rounded-xl bg-[#FAFAF5]/8 flex items-center justify-center ${room.color} shrink-0">${I[room.icon]}</div>
+            <div>
+                <div class="text-[#C9A84C]/60 text-[9px] tracking-[0.45em] uppercase font-medium mb-1">Selected Arena</div>
+                <h2 class="font-display text-2xl text-[#FAFAF5]">${room.name}</h2>
+                <p class="text-xs text-[#FAFAF5]/40 mt-0.5">${room.desc}</p>
+            </div>
+        </div>
+
+        <!-- Intent -->
+        <div class="glass-panel p-8 mb-5">
+            <div class="flex items-center gap-2 text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/60 uppercase mb-4">
+                <span class="w-4 h-4">${I.target}</span> Set Intent
+            </div>
+            <textarea id="goal-inp" rows="3" class="w-full bg-black/40 border border-[#C9A84C]/15 rounded-xl p-4 text-[#FAFAF5] focus:border-[#C9A84C] focus:shadow-[0_0_0_1px_rgba(201,168,76,0.15)] outline-none resize-none placeholder-[#FAFAF5]/25 transition-all"
+                placeholder="What exactly will you accomplish in this session?"></textarea>
+        </div>
+
+        <!-- Timer mode -->
+        <div class="glass-panel p-8 mb-8">
+            <div class="flex items-center gap-2 text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/60 uppercase mb-5">
+                <span class="w-4 h-4">${I.clock}</span> Timer Mode
+            </div>
+            <div class="flex gap-4">
+                <button class="flex-1 py-3 rounded-xl border flex justify-center items-center gap-2 transition-all text-sm font-semibold ${S.timerMode==='pomodoro'
+                    ? 'bg-[#C9A84C]/12 border-[#C9A84C] text-[#C9A84C]'
+                    : 'bg-[#FAFAF5]/5 border-[#FAFAF5]/10 text-[#FAFAF5]/50 hover:bg-[#FAFAF5]/8'}"
+                    data-action="timer-mode" data-val="pomodoro">
+                    <span class="w-4 h-4">${I.clock}</span> Pomodoro (25m)
+                </button>
+                <button class="flex-1 py-3 rounded-xl border flex justify-center items-center gap-2 transition-all text-sm font-semibold ${S.timerMode==='custom'
+                    ? 'bg-[#C9A84C]/12 border-[#C9A84C] text-[#C9A84C]'
+                    : 'bg-[#FAFAF5]/5 border-[#FAFAF5]/10 text-[#FAFAF5]/50 hover:bg-[#FAFAF5]/8'}"
+                    data-action="timer-mode" data-val="custom">
+                    <span class="w-4 h-4">${I.edit}</span> Custom
+                </button>
+            </div>
+            ${S.timerMode === 'custom' ? `
+            <div class="mt-5 flex items-center gap-4 bg-black/40 p-4 rounded-xl border border-[#C9A84C]/15 w-max">
+                <input type="number" id="custom-time" value="${S.customTime}" min="1" max="180"
+                    class="w-16 bg-transparent text-2xl font-bold text-center text-[#C9A84C] focus:outline-none">
+                <span class="text-[#FAFAF5]/40 text-sm">minutes</span>
+            </div>` : ''}
+        </div>
+
+        <button id="start-btn" data-action="start-session"
+            class="w-full py-4 rounded-xl bg-[#C9A84C] text-[#080808] font-bold text-lg flex justify-center items-center gap-3 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(201,168,76,0.35)] transition-all duration-300 tracking-wide">
+            <span class="w-5 h-5">${I.play}</span> Start Deep Work
+        </button>
+    </div>`;
+}
+
+// ─── VIEW: SESSION (TIMER) ────────────────────────────────────────────────────
+function renderSession() {
+    const isWork = S.pomPhase === 'work';
+    const phaseColor = isWork ? 'text-[#C9A84C]' : 'text-emerald-400';
+
+    app.innerHTML = `
+    <div class="h-screen w-full flex flex-col items-center justify-center relative p-6 bg-[#080808]">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.04),transparent_60%)]"></div>
+
+        <div class="w-full max-w-xl relative z-10" style="animation: fadeIn 0.5s ease">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-12">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-[#FAFAF5]/6 flex items-center justify-center ${S.selectedRoom?.color || 'text-[#C9A84C]'}">${I[S.selectedRoom?.icon || 'grid']}</div>
+                    <div>
+                        <h2 class="font-bold text-lg text-[#FAFAF5]">${S.selectedRoom?.name || 'Focus'}</h2>
+                        <div class="text-xs font-medium tracking-widest uppercase flex gap-2 mt-0.5">
+                            <span id="ph" class="${phaseColor}">${isWork ? 'Deep Work' : 'Rest'}</span>
+                            ${S.pomCount > 0 ? `<span class="text-[#FAFAF5]/30">· ${S.pomCount} done</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <button data-action="end-session" class="px-4 py-2 rounded-lg bg-red-500/8 text-red-400 border border-red-500/25 hover:bg-red-500/16 transition-colors flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
+                    <span class="w-4 h-4">${I.stop}</span> End
+                </button>
+            </div>
+
+            <!-- Timer ring -->
+            <div class="flex justify-center mb-12 relative">
+                <svg class="timer-svg" width="280" height="280" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="5"/>
+                    <circle id="tc" cx="100" cy="100" r="88" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"
+                        class="${phaseColor} transition-all duration-1000 ease-linear"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                    <div id="td" class="font-display text-7xl tracking-wider ${phaseColor} drop-shadow-[0_0_18px_currentColor]">${fmt(S.timer)}</div>
+                    <div class="text-[#FAFAF5]/30 text-xs tracking-[0.35em] uppercase">${isWork ? 'Focus' : 'Rest'}</div>
+                </div>
+            </div>
+
+            <!-- Play/Pause -->
+            <div class="flex justify-center mb-10">
+                <button id="play-pause" data-action="toggle-timer"
+                    class="px-10 py-4 rounded-full font-bold text-sm tracking-widest uppercase flex items-center gap-3 transition-all duration-300 ${S.timerRunning
+                        ? 'bg-[#FAFAF5]/8 text-[#FAFAF5] hover:bg-[#FAFAF5]/12 border border-[#FAFAF5]/15'
+                        : 'bg-[#C9A84C] text-[#080808] hover:scale-105 hover:shadow-[0_0_20px_rgba(201,168,76,0.4)]'}">
+                    <span class="w-5 h-5">${S.timerRunning ? I.pause : I.play}</span>
+                    ${S.timerRunning ? 'Pause' : 'Resume'}
+                </button>
+            </div>
+
+            <!-- Goal & Controls row -->
+            <div class="glass-panel p-5 mb-5">
+                <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-2 flex items-center gap-2">
+                    <span class="w-4 h-4">${I.target}</span> Current Goal
+                </div>
+                <div class="text-[#FAFAF5]/80 font-medium text-sm">${S.goal}</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Ambient -->
+                <div class="glass-panel p-5">
+                    <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-4 flex items-center gap-2">
+                        <span class="w-4 h-4">${I.headphones}</span> Ambient
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        ${[['rain','Rain',I.rain],['cafe','Cafe',I.coffee],['white','White Noise',I.wave]].map(([id,l,icon]) => `
+                        <button class="ambient-btn flex items-center gap-3 p-2 rounded-lg text-xs text-left transition-colors ${S.ambient===id
+                            ? 'bg-[#C9A84C]/12 text-[#C9A84C] border border-[#C9A84C]/20'
+                            : 'text-[#FAFAF5]/50 hover:bg-[#FAFAF5]/5'}"
+                            data-action="ambient" data-val="${id}">
+                            <div class="w-4 h-4">${icon}</div> ${l} ${S.ambient===id ? '●' : ''}
+                        </button>`).join('')}
+                    </div>
+                </div>
+                <!-- Peers -->
+                <div class="glass-panel p-5">
+                    <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-4 flex items-center gap-2">
+                        <span class="w-4 h-4">${I.users}</span> Peers
+                    </div>
+                    <div class="flex -space-x-2 mb-3">
+                        ${['A','R','K'].map((l,i) => `
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 border-[#080808] text-[#FAFAF5]"
+                            style="background:hsl(${i*70+200},40%,35%)">${l}</div>`).join('')}
+                    </div>
+                    <div class="text-xs text-[#FAFAF5]/35">+8 others focusing</div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    updateTimerDOM();
 }
 
 function startTimer() {
-  clearInterval(timerIv);
-  timerIv = setInterval(() => {
-    if (!S.timerRunning) return;
-    S.timer--;
-    updateTimerDOM();
-    if (S.timer <= 0) {
-      if (S.timerMode === 'pomodoro') {
-        if (S.pomPhase === 'work') { S.pomCount++; S.pomPhase = 'break'; S.timer = 5*60; showNotif('Pomodoro complete! Take a 5 min break.'); }
-        else { S.pomPhase = 'work'; S.timer = 25*60; showNotif('Break over — back to focus!'); }
-        updateSessionPhaseLabel(); updateTimerDOM();
-      } else {
-        S.timerRunning = false; clearInterval(timerIv);
-        showNotif('Session complete!');
-        setTimeout(endSession, 800);
-      }
-    }
-  }, 1000);
-}
-
-const ppBtn = document.getElementById('play-pause-btn');
-ppBtn.addEventListener('click', () => {
-  S.timerRunning = !S.timerRunning;
-  if (S.timerRunning) {
-    startTimer();
-    ppBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause`;
-    ppBtn.classList.remove('paused');
-  } else {
     clearInterval(timerIv);
-    ppBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Resume`;
-    ppBtn.classList.add('paused');
-  }
-});
-
-document.getElementById('end-session-btn').addEventListener('click', endSession);
-
-function endSession() {
-  clearInterval(timerIv); S.timerRunning = false;
-  stopAudio(); S.ambient = null;
-  document.querySelectorAll('.ambient-opt').forEach(o => o.classList.remove('active'));
-
-  document.getElementById('session-view').classList.remove('active');
-  document.getElementById('app-main').style.display = '';
-  document.getElementById('app-shell').classList.remove('active');
-
-  const dur = S.sessionStart ? Math.round((Date.now()-S.sessionStart)/60000) : (S.customTime||25);
-  S.sessionDuration = dur;
-
-  ppBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Timer`;
-  ppBtn.classList.remove('paused');
-
-  // Show AI chat accountability screen
-  showAIAccountChat(dur);
+    timerIv = setInterval(() => {
+        if (!S.timerRunning) return;
+        S.timer--;
+        updateTimerDOM();
+        if (S.timer <= 0) {
+            if (S.timerMode === 'pomodoro') {
+                S.pomPhase = S.pomPhase === 'work' ? 'break' : 'work';
+                if (S.pomPhase === 'break') S.pomCount++;
+                S.timer = S.pomPhase === 'work' ? 25*60 : 5*60;
+                showNotif(S.pomPhase === 'break' ? '🎉 Pomodoro done! Break time.' : '💪 Break over! Focus.');
+                renderSession();
+            } else {
+                S.timerRunning = false;
+                showNotif('⏰ Session complete!');
+                S.timer = 0;
+            }
+        }
+    }, 1000);
 }
 
-// ─── AI ACCOUNTABILITY CHAT ───────────────────────────────────────────────────
-let aiChatState = { uploadedImage: null, uploadedFileName: '', analysisComplete: false, sessionDur: 0 };
-
-function showAIAccountChat(dur) {
-  aiChatState = { uploadedImage: null, uploadedFileName: '', analysisComplete: false, sessionDur: dur };
-  const screen = document.getElementById('ai-account-screen');
-  screen.classList.add('active');
-  const msgs = document.getElementById('ai-messages');
-  msgs.innerHTML = '';
-  document.getElementById('ai-text-inp').value = '';
-  document.getElementById('ai-upload-prev').style.display = 'none';
-  document.getElementById('ai-send-btn').disabled = false;
-
-  // Opening AI message
-  const arena = S.selectedRoom?.name || 'Focus';
-  const goal = S.goal || 'General study session';
-  setTimeout(() => {
-    addAIMessage(`
-      <strong>Session complete — ${dur} minute${dur!==1?'s':''} of focus.</strong><br><br>
-      I'm your accountability coach. Before I log this session, I need to verify your work.<br><br>
-      Your stated goal was:<br>
-      <span class="goal-q">${escHtml(goal)}</span>
-      Arena: <strong>${escHtml(arena)}</strong>
-    `);
-    setTimeout(() => {
-      addAIMessage(`Now show me the proof. You can:<br><br>
-        <strong>· Write</strong> detailed notes on what you covered<br>
-        <strong>· Paste</strong> questions / problems you solved<br>
-        <strong>· Upload</strong> a screenshot (LeetCode, notes, textbook pages)<br>
-        <strong>· Photo</strong> your handwritten work<br><br>
-        Be specific — the more detail, the higher your score. I grade you on effort, depth, and alignment with your goal.`);
-    }, 700);
-  }, 300);
+function updateTimerDOM() {
+    const td = document.getElementById('td');
+    const tc = document.getElementById('tc');
+    if (td) td.textContent = fmt(S.timer);
+    if (tc) {
+        const total = S.timerMode === 'pomodoro'
+            ? (S.pomPhase === 'work' ? 25*60 : 5*60)
+            : S.customTime * 60;
+        const prog = Math.min((total - S.timer) / total, 1);
+        tc.style.strokeDasharray = 2 * Math.PI * 88;
+        tc.style.strokeDashoffset = (2 * Math.PI * 88) * (1 - prog);
+    }
 }
 
-function escHtml(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+// ─── VIEW: ACCOUNTABILITY ─────────────────────────────────────────────────────
+function renderAccountability() {
+    const dur = S.sessionStart ? Math.round((Date.now() - S.sessionStart) / 60000) : S.customTime;
 
-function addAIMessage(html) {
-  const msgs = document.getElementById('ai-messages');
-  const wrap = document.createElement('div');
-  wrap.className = 'chat-msg ai-msg';
-  wrap.innerHTML = `
-    <div class="chat-msg-av">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/></svg>
-    </div>
-    <div class="chat-bubble">${html}</div>`;
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-}
+    app.innerHTML = `
+    <div class="min-h-screen flex items-center justify-center p-6 bg-[#080808] relative">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.05),transparent_60%)]"></div>
+        <div class="w-full max-w-2xl relative z-10" style="animation: fadeIn 0.5s ease">
 
-function addUserMessage(text, imgSrc) {
-  const msgs = document.getElementById('ai-messages');
-  const wrap = document.createElement('div');
-  wrap.className = 'chat-msg user-msg';
-  let content = escHtml(text).replace(/\n/g,'<br>');
-  if (imgSrc) content += `<img src="${imgSrc}" alt="proof"/>`;
-  wrap.innerHTML = `
-    <div class="chat-msg-av">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    </div>
-    <div class="chat-bubble">${content}</div>`;
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-}
+            <div class="text-center mb-12">
+                <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.5em] uppercase font-medium block mb-5">Session Complete</span>
+                <h1 class="font-display text-7xl mb-4 text-[#FAFAF5]">PROVE YOUR WORK</h1>
+                <p class="text-[#FAFAF5]/50 text-lg">You studied for <span class="text-[#C9A84C] font-bold">${dur} minutes</span>. What did you accomplish?</p>
+            </div>
 
-function addTypingIndicator() {
-  const msgs = document.getElementById('ai-messages');
-  const wrap = document.createElement('div');
-  wrap.className = 'chat-msg ai-msg';
-  wrap.id = 'ai-typing';
-  wrap.innerHTML = `
-    <div class="chat-msg-av">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/></svg>
-    </div>
-    <div class="chat-bubble"><div class="chat-typing-dots"><span></span><span></span><span></span></div></div>`;
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-  return wrap;
-}
+            <!-- Stated goal -->
+            <div class="glass-panel p-6 mb-5">
+                <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-3">Stated Goal</div>
+                <div class="p-4 bg-[#C9A84C]/8 border-l-4 border-[#C9A84C] rounded-r-xl font-medium text-[#FAFAF5]/90">${S.goal}</div>
+            </div>
 
-function removeTyping() {
-  const t = document.getElementById('ai-typing');
-  if (t) t.remove();
-}
+            <!-- Proof input -->
+            <div class="glass-panel p-8 mb-8">
+                <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-4 flex items-center gap-2">
+                    <span class="w-4 h-4">${I.edit}</span> Execution Proof
+                </div>
+                <textarea id="proof-inp" rows="5"
+                    class="w-full bg-black/40 border border-[#C9A84C]/15 rounded-xl p-5 text-[#FAFAF5] focus:border-[#C9A84C] focus:shadow-[0_0_0_1px_rgba(201,168,76,0.12)] outline-none resize-none placeholder-[#FAFAF5]/25 transition-all"
+                    placeholder="Be honest. AI will evaluate this. e.g., 'Completed 20 physics problems from HC Verma…'"></textarea>
+            </div>
 
-function addScoreCard(score, grade, feedback) {
-  const msgs = document.getElementById('ai-messages');
-  const wrap = document.createElement('div');
-  wrap.className = 'chat-msg ai-msg';
-  wrap.style.maxWidth = '100%';
-  const barColor = score >= 88 ? 'var(--gold)' : score >= 74 ? '#a78bfa' : score >= 58 ? '#60a5fa' : '#f87171';
-  wrap.innerHTML = `
-    <div class="chat-msg-av">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/></svg>
-    </div>
-    <div style="flex:1;">
-      <div class="chat-bubble" style="margin-bottom:10px;">${feedback}</div>
-      <div class="ai-score-card">
-        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Session Score</div>
-        <div class="ai-score-row">
-          <div>
-            <div class="ai-score-num" style="color:${barColor};">${score}</div>
-            <div class="ai-score-meta">out of 100</div>
-          </div>
-          <div class="ai-score-grade-box">${grade}</div>
+            <button id="submit-btn" data-action="submit-proof"
+                class="w-full py-5 rounded-xl bg-[#C9A84C] text-[#080808] font-bold text-lg flex justify-center items-center gap-3 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(201,168,76,0.35)] transition-all duration-300 tracking-wide">
+                <span class="w-5 h-5">${I.robot}</span> Submit for AI Review
+            </button>
         </div>
-        <div class="ai-score-bar-wrap"><div class="ai-score-bar" id="ai-score-bar" style="background:${barColor};"></div></div>
-        <button class="ai-done-btn" id="ai-done-btn">↗ Save &amp; View Dashboard</button>
-      </div>
     </div>`;
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-
-  setTimeout(() => {
-    const bar = document.getElementById('ai-score-bar');
-    if (bar) bar.style.width = score + '%';
-  }, 100);
-
-  document.getElementById('ai-done-btn').addEventListener('click', () => {
-    finishSession(score, grade);
-  });
-  document.getElementById('ai-done-btn').addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
-  document.getElementById('ai-done-btn').addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
 }
 
-function finishSession(score, grade) {
-  const dur = aiChatState.sessionDur || 25;
-  const passed = score >= 58;
-  const today = new Date().toISOString().slice(0,10);
-  S.sessions.unshift({
-    room: S.selectedRoom?.name || 'Focus',
-    goal: S.goal, duration: dur,
-    status: passed ? 'completed' : 'needs_review',
-    date: new Date().toLocaleDateString('en-IN'),
-    isoDate: today,
-    score, grade,
-  });
-  lsSet('cx_sessions', S.sessions);
-  S.goal = ''; S.proof = ''; S.selectedRoom = null;
-  document.getElementById('ai-account-screen').classList.remove('active');
-  showApp();
-  setActiveNav('dashboard');
-  showNotif(passed ? `Score: ${score}/100 (${grade}) — Session logged!` : `Score: ${score}/100 — Keep going, aim higher next time.`);
-}
-
-async function analyzeProofWithAI(proofText, imageBase64, imageType) {
-  const goal = S.goal || 'General study session';
-  const arena = S.selectedRoom?.name || 'Focus';
-  const dur = aiChatState.sessionDur || 25;
-
-  const systemPrompt = `You are the AI accountability coach for Cortex Hub, a high-intensity study platform. A student just completed a study session and is submitting proof of their work.
-
-Your job:
-1. Carefully analyze their proof against their stated goal
-2. Give honest, encouraging, coach-like feedback (3-4 sentences)
-3. Score their session
-
-SCORING RUBRIC:
-- Alignment with stated goal (40%): Did they actually do what they said?
-- Depth of work (30%): How detailed/substantial is the proof?
-- Evidence quality (30%): Specific examples, screenshots, numbers, problem counts
-
-Be direct like a mentor. Don't be sycophantic. If proof is thin, say so. If it's good, celebrate it.
-
-At the END of your response, output EXACTLY this JSON block (no other JSON):
-{"score": 82, "grade": "B", "verdict": "Verified"}
-
-Score 0–100. Grades: A (88+), B (74–87), C (58–73), D (<58). Do not wrap in code blocks.`;
-
-  const userContent = [];
-
-  if (imageBase64 && imageType) {
-    userContent.push({
-      type: 'image',
-      source: { type: 'base64', media_type: imageType, data: imageBase64 }
-    });
-  }
-
-  userContent.push({
-    type: 'text',
-    text: `STUDY SESSION DETAILS:
-Arena: ${arena}
-Duration: ${dur} minutes
-Stated Goal: "${goal}"
-
-STUDENT'S PROOF:
-${proofText || '(No text — see image above)'}
-
-Please analyze this proof and give me your honest assessment.`
-  });
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userContent }]
-    })
-  });
-
-  const data = await response.json();
-  const fullText = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-
-  // Extract JSON score block
-  const jsonMatch = fullText.match(/\{[\s]*"score"[\s]*:[\s]*(\d+)[\s]*,[\s]*"grade"[\s]*:[\s]*"([A-D])"[\s]*,[\s]*"verdict"[\s]*:[\s]*"([^"]+)"[\s]*\}/);
-  let score = 65, grade = 'C', verdict = 'Recorded';
-  if (jsonMatch) {
-    score = parseInt(jsonMatch[1]);
-    grade = jsonMatch[2];
-    verdict = jsonMatch[3];
-  }
-
-  const feedbackText = fullText.replace(/\{[\s\S]*"score"[\s\S]*\}/, '').trim();
-  return { score, grade, verdict, feedback: feedbackText || 'Session analyzed.' };
-}
-
-async function sendProofMessage() {
-  if (aiChatState.analysisComplete) return;
-  const inp = document.getElementById('ai-text-inp');
-  const text = inp.value.trim();
-  const hasImg = !!aiChatState.uploadedImage;
-
-  if (!text && !hasImg) {
-    showNotif('Please write something or upload a screenshot first.');
-    return;
-  }
-
-  // Show user message
-  addUserMessage(text, hasImg ? aiChatState.uploadedImage.dataUrl : null);
-  inp.value = '';
-  document.getElementById('ai-upload-prev').style.display = 'none';
-  document.getElementById('ai-send-btn').disabled = true;
-
-  const typing = addTypingIndicator();
-
-  try {
-    const result = await analyzeProofWithAI(
-      text,
-      hasImg ? aiChatState.uploadedImage.base64 : null,
-      hasImg ? aiChatState.uploadedImage.type : null
-    );
-    removeTyping();
-    aiChatState.analysisComplete = true;
-    addScoreCard(result.score, result.grade, result.feedback.replace(/\n/g, '<br>'));
-  } catch (err) {
-    removeTyping();
-    // Fallback local scoring
-    const words = text.trim().split(/\s+/).filter(Boolean).length;
-    const score = Math.min(100, Math.max(30, Math.round(words * 2.5 + aiChatState.sessionDur * 0.5 + (hasImg ? 12 : 0))));
-    const grade = score >= 88 ? 'A' : score >= 74 ? 'B' : score >= 58 ? 'C' : 'D';
-    aiChatState.analysisComplete = true;
-    addScoreCard(score, grade, 'Session recorded. <em>(AI analysis offline — local score applied.)</em>');
-  }
-
-  // Reset upload state
-  aiChatState.uploadedImage = null;
-  aiChatState.uploadedFileName = '';
-}
-
-// Send on button click
-document.getElementById('ai-send-btn').addEventListener('click', sendProofMessage);
-
-// Send on Ctrl+Enter
-document.getElementById('ai-text-inp').addEventListener('keydown', e => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); sendProofMessage(); }
-  // Auto-resize textarea
-  setTimeout(() => {
-    e.target.style.height = 'auto';
-    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-  }, 0);
-});
-
-// File upload handler
-document.getElementById('ai-file-inp').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const dataUrl = ev.target.result;
-    const base64 = dataUrl.split(',')[1];
-    aiChatState.uploadedImage = { base64, type: file.type, dataUrl };
-    aiChatState.uploadedFileName = file.name;
-    document.getElementById('ai-prev-img').src = dataUrl;
-    document.getElementById('ai-prev-name').textContent = file.name;
-    document.getElementById('ai-upload-prev').style.display = '';
-  };
-  reader.readAsDataURL(file);
-  e.target.value = '';
-});
-
-// Remove upload
-document.getElementById('ai-rm-upload').addEventListener('click', () => {
-  aiChatState.uploadedImage = null;
-  document.getElementById('ai-upload-prev').style.display = 'none';
-});
-
-// ─── AMBIENT ──────────────────────────────────────────────────────────────────
-document.querySelectorAll('.ambient-opt').forEach(opt => {
-  opt.addEventListener('click', () => {
-    const t = opt.dataset.ambient;
-    if (S.ambient === t) { stopAudio(); S.ambient = null; document.querySelectorAll('.ambient-opt').forEach(o => o.classList.remove('active')); }
-    else { startAudio(t); S.ambient = t; document.querySelectorAll('.ambient-opt').forEach(o => o.classList.toggle('active', o.dataset.ambient===t)); }
-  });
-});
-
-// ─── JOIN ROOMS ───────────────────────────────────────────────────────────────
-function getJoinRooms() { return (lsGet('cx_jrooms')||[]).filter(r => Date.now()-r.createdAt < 4*60*60*1000); }
-
-function renderJoinRooms() {
-  const tf = document.getElementById('tag-filters');
-  tf.innerHTML = ['All',...INTERESTS].map(t => `
-    <button class="tag-chip${S.joinFilter===(t==='All'?'':t)?' active':''}" data-tag="${t==='All'?'':t}">${t}</button>
-  `).join('');
-  tf.querySelectorAll('.tag-chip').forEach(c => {
-    c.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));
-    c.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));
-    c.addEventListener('click', () => { S.joinFilter = c.dataset.tag; renderJoinRooms(); });
-  });
-
-  const all = getJoinRooms();
-  const filtered = S.joinFilter ? all.filter(r => r.interest === S.joinFilter || r.name.toLowerCase().includes(S.joinFilter.toLowerCase())) : all;
-  const grid = document.getElementById('jr-rooms-grid');
-
-  if (!filtered.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;padding:80px 0;text-align:center;font-family:var(--font-display);font-size:32px;font-weight:300;color:var(--border2);">No rooms live.<br><span style="font-size:18px;color:var(--muted);">Create one above.</span></div>`;
-  } else {
-    grid.innerHTML = filtered.map(r => `
-      <div class="jr-room-card">
-        <div class="jr-room-tag">${r.interest}</div>
-        <div class="jr-room-name">${r.name}</div>
-        <div class="jr-room-topic">${r.topic||'General study session'}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.06em;">
-            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4ade80;margin-right:6px;vertical-align:middle;"></span>Live
-          </div>
-        </div>
-        <a href="https://viz-droid.github.io/kartus/WEB_UIKITS.html" target="_blank" class="join-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-          Join Call
-        </a>
-      </div>
-    `).join('');
-    grid.querySelectorAll('.join-btn').forEach(b => { b.addEventListener('click', ()=>showNotif('ZegoCloud integration needed to join call.')); });
-  }
-}
-
-// ─── CREATE ROOM MODAL ────────────────────────────────────────────────────────
-document.getElementById('create-room-btn').addEventListener('click', () => {
-  S.createRoomTag = '';
-  const modal = document.getElementById('create-modal');
-  modal.classList.add('open');
-  const crtags = document.getElementById('cr-tags');
-  crtags.innerHTML = INTERESTS.map(t => `<button class="tag-chip" data-tag="${t}">${t}</button>`).join('');
-  crtags.querySelectorAll('.tag-chip').forEach(c => {
-    c.addEventListener('click', () => {
-      S.createRoomTag = c.dataset.tag;
-      crtags.querySelectorAll('.tag-chip').forEach(x => x.classList.toggle('active', x.dataset.tag===S.createRoomTag));
-    });
-  });
-  document.getElementById('cr-name').value = '';
-});
-document.getElementById('modal-close').addEventListener('click', () => document.getElementById('create-modal').classList.remove('open'));
-document.getElementById('confirm-create-btn').addEventListener('click', () => {
-  const name = document.getElementById('cr-name').value.trim();
-  if (!name || !S.createRoomTag) { showNotif('Fill all fields.'); return; }
-  const rooms = getJoinRooms();
-  rooms.unshift({ roomId:Date.now(), name, interest:S.createRoomTag, topic:'', createdAt:Date.now() });
-  lsSet('cx_jrooms', rooms);
-  document.getElementById('create-modal').classList.remove('open');
-  renderJoinRooms();
-  showNotif('Room created!');
-});
-
-// Search
-document.getElementById('jr-search').addEventListener('input', e => { S.joinFilter = e.target.value; renderJoinRooms(); });
-
-// ─── DASHBOARD ────────────────────────────────────────────────────────────────
+// ─── VIEW: DASHBOARD ──────────────────────────────────────────────────────────
 function renderDashboard() {
-  const done = S.sessions.filter(s => s.status==='completed');
-  const hrs = Math.round(done.reduce((a,c) => a+(c.duration||0), 0)/60*10)/10;
+    const sDone = S.sessions.filter(s => s.status === 'completed');
+    const hrs   = Math.round(sDone.reduce((a, c) => a + (c.duration || 0), 0) / 60 * 10) / 10;
 
-  document.getElementById('dash-stats').innerHTML = `
-    <div class="stat-box">
-      <div class="stat-box-num"><span>${hrs}</span> hr</div>
-      <div class="stat-box-label">Total Focus Time</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-box-num"><span>${done.length}</span></div>
-      <div class="stat-box-label">Sessions Verified</div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-box-num"><span>${S.user?.streak||1}</span> 🔥</div>
-      <div class="stat-box-label">Day Streak</div>
-    </div>
-  `;
-
-  renderStudyGraph();
-  renderContribHeatmap();
-  renderBadges();
-  renderArenaScores();
-
-  const sl = document.getElementById('sessions-list');
-  if (!S.sessions.length) {
-    sl.innerHTML = `<div style="padding:48px;text-align:center;font-family:var(--font-display);font-size:28px;font-weight:300;color:var(--border2);">No sessions yet.<br><span style="font-size:16px;color:var(--muted);">Start your first arena.</span></div>`;
-  } else {
-    sl.innerHTML = S.sessions.slice(0,8).map(s => `
-      <div class="session-row">
-        <div class="session-status ${s.status==='completed'?'ok':'fail'}"></div>
-        <div style="flex:1;min-width:0;">
-          <div class="session-goal-text">${s.goal}</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.05em;">${s.room} · ${s.duration}m · ${s.date}</div>
-        </div>
-        <div class="session-meta">${s.status==='completed'?'✓ Verified':'⚠ Review'}</div>
-      </div>
-    `).join('');
-  }
-}
-
-// ─── STUDY HOURS GRAPH (real data only) ──────────────────────────────────────
-function renderStudyGraph() {
-  const wrap = document.getElementById('study-graph-wrap');
-  // Build last 14 days
-  const days = [];
-  const now = new Date();
-  for (let i = 13; i >= 0; i--) {
-    const d = new Date(now); d.setDate(d.getDate() - i);
-    const iso = d.toISOString().slice(0,10);
-    const label = d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'}).replace(' ','<br>');
-    const shortLabel = ['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()];
-    days.push({ iso, label: shortLabel, isToday: i===0 });
-  }
-
-  // Sum hours per day from real sessions
-  const dayMap = {};
-  S.sessions.forEach(s => {
-    const key = s.isoDate || '';
-    if (key) dayMap[key] = (dayMap[key]||0) + (s.duration||0)/60;
-  });
-
-  const maxH = Math.max(...days.map(d => dayMap[d.iso]||0), 0.5);
-
-  const hasAnyData = days.some(d => dayMap[d.iso]);
-
-  if (!hasAnyData) {
-    wrap.innerHTML = `<div class="graph-no-data">No sessions yet — start studying to see your graph!</div>`;
-    return;
-  }
-
-  wrap.innerHTML = `
-    <div class="graph-canvas" id="graph-canvas"></div>
-    <div style="display:flex;justify-content:space-between;padding:0 2px;">
-      ${days.map(d=>`<div style="flex:1;text-align:center;font-family:var(--font-mono);font-size:9px;color:${d.isToday?'var(--gold)':'var(--muted)'};letter-spacing:.03em;">${d.label}</div>`).join('')}
-    </div>
-  `;
-
-  const canvas = document.getElementById('graph-canvas');
-  days.forEach(d => {
-    const h = dayMap[d.iso] || 0;
-    const pct = maxH > 0 ? (h / maxH * 100) : 0;
-    const cls = d.isToday ? 'today-bar' : h > 0 ? 'has-data' : 'empty';
-    const col = document.createElement('div');
-    col.className = 'graph-bar-col';
-    col.innerHTML = `
-      <div class="g-bar-outer">
-        <div class="g-bar ${cls}" style="height:${Math.max(pct,2)}%;">
-          ${h > 0 ? `<div class="g-bar-tip">${h.toFixed(1)}h</div>` : ''}
-        </div>
-      </div>
-    `;
-    canvas.appendChild(col);
-  });
-}
-
-// ─── CONTRIBUTION HEATMAP (GitHub style, real data) ──────────────────────────
-function renderContribHeatmap() {
-  const section = document.getElementById('contrib-section');
-
-  // Build 52 weeks of data
-  const today = new Date(); today.setHours(0,0,0,0);
-  const startDate = new Date(today);
-  // Go back to last Sunday 52 weeks ago
-  startDate.setDate(startDate.getDate() - 364 - startDate.getDay());
-
-  // Map isoDate → hours from real sessions
-  const hoursMap = {};
-  S.sessions.forEach(s => {
-    if (s.isoDate) hoursMap[s.isoDate] = (hoursMap[s.isoDate]||0) + (s.duration||0)/60;
-  });
-
-  const getLevel = h => h <= 0 ? '' : h < 1 ? 'l1' : h < 2 ? 'l2' : h < 3 ? 'l3' : 'l4';
-
-  // Build weeks array
-  const weeks = [];
-  let cur = new Date(startDate);
-  while (cur <= today) {
-    const week = [];
-    for (let d = 0; d < 7; d++) {
-      const iso = cur.toISOString().slice(0,10);
-      const isFuture = cur > today;
-      week.push({ iso, isFuture, h: hoursMap[iso]||0, dow: d });
-      cur.setDate(cur.getDate() + 1);
-    }
-    weeks.push(week);
-  }
-
-  // Month labels
-  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const monthLabels = [];
-  let lastMonth = -1;
-  weeks.forEach((w, wi) => {
-    const m = new Date(w[0].iso).getMonth();
-    if (m !== lastMonth) { monthLabels.push({ wi, label: monthNames[m] }); lastMonth = m; }
-    else monthLabels.push({ wi, label: '' });
-  });
-
-  const dayLabels = ['','Mon','','Wed','','Fri',''];
-
-  section.innerHTML = `
-    <div class="contrib-inner">
-      <div style="display:flex;gap:8px;align-items:flex-start;">
-        <div class="contrib-day-labels">
-          ${dayLabels.map(l=>`<div class="contrib-day-lbl">${l}</div>`).join('')}
-        </div>
-        <div style="overflow-x:auto;">
-          <div style="display:flex;gap:0;margin-bottom:4px;padding-left:2px;">
-            ${monthLabels.map(ml=>`<div style="width:15px;font-family:var(--font-mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;">${ml.label}</div>`).join('')}
-          </div>
-          <div class="contrib-weeks" id="contrib-weeks-grid"></div>
-        </div>
-      </div>
-      <div class="contrib-legend">
-        <span class="contrib-legend-label">Less</span>
-        <div class="c-leg" style="background:rgba(255,255,255,0.04);"></div>
-        <div class="c-leg c-cell l1"></div>
-        <div class="c-leg c-cell l2"></div>
-        <div class="c-leg c-cell l3"></div>
-        <div class="c-leg c-cell l4"></div>
-        <span class="contrib-legend-label">More</span>
-      </div>
-    </div>
-  `;
-
-  const grid = document.getElementById('contrib-weeks-grid');
-  const tooltip = document.getElementById('contrib-tooltip');
-
-  weeks.forEach(week => {
-    const wEl = document.createElement('div');
-    wEl.className = 'contrib-week';
-    week.forEach(day => {
-      const cell = document.createElement('div');
-      const lvl = getLevel(day.h);
-      cell.className = `c-cell${lvl?' '+lvl:''}${day.isFuture?' future':''}`;
-      cell.addEventListener('mouseenter', e => {
-        if (day.isFuture) return;
-        const label = day.h > 0 ? `${day.h.toFixed(1)}h on ${day.iso}` : `No study on ${day.iso}`;
-        tooltip.textContent = label;
-        tooltip.style.display = 'block';
-        tooltip.style.left = (e.clientX+10)+'px';
-        tooltip.style.top = (e.clientY-28)+'px';
-      });
-      cell.addEventListener('mousemove', e => {
-        tooltip.style.left = (e.clientX+10)+'px';
-        tooltip.style.top = (e.clientY-28)+'px';
-      });
-      cell.addEventListener('mouseleave', () => { tooltip.style.display='none'; });
-      wEl.appendChild(cell);
-    });
-    grid.appendChild(wEl);
-  });
-}
-
-// ─── BADGES ───────────────────────────────────────────────────────────────────
-function renderBadges() {
-  const streak = S.user?.streak || 1;
-  const done = S.sessions.filter(s=>s.status==='completed');
-  const totalHrs = done.reduce((a,c)=>a+(c.duration||0),0)/60;
-  const totalSessions = done.length;
-  const scores = done.filter(s=>s.score).map(s=>s.score);
-  const avgScore = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
-  const hasA = done.some(s=>s.grade==='A');
-
-  const BADGES = [
-    { emoji:'🔥', name:'Ignition',    cond:'1-day streak',    earned: streak>=1,  tip:'Start your journey' },
-    { emoji:'⚡', name:'On Fire',     cond:'3-day streak',    earned: streak>=3,  tip:'3 days strong' },
-    { emoji:'🌟', name:'Week Warrior',cond:'7-day streak',    earned: streak>=7,  tip:'7 days unbroken' },
-    { emoji:'💎', name:'Diamond Mind',cond:'30-day streak',   earned: streak>=30, tip:'30-day legend' },
-    { emoji:'📚', name:'First Step',  cond:'1st session done',earned: totalSessions>=1, tip:'Completed first session' },
-    { emoji:'🎯', name:'Focused 10',  cond:'10 sessions',     earned: totalSessions>=10,tip:'10 sessions completed' },
-    { emoji:'🏆', name:'Century',     cond:'100 sessions',    earned: totalSessions>=100,tip:'100 sessions done' },
-    { emoji:'⏱️', name:'Hour Glass',  cond:'10 hrs studied',  earned: totalHrs>=10, tip:'10 total hours' },
-    { emoji:'🚀', name:'Deep Orbit',  cond:'50 hrs studied',  earned: totalHrs>=50, tip:'50 total hours' },
-    { emoji:'🥇', name:'Top Grade',   cond:'Score A on arena',earned: hasA,        tip:'Scored A on a session' },
-    { emoji:'📈', name:'High Scorer', cond:'Avg score ≥ 80',  earned: avgScore>=80, tip:`Avg score: ${avgScore}` },
-    { emoji:'🦉', name:'Night Owl',   cond:'Study after 10pm',earned: false,       tip:'Coming soon' },
-  ];
-
-  const container = document.getElementById('badges-row');
-  container.innerHTML = BADGES.map(b => `
-    <div class="badge-item ${b.earned?'earned':'locked'}">
-      <div class="badge-emoji">${b.emoji}</div>
-      <div class="badge-name">${b.name}</div>
-      <div class="badge-cond">${b.cond}</div>
-    </div>
-  `).join('');
-}
-
-// ─── ARENA SCORES ─────────────────────────────────────────────────────────────
-function renderArenaScores() {
-  const scored = S.sessions.filter(s=>s.score != null);
-  const el = document.getElementById('arena-scores-list');
-  if (!scored.length) {
-    el.innerHTML = `<div style="padding:40px;text-align:center;font-family:var(--font-display);font-size:22px;font-weight:300;color:var(--border2);">No scored sessions yet.<br><span style="font-size:14px;color:var(--muted);">Complete an arena to earn your first score.</span></div>`;
-    return;
-  }
-  el.innerHTML = scored.slice(0,10).map(s => {
-    const grCls = s.grade==='A'?'grA':s.grade==='B'?'grB':s.grade==='C'?'grC':'grD';
     return `
-      <div class="score-row">
-        <div class="score-grade-box ${grCls}">${s.grade||'?'}</div>
-        <div class="score-info">
-          <div class="score-goal-txt">${s.goal}</div>
-          <div class="score-meta-txt">${s.room} · ${s.duration}m · ${s.date}</div>
+    <div class="mb-12">
+        <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.5em] uppercase font-medium block mb-3">Your Progress</span>
+        <h2 class="font-display text-6xl mb-3 text-[#FAFAF5]">DASHBOARD</h2>
+        <div class="flex items-center gap-3">
+            <span class="px-3 py-1 bg-[#C9A84C]/12 text-[#C9A84C] rounded-md text-xs font-bold border border-[#C9A84C]/25 tracking-wide">🔥 ${S.user?.streak || 1} Day Streak</span>
+            <span class="text-[#FAFAF5]/35 text-xs tracking-wide">Cortex Scholar Rank</span>
         </div>
-        <div style="text-align:right;flex-shrink:0;">
-          <div class="score-pts-val">${s.score||0}</div>
-          <div class="score-pts-label">pts</div>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-// ─── LEADERBOARD ──────────────────────────────────────────────────────────────
-const LB_SEED = [
-  { name:'Aryan Mehta',  exam:'JEE',          hrs:47, sessions:32, streak:18 },
-  { name:'Riya Sharma',  exam:'UPSC',         hrs:41, sessions:28, streak:14 },
-  { name:'Karan Verma',  exam:'GATE',         hrs:36, sessions:23, streak:10 },
-  { name:'Priya Singh',  exam:'NEET',         hrs:30, sessions:19, streak:8  },
-  { name:'Dev Patel',    exam:'JEE',          hrs:26, sessions:15, streak:5  },
-  { name:'Ananya Roy',   exam:'UPSC',         hrs:22, sessions:13, streak:4  },
-  { name:'Rohit Kumar',  exam:'NEET',         hrs:18, sessions:10, streak:3  },
-  { name:'Simran Kaur',  exam:'College',      hrs:14, sessions:9,  streak:2  },
-];
-
-let lbPage = 0;
-const LB_PER_PAGE = 4;
-
-function getLeaderboardData() {
-  const done = S.sessions.filter(s=>s.status==='completed');
-  const myHrs = Math.round(done.reduce((a,c)=>a+(c.duration||0),0)/60*10)/10;
-  const me = {
-    name: S.user?.name || 'You',
-    exam: S.user?.examType || 'Custom',
-    hrs: myHrs,
-    sessions: done.length,
-    streak: S.user?.streak||1,
-    isMe: true,
-  };
-  return [...LB_SEED, me].sort((a,b)=>b.hrs-a.hrs);
-}
-
-function renderLeaderboard() {
-  const data = getLeaderboardData();
-  const me = data.findIndex(u=>u.isMe);
-  const totalPages = Math.ceil(data.length / LB_PER_PAGE);
-
-  const carousel = document.getElementById('lb-carousel');
-  const dotsEl = document.getElementById('lb-dots');
-  const myRankEl = document.getElementById('lb-my-rank');
-  const myStatsEl = document.getElementById('lb-my-stats');
-
-  const medals = ['🥇','🥈','🥉'];
-  const rankCls = ['gold-rank','silver-rank','bronze-rank'];
-
-  carousel.innerHTML = data.map((u,i) => `
-    <div class="lb-card ${u.isMe?'me':''} ${rankCls[i]||''}">
-      ${medals[i] ? `<div class="lb-medal">${medals[i]}</div>` : ''}
-      <div class="lb-rank-num">${String(i+1).padStart(2,'0')}</div>
-      <div class="lb-uname">${u.name}${u.isMe?' <span style="color:var(--gold);font-size:11px;">(You)</span>':''}</div>
-      <div class="lb-uexam">${u.exam}</div>
-      <div class="lb-stats">
-        <div class="lb-stat-row">Hours studied <strong>${u.hrs}h</strong></div>
-        <div class="lb-stat-row">Sessions <strong>${u.sessions}</strong></div>
-        <div class="lb-stat-row">Streak <strong>${u.streak} 🔥</strong></div>
-      </div>
     </div>
-  `).join('');
 
-  if (myRankEl) myRankEl.textContent = `Your rank: #${me+1} of ${data.length}`;
+    <!-- Stat cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <div class="glass-panel p-6 border border-[#C9A84C]/20">
+            <div class="w-10 h-10 rounded-lg bg-[#C9A84C]/15 text-[#C9A84C] flex items-center justify-center mb-5 w-5 h-5">${I.clock}</div>
+            <div class="font-display text-4xl text-[#C9A84C] mb-1">${hrs} hr</div>
+            <div class="text-xs text-[#FAFAF5]/40 font-bold uppercase tracking-[0.3em]">Total Focus</div>
+        </div>
+        <div class="glass-panel p-6 border border-emerald-500/20">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-5 w-5 h-5">${I.check}</div>
+            <div class="font-display text-4xl text-emerald-400 mb-1">${sDone.length}</div>
+            <div class="text-xs text-[#FAFAF5]/40 font-bold uppercase tracking-[0.3em]">Sessions</div>
+        </div>
+        <div class="glass-panel p-6 border border-[#9B7FD4]/20">
+            <div class="w-10 h-10 rounded-lg bg-[#9B7FD4]/15 text-[#9B7FD4] flex items-center justify-center mb-5 w-5 h-5">${I.robot}</div>
+            <div class="font-display text-4xl text-[#9B7FD4] mb-1">92%</div>
+            <div class="text-xs text-[#FAFAF5]/40 font-bold uppercase tracking-[0.3em]">AI Avg Score</div>
+        </div>
+    </div>
 
-  // Dots
-  dotsEl.innerHTML = Array.from({length:totalPages},(_,i)=>`<div class="lb-dot${i===lbPage?' active':''}" data-page="${i}"></div>`).join('');
-  dotsEl.querySelectorAll('.lb-dot').forEach(d => {
-    d.addEventListener('click',()=>{ lbPage=+d.dataset.page; scrollLbCarousel(); });
-  });
-
-  // My stats
-  if (myStatsEl) {
-    const myData = data[me];
-    const done = S.sessions.filter(s=>s.status==='completed');
-    const weekHrs = (() => {
-      const week = new Date(); week.setDate(week.getDate()-7);
-      return Math.round(done.filter(s=>s.isoDate && new Date(s.isoDate)>=week).reduce((a,c)=>a+(c.duration||0),0)/60*10)/10;
-    })();
-    myStatsEl.innerHTML = `
-      <div class="stat-box"><div class="stat-box-num"><span>#${me+1}</span></div><div class="stat-box-label">Global Rank</div></div>
-      <div class="stat-box"><div class="stat-box-num"><span>${weekHrs}</span>h</div><div class="stat-box-label">This Week</div></div>
-      <div class="stat-box"><div class="stat-box-num"><span>${myData.streak}</span> 🔥</div><div class="stat-box-label">Current Streak</div></div>
-    `;
-  }
-
-  // Scroll to page
-  scrollLbCarousel();
-
-  // Nav buttons
-  document.getElementById('lb-prev').onclick = () => { lbPage = Math.max(0, lbPage-1); scrollLbCarousel(); };
-  document.getElementById('lb-next').onclick = () => { lbPage = Math.min(totalPages-1, lbPage+1); scrollLbCarousel(); };
+    <!-- Recent sessions -->
+    <div class="glass-panel p-8">
+        <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-6 flex items-center gap-2">
+            <span class="w-4 h-4">${I.edit}</span> Recent Sessions
+        </div>
+        <div class="flex flex-col gap-3">
+            ${S.sessions.length === 0
+                ? '<p class="text-[#FAFAF5]/25 text-center py-10 font-medium">No sessions yet. Start your first focus arena.</p>'
+                : S.sessions.slice(0, 5).map(s => `
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-[#FAFAF5]/3 hover:bg-[#FAFAF5]/5 transition-colors border border-transparent hover:border-[#C9A84C]/10">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${s.status === 'completed'
+                        ? 'bg-emerald-500/15 text-emerald-400'
+                        : 'bg-red-500/15 text-red-400'}">
+                        <span class="w-5 h-5">${s.status === 'completed' ? I.check : I.xcirc}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-sm text-[#FAFAF5] truncate">${s.goal}</div>
+                        <div class="text-xs text-[#FAFAF5]/35 mt-1">${s.room} · ${s.duration}m</div>
+                    </div>
+                    <div class="text-xs text-[#FAFAF5]/25">${new Date().toLocaleDateString()}</div>
+                </div>`).join('')}
+        </div>
+    </div>`;
 }
 
-function scrollLbCarousel() {
-  const carousel = document.getElementById('lb-carousel');
-  const cardW = 221; // 220 min-width + 1 gap
-  carousel.scrollLeft = lbPage * LB_PER_PAGE * cardW;
-  document.querySelectorAll('.lb-dot').forEach((d,i) => d.classList.toggle('active', i===lbPage));
+// ─── VIEW: JOIN ROOM ──────────────────────────────────────────────────────────
+function renderJoinRoom() {
+    const all      = getJoinRooms();
+    const filter   = S.joinRoomFilter.toLowerCase();
+    const filtered = filter ? all.filter(r => r.name.toLowerCase().includes(filter) || r.interest.toLowerCase().includes(filter)) : all;
+
+    return `
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
+        <div>
+            <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.5em] uppercase font-medium block mb-3">Collaborative Focus</span>
+            <h2 class="font-display text-6xl text-[#FAFAF5]">LIVE ROOMS</h2>
+            <p class="text-[#FAFAF5]/40 text-sm mt-2">Study live with peers via ZegoCloud.</p>
+        </div>
+        <button data-action="create-room"
+            class="bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-105 hover:shadow-[0_0_20px_rgba(201,168,76,0.35)] transition-all duration-300 text-sm tracking-wide shrink-0">
+            <span class="w-4 h-4">${I.plus}</span> Create Room
+        </button>
+    </div>
+
+    <!-- Search -->
+    <div class="relative mb-5">
+        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-[#FAFAF5]/30 w-4 h-4">${I.hash}</div>
+        <input id="jr-filter" value="${S.joinRoomFilter}" placeholder="Search topics or interests…"
+            class="w-full bg-[#FAFAF5]/4 border border-[#C9A84C]/15 rounded-xl py-4 pl-11 pr-4 text-[#FAFAF5] placeholder-[#FAFAF5]/25 focus:border-[#C9A84C] outline-none transition-all text-sm">
+    </div>
+
+    <!-- Filter chips -->
+    <div class="flex flex-wrap gap-2 mb-8">
+        <button class="px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${S.joinRoomFilter === ''
+            ? 'bg-[#C9A84C]/15 border-[#C9A84C] text-[#C9A84C]'
+            : 'bg-transparent border-[#FAFAF5]/15 text-[#FAFAF5]/45 hover:border-[#FAFAF5]/35'}"
+            data-action="jr-filter" data-val="">All</button>
+        ${INTEREST_TAGS.map(t => `
+        <button class="px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${S.joinRoomFilter === t
+            ? 'bg-[#C9A84C]/15 border-[#C9A84C] text-[#C9A84C]'
+            : 'bg-transparent border-[#FAFAF5]/15 text-[#FAFAF5]/45 hover:border-[#FAFAF5]/35'}"
+            data-action="jr-filter" data-val="${t}">${t}</button>`).join('')}
+    </div>
+
+    <!-- Room grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        ${filtered.length === 0
+            ? `<div class="col-span-full text-center py-20 text-[#FAFAF5]/25 font-display text-3xl tracking-widest">No rooms active.<br><span class="text-[#C9A84C]/40 text-lg">Create one above.</span></div>`
+            : filtered.map(r => `
+            <div class="glass-panel p-6 flex flex-col relative overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#C9A84C]/8 to-transparent rounded-bl-full pointer-events-none"></div>
+                <div class="inline-block px-3 py-1 bg-[#C9A84C]/10 rounded-full text-[10px] font-bold w-max mb-4 border border-[#C9A84C]/20 text-[#C9A84C] tracking-widest uppercase">${r.interest}</div>
+                <h3 class="font-bold text-lg mb-1 text-[#FAFAF5]">${r.name}</h3>
+                <p class="text-xs text-[#FAFAF5]/40 mb-6 flex-1">${r.topic || 'General study'}</p>
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex -space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-[#C9A84C]/30 border-2 border-[#080808] flex items-center justify-center text-xs font-bold text-[#C9A84C]">A</div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-emerald-400 font-bold tracking-widest uppercase">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
+                    </div>
+                </div>
+                <button class="w-full py-3 rounded-xl bg-[#C9A84C]/10 text-[#C9A84C] border border-[#C9A84C]/25 font-bold flex justify-center items-center gap-2 hover:bg-[#C9A84C]/18 transition-colors text-sm" data-action="join-room">
+                    <span class="w-4 h-4">${I.video}</span> Join Call
+                </button>
+            </div>`).join('')}
+    </div>`;
 }
 
-// Auto-scroll leaderboard
-let lbAutoScroll;
-function startLbAutoScroll() {
-  clearInterval(lbAutoScroll);
-  lbAutoScroll = setInterval(() => {
-    if (document.getElementById('view-leaderboard')?.style.display !== 'none') {
-      const carousel = document.getElementById('lb-carousel');
-      const data = getLeaderboardData();
-      const totalPages = Math.ceil(data.length/LB_PER_PAGE);
-      lbPage = (lbPage+1)%totalPages;
-      scrollLbCarousel();
+function renderCreateRoomModal() {
+    return `
+    <div class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[5000] flex items-center justify-center p-4" style="animation: fadeIn 0.2s ease">
+        <div class="glass-panel w-full max-w-md p-8 bg-[#0D0D0D]/95 border-[#C9A84C]/20 relative">
+            <button data-action="close-modal" class="absolute top-5 right-5 text-[#FAFAF5]/40 hover:text-[#FAFAF5] p-2 transition-colors">
+                <span class="w-4 h-4">${I.x}</span>
+            </button>
+
+            <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.45em] uppercase font-medium block mb-3">New Collaboration</span>
+            <h2 class="font-display text-4xl mb-7 text-[#FAFAF5]">Create Arena</h2>
+
+            <div class="mb-6">
+                <label class="text-[10px] font-bold tracking-[0.4em] text-[#FAFAF5]/40 uppercase block mb-3">Room Name</label>
+                <input id="cr-name" class="w-full bg-black/50 border border-[#C9A84C]/15 rounded-xl p-4 text-[#FAFAF5] focus:border-[#C9A84C] outline-none placeholder-[#FAFAF5]/25 text-sm transition-all" placeholder="e.g. Physics Grind">
+            </div>
+
+            <div class="mb-8">
+                <label class="text-[10px] font-bold tracking-[0.4em] text-[#FAFAF5]/40 uppercase block mb-3">Interest Tag</label>
+                <div class="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
+                    ${INTEREST_TAGS.map(t => `
+                    <button class="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${S.createRoomData.interest === t
+                        ? 'bg-[#C9A84C]/15 border-[#C9A84C] text-[#C9A84C]'
+                        : 'border-[#FAFAF5]/12 text-[#FAFAF5]/45 hover:border-[#C9A84C]/30'}"
+                        data-action="cr-interest" data-val="${t}">${t}</button>`).join('')}
+                </div>
+            </div>
+
+            <button data-action="confirm-create-room"
+                class="w-full py-4 rounded-xl bg-[#C9A84C] text-[#080808] font-bold flex justify-center items-center gap-2 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(201,168,76,0.35)] transition-all duration-300 tracking-wide">
+                <span class="w-5 h-5">${I.plus}</span> Launch Room
+            </button>
+        </div>
+    </div>`;
+}
+
+// ─── EVENTS & INTERACTIVITY ───────────────────────────────────────────────────
+document.addEventListener('click', async e => {
+    const el = e.target.closest('[data-action]');
+    if (!el) return;
+    const action = el.dataset.action;
+
+    if (action === 'start') {
+        const u = lsGet('ch_user');
+        if (u) { S.user = u; S.screen = 'app'; S.activeNav = 'rooms'; render(); }
+        else    { S.screen = 'setup'; render(); }
     }
-  }, 3500);
-}
-startLbAutoScroll();
-
-
-// ─── LANDING CURSOR HOVER (add to all interactive) ───────────────────────────
-document.querySelectorAll('.pack-card,.price-card,.testi-card,.step,.arena-card').forEach(el => {
-  el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));
+    else if (action === 'exam')  { S.setupData.examType  = el.dataset.val; renderSetup(); }
+    else if (action === 'style') { S.setupData.studyStyle = el.dataset.val; renderSetup(); }
+    else if (action === 'setup-back') { if (S.setupStep > 0) { S.setupStep--; renderSetup(); } }
+    else if (action === 'setup-next') {
+        if (S.setupStep < 2) { S.setupStep++; renderSetup(); }
+        else {
+            S.user = { ...S.setupData, _id: Date.now(), streak: 1 };
+            lsSet('ch_user', S.user);
+            S.screen = 'app'; S.activeNav = 'rooms'; render();
+        }
+    }
+    else if (action === 'nav')        { S.activeNav = el.dataset.nav; S.selectedRoom = null; renderAppShell(); }
+    else if (action === 'select-room'){ S.selectedRoom = ROOMS.find(r => r.id === el.dataset.room); S.activeNav = 'goalset'; renderAppShell(); }
+    else if (action === 'back-rooms') { S.selectedRoom = null; S.activeNav = 'rooms'; renderAppShell(); }
+    else if (action === 'timer-mode') { S.timerMode = el.dataset.val; renderAppShell(); }
+    else if (action === 'start-session') {
+        const g = document.getElementById('goal-inp');
+        if (g) S.goal = g.value;
+        if (!S.goal) { showNotif('Please set an intent first.'); return; }
+        if (S.timerMode === 'custom') S.customTime = parseInt(document.getElementById('custom-time')?.value) || 25;
+        S.sessionStart = Date.now();
+        S.timer = S.timerMode === 'pomodoro' ? 25*60 : S.customTime*60;
+        S.timerRunning = true; S.pomPhase = 'work'; S.pomCount = 0;
+        S.screen = 'session'; render(); startTimer();
+    }
+    else if (action === 'toggle-timer') {
+        S.timerRunning = !S.timerRunning;
+        renderSession();
+        S.timerRunning ? startTimer() : clearInterval(timerIv);
+    }
+    else if (action === 'ambient') {
+        const t = el.dataset.val;
+        if (S.ambient === t) { stopAudio(); S.ambient = null; }
+        else { startAudio(t); S.ambient = t; }
+        renderSession();
+    }
+    else if (action === 'end-session') {
+        clearInterval(timerIv); S.timerRunning = false; stopAudio(); S.ambient = null;
+        S.screen = 'accountability'; render();
+    }
+    else if (action === 'submit-proof') {
+        const p = document.getElementById('proof-inp');
+        if (p) S.proof = p.value;
+        if (!S.proof) { showNotif('Provide proof of your work.'); return; }
+        const btn = document.getElementById('submit-btn');
+        btn.innerHTML = '<span class="animate-pulse">Analyzing with AI…</span>';
+        btn.disabled = true;
+        setTimeout(() => {
+            const passed = S.proof.length > 20;
+            S.sessions.unshift({
+                room:      S.selectedRoom?.name || 'Focus',
+                goal:      S.goal,
+                duration:  S.sessionStart ? Math.round((Date.now()-S.sessionStart)/60000) : S.customTime,
+                status:    passed ? 'completed' : 'failed',
+                createdAt: Date.now()
+            });
+            S.goal = ''; S.proof = ''; S.selectedRoom = null;
+            S.screen = 'app'; S.activeNav = 'dashboard'; render();
+            showNotif(passed ? 'Session verified and logged! 🏆' : 'Session recorded — proof insufficient.');
+        }, 1500);
+    }
+    else if (action === 'create-room')  { S.showCreateModal = true;  renderAppShell(); }
+    else if (action === 'close-modal')  { S.showCreateModal = false; renderAppShell(); }
+    else if (action === 'cr-interest')  { S.createRoomData.interest = el.dataset.val; renderAppShell(); }
+    else if (action === 'confirm-create-room') {
+        const rn = document.getElementById('cr-name')?.value;
+        if (!rn || !S.createRoomData.interest) { showNotif('Fill in all fields.'); return; }
+        const r = getJoinRooms();
+        r.unshift({ roomId: Date.now(), name: rn, interest: S.createRoomData.interest, createdAt: Date.now() });
+        lsSet('ch_join_rooms', r);
+        S.showCreateModal = false; renderAppShell();
+        showNotif('Room created successfully!');
+    }
+    else if (action === 'join-room') {
+        showNotif('ZegoCloud integration required to join call.');
+    }
+    else if (action === 'jr-filter') {
+        S.joinRoomFilter = el.dataset.val; renderAppShell();
+    }
 });
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-// Initial render of rooms grid if user is logged in (pre-populate)
-renderRoomsGrid();
-</script>
-</body>
-</html>
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+render();
+
+
+// DOM Elements
+const overlay = document.getElementById('auth-overlay');
+const panel = document.getElementById('auth-panel');
+const closeBtn = document.getElementById('close-auth');
+
+// Views & Tabs
+const viewLogin = document.getElementById('view-login');
+const viewSignup = document.getElementById('view-signup');
+const tabLogin = document.getElementById('tab-login');
+const tabSignup = document.getElementById('tab-signup');
+
+// GSAP Timeline setup
+const tl = gsap.timeline({ paused: true });
+tl.to(overlay, { autoAlpha: 1, duration: 0.4 })
+  .to(panel, { x: 0, duration: 0.5, ease: 'power4.out' }, '<');
+
+// Reusable classes for active/inactive tabs based on the new aesthetic
+const activeTabClasses = ['border-[#C9A84C]', 'text-[#C9A84C]'];
+const inactiveTabClasses = ['border-transparent', 'text-gray-500', 'hover:text-[#FAFAF5]'];
+
+function setAuthView(view) {
+  if (view === 'login') {
+    // Show Login, Hide Signup
+    viewLogin.classList.remove('hidden');
+    viewSignup.classList.add('hidden');
+    
+    // Style Login Tab as Active
+    tabLogin.classList.add(...activeTabClasses);
+    tabLogin.classList.remove(...inactiveTabClasses);
+    
+    // Style Signup Tab as Inactive
+    tabSignup.classList.remove(...activeTabClasses);
+    tabSignup.classList.add(...inactiveTabClasses);
+    
+  } else if (view === 'signup') {
+    // Show Signup, Hide Login
+    viewSignup.classList.remove('hidden');
+    viewLogin.classList.add('hidden');
+    
+    // Style Signup Tab as Active
+    tabSignup.classList.add(...activeTabClasses);
+    tabSignup.classList.remove(...inactiveTabClasses);
+    
+    // Style Login Tab as Inactive
+    tabLogin.classList.remove(...activeTabClasses);
+    tabLogin.classList.add(...inactiveTabClasses);
+  }
+}
+
+// 1. Listen for clicks on the trigger buttons
+document.querySelectorAll('[data-auth-trigger]').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    // Determine which button was clicked ('login' or 'signup')
+    const requestedView = e.currentTarget.dataset.authTrigger;
+    
+    // Set the correct view BEFORE animating in
+    setAuthView(requestedView);
+    
+    // Play the GSAP animation
+    tl.play();
+  });
+});
+
+// 2. Listen for clicks on the tabs inside the offcanvas
+tabLogin.addEventListener('click', () => setAuthView('login'));
+tabSignup.addEventListener('click', () => setAuthView('signup'));
+
+// 3. Close mechanics
+closeBtn.addEventListener('click', () => tl.reverse());
+overlay.addEventListener('click', () => tl.reverse());
