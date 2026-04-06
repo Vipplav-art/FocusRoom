@@ -3,68 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus Room</title>
+    <title>Cortex Hub | Focus. Prove It. Grow.</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         body {
             margin: 0;
             overflow-x: hidden;
-            font-family: 'Space Grotesk', sans-serif;
-            background-color: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            background-color: #050505; /* Deep studio black */
+            color: #ffffff;
         }
-        .nav-link.active {
-            color: #fff;
-            text-decoration: underline;
-            text-underline-offset: 8px;
+
+        h1, h2, h3, .font-display {
+            font-family: 'Syne', sans-serif;
+        }
+
+        /* Hide scrollbar for clean aesthetic */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Navigation link underline animation */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background-color: currentColor;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Parallax Image Styles */
+        .parallax-wrapper {
+            position: relative;
+            overflow: hidden;
+            background: #111;
+        }
+        .parallax-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Scaled up so we have room to move it horizontally without revealing edges */
+            transform: scale(1.3);
+            transform-origin: center;
         }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-white selection:text-black">
 
-    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-12 md:px-32 py-6 text-white mix-blend-difference">
-        <a href="#" class="font-semibold text-xl tracking-tighter">Focus Room</a>
-        <ul class="flex gap-8 font-medium uppercase text-sm tracking-widest text-white/60">
-            <li><a href="#" class="nav-link" data-index="0">Online</a></li>
-            <li><a href="#" class="nav-link" data-index="1">Live</a></li>
-            <li><a href="#" class="nav-link" data-index="2">Focus</a></li>
-            <li><a href="#" class="nav-link" data-index="3">Together</a></li>
-            <li><a href="#" class="nav-link" data-index="4">Join</a></li>
+    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 md:px-16 py-8 mix-blend-difference text-white">
+        <a href="#" class="font-display font-bold text-xl tracking-tight uppercase">Cortex Hub</a>
+        
+        <ul class="hidden md:flex gap-10 font-medium uppercase text-xs tracking-[0.2em] text-white/70">
+            <li><a href="#" class="nav-link transition-colors hover:text-white" data-index="0">Mission</a></li>
+            <li><a href="#" class="nav-link transition-colors hover:text-white" data-index="1">System</a></li>
+            <li><a href="#" class="nav-link transition-colors hover:text-white" data-index="2">Rooms</a></li>
+            <li><a href="#" class="nav-link transition-colors hover:text-white" data-index="3">Features</a></li>
         </ul>
     </nav>
 
     <section id="horizontal" class="h-screen overflow-hidden">
-        <div id="scroll-container" class="flex h-screen w-max">
+        <div id="scroll-container" class="flex h-screen w-max items-center">
             
-            <div class="panel w-screen h-screen shrink-0 flex items-center justify-center">
-                <div class="bg-black/20 px-20 py-10 backdrop-blur-sm">
-                    <h1 class="text-[12vw] font-['Bebas_Neue'] leading-none text-white">ONLINE</h1>
+            <div class="panel w-screen h-screen shrink-0 flex flex-col justify-center px-8 md:px-16 relative">
+                <h1 class="text-[12vw] font-display font-extrabold leading-[0.85] tracking-tighter uppercase z-10">
+                    Focus.<br>
+                    <span class="text-white/40">Prove It.</span><br>
+                    Grow.
+                </h1>
+                <p class="absolute bottom-16 right-16 max-w-sm text-sm md:text-base text-white/60 tracking-wide uppercase leading-relaxed hidden md:block">
+                    The study platform that actually holds you accountable.
+                </p>
+            </div>
+
+            <div class="panel w-[100vw] md:w-[80vw] h-screen shrink-0 flex items-center justify-center px-8 md:px-24">
+                <p class="text-3xl md:text-5xl lg:text-7xl font-display font-semibold leading-tight tracking-tight max-w-6xl">
+                    Set goals, study deep, then submit proof. 
+                    <span class="text-white/30">AI grades every session, no shortcuts.</span>
+                </p>
+            </div>
+
+            <div class="panel w-[100vw] md:w-[120vw] h-screen shrink-0 flex flex-col md:flex-row items-center justify-center gap-12 md:gap-24 px-8 md:px-16 border-l border-white/10">
+                <div class="w-full md:w-1/2 h-[50vh] md:h-[70vh] parallax-wrapper rounded-sm">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2000&auto=format&fit=crop" alt="Study Group" class="parallax-img" data-speed="-20">
+                </div>
+                <div class="w-full md:w-1/2 flex flex-col gap-8">
+                    <span class="text-xs tracking-[0.2em] uppercase text-white/50 border-b border-white/20 pb-4 inline-block w-max">Core Feature</span>
+                    <h2 class="text-5xl md:text-8xl font-display font-bold uppercase leading-none tracking-tighter">AI Accountability</h2>
+                    <p class="text-xl md:text-2xl text-white/70 max-w-md font-light leading-relaxed">
+                        Every session graded by AI. Compete with real students on the live leaderboard.
+                    </p>
                 </div>
             </div>
 
-            <div class="panel w-screen h-screen shrink-0 flex items-center justify-center">
-                <div class="bg-black/20 px-20 py-10 backdrop-blur-sm">
-                    <h1 class="text-[12vw] font-['Bebas_Neue'] leading-none text-white">LIVE ROOMS</h1>
+            <div class="panel w-screen h-screen shrink-0 flex items-center justify-center relative border-l border-white/10">
+                <h1 class="text-[18vw] font-display font-extrabold text-white/5 leading-none absolute whitespace-nowrap top-1/2 -translate-y-1/2 pointer-events-none">
+                    DEEP WORK
+                </h1>
+                
+                <div class="w-[80vw] md:w-[40vw] h-[60vh] parallax-wrapper rounded-sm z-10 mx-auto">
+                    <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2000&auto=format&fit=crop" alt="Focus Desk" class="parallax-img" data-speed="25">
+                </div>
+                
+                <div class="absolute bottom-16 left-8 md:left-16 z-20">
+                    <h3 class="text-3xl font-display font-bold uppercase mb-2">Pomodoro Built-In</h3>
+                    <p class="text-white/60 text-sm tracking-widest uppercase">25 + 5 Focus Cycles</p>
                 </div>
             </div>
 
-            <div class="panel w-screen h-screen shrink-0 flex items-center justify-center">
-                <div class="bg-black/20 px-20 py-10 backdrop-blur-sm">
-                    <h1 class="text-[12vw] font-['Bebas_Neue'] leading-none text-white">STAY FOCUSED</h1>
+            <div class="panel w-screen h-screen shrink-0 flex flex-col justify-center px-8 md:px-24 border-l border-white/10">
+                <div class="mb-16">
+                    <h2 class="text-6xl md:text-9xl font-display font-bold uppercase tracking-tighter leading-none mb-4">Focus Rooms</h2>
+                    <p class="text-xl text-white/50">Choose an arena that matches your energy today.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-12 gap-x-24 w-full max-w-6xl">
+                    <div class="border-t border-white/20 pt-6">
+                        <h4 class="text-2xl font-display font-bold mb-3 uppercase tracking-tight">Silent Zone</h4>
+                        <p class="text-white/60 font-light text-lg">Library-grade focus. Zero tolerance for distraction.</p>
+                    </div>
+                    <div class="border-t border-white/20 pt-6">
+                        <h4 class="text-2xl font-display font-bold mb-3 uppercase tracking-tight">Exam Blitz</h4>
+                        <p class="text-white/60 font-light text-lg">High-intensity MCQ grind. Competitive exam mode.</p>
+                    </div>
+                    <div class="border-t border-white/20 pt-6">
+                        <h4 class="text-2xl font-display font-bold mb-3 uppercase tracking-tight">Code Lab</h4>
+                        <p class="text-white/60 font-light text-lg">For programmers, DSA grinders and CS students.</p>
+                    </div>
+                    <div class="border-t border-white/20 pt-6">
+                        <h4 class="text-2xl font-display font-bold mb-3 uppercase tracking-tight">Chill & Study</h4>
+                        <p class="text-white/60 font-light text-lg">Light material, reading. Low pressure mode.</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="panel w-screen h-screen shrink-0 flex items-center justify-center">
-                <div class="bg-black/20 px-20 py-10 backdrop-blur-sm">
-                    <h1 class="text-[12vw] font-['Bebas_Neue'] leading-none text-white">WORK TOGETHER</h1>
+            <div class="panel w-screen h-screen shrink-0 bg-white text-black flex flex-col items-center justify-center relative border-l border-white/10">
+                <div class="text-center z-10 relative">
+                    <h1 class="text-[15vw] font-display font-extrabold leading-none tracking-tighter uppercase hover:text-black/80 transition-colors cursor-pointer">
+                        JOIN NOW
+                    </h1>
+                    <div class="mt-8 flex gap-8 justify-center">
+                        <p class="text-sm tracking-[0.2em] uppercase font-semibold">Create.</p>
+                        <p class="text-sm tracking-[0.2em] uppercase font-semibold">Share.</p>
+                        <p class="text-sm tracking-[0.2em] uppercase font-semibold">Connect.</p>
+                    </div>
                 </div>
-            </div>
-
-            <div class="panel w-screen h-screen shrink-0 flex items-center justify-center">
-                <div class="bg-black/20 px-20 py-10 backdrop-blur-sm">
-                    <h1 class="text-[12vw] font-['Bebas_Neue'] leading-none text-white">JOIN NOW</h1>
+                
+                <div class="absolute inset-0 opacity-10 pointer-events-none overflow-hidden flex items-center justify-center">
+                     <h1 class="text-[30vw] font-display font-extrabold leading-none tracking-tighter uppercase whitespace-nowrap">
+                        CORTEX
+                    </h1>
                 </div>
             </div>
 
@@ -74,6 +183,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+    
     <script src="script.js"></script>
 </body>
 </html>
