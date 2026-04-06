@@ -197,7 +197,7 @@ function renderLanding() {
             <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="2">Live Rooms</a></li>
             <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="3">Join</a></li>
         </ul>
-        <button data-action="start" class="border border-[#C9A84C] text-[#C9A84C] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#C9A84C] hover:text-[#080808] transition-all duration-300">Enter Hub</button>
+        <a href="hubpremier.html" class="border border-[#C9A84C] text-[#C9A84C] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#C9A84C] hover:text-[#080808] transition-all duration-300">Enter Hub</a>
     </nav>
 
     <!-- ─── Horizontal Panels ─── -->
@@ -261,9 +261,9 @@ function renderLanding() {
                 <span class="text-[#C9A84C]/50 text-[10px] tracking-[0.5em] uppercase font-medium mb-8 relative z-10">04 — Grow</span>
                 <h1 class="text-[13vw] font-display leading-none tracking-tight relative z-10">GROW.</h1>
                 <div class="w-12 h-[1px] bg-[#C9A84C] mt-8 mb-10 relative z-10"></div>
-                <button data-action="start" class="bg-[#C9A84C] text-[#080808] px-10 py-4 rounded-full font-bold text-lg hover:scale-105 hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] transition-all duration-300 flex items-center gap-3 relative z-10">
+                <a href="hubpremier.html" class="bg-[#C9A84C] text-[#080808] px-10 py-4 rounded-full font-bold text-lg hover:scale-105 hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] transition-all duration-300 flex items-center gap-3 relative z-10">
                     Launch Cortex Hub <span class="w-5 h-5">${I.arrowR}</span>
-                </button>
+                </a>
             </div>
 
         </div>
