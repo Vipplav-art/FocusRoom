@@ -304,7 +304,7 @@ function renderLanding() {
         </div>
         <input type="password" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="••••••••">
       </div>
-      <button type="button" class="w-full mt-4 bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] transition-all duration-300">Access Account</button>
+      <a href="hubpremier.html" class="w-full mt-4 bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] transition-all duration-300">Access Account</a>
     </form>
 
     <form id="view-signup" class="flex flex-col gap-5 hidden">
@@ -320,7 +320,7 @@ function renderLanding() {
         <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Password</label>
         <input type="password" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="Create a password">
       </div>
-      <button type="button" class="w-full mt-4 bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] transition-all duration-300">Create Account</button>
+      <a href="hubpremier.html" class="w-full mt-4 bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] transition-all duration-300">Create Account</a>
     </form>
 
   </div>
