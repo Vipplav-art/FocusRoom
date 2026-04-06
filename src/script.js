@@ -78,9 +78,6 @@ const S = {
     createRoomData: { name: '', topic: '', interest: '' },
     activeJoinRoom: null,
 
-    showLoginModal: false,
-    loginData: { username: '', password: '' },
-
     proof: '',
     aiResult: null,
     ambient: null,
@@ -200,8 +197,12 @@ function renderLanding() {
             <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="2">Live Rooms</a></li>
             <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="3">Join</a></li>
         </ul>
-        <a href="javascript:void(0)" data-action="open-login-modal" class="border border-[#C9A84C] text-[#C9A84C] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#C9A84C] hover:text-[#080808] transition-all duration-300">Login</a>
+        <ul class="flex items-center gap-1">
+          <li><button data-auth-trigger="login" class="border border-[#C9A84C] text-[#C9A84C] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#C9A84C] hover:text-[#080808] transition-all duration-300">Log in</button></li>
+          <li><button data-auth-trigger="signup" class="ml-4 bg-[#C9A84C] text-[#080808] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] hover:text-[#080808] transition-all duration-300">Sign up</button></li>
+        </ul>
     </nav>
+
 
     <!-- ─── Horizontal Panels ─── -->
     <section id="horizontal" class="h-screen overflow-hidden bg-[#080808]">
@@ -271,7 +272,61 @@ function renderLanding() {
 
         </div>
     </section>
-    ${S.showLoginModal ? renderLoginModal() : ''}`;
+    
+    <div id="auth-overlay" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 invisible opacity-0" aria-hidden="true"></div>
+
+<div id="auth-panel" class="fixed top-0 right-0 h-full w-full max-w-md bg-[#080808] shadow-2xl z-50 translate-x-full flex flex-col border-l border-gray-800">
+  
+  <div class="flex justify-end p-6">
+    <button id="close-auth" class="text-gray-500 hover:text-[#C9A84C] transition-colors p-2" aria-label="Close">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="px-10 pb-10 overflow-y-auto flex-grow">
+    
+    <div class="flex gap-8 border-b border-gray-800 mb-8">
+      <button id="tab-login" class="pb-3 font-bold uppercase tracking-widest text-xs transition-all border-b-2 border-[#C9A84C] text-[#C9A84C]">Log in</button>
+      <button id="tab-signup" class="pb-3 font-bold uppercase tracking-widest text-xs transition-all border-b-2 border-transparent text-gray-500 hover:text-[#FAFAF5]">Sign up</button>
+    </div>
+
+    <form id="view-login" class="flex flex-col gap-5">
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Email address</label>
+        <input type="email" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="you@example.com">
+      </div>
+      <div>
+        <div class="flex justify-between items-center mb-2">
+           <label class="block text-xs font-bold uppercase tracking-widest text-gray-400">Password</label>
+           <a href="#" class="text-[10px] text-gray-500 hover:text-[#C9A84C] uppercase tracking-wider transition-colors">Forgot?</a>
+        </div>
+        <input type="password" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="••••••••">
+      </div>
+      <button type="button" class="w-full mt-4 bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] transition-all duration-300">Access Account</button>
+    </form>
+
+    <form id="view-signup" class="flex flex-col gap-5 hidden">
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Full Name</label>
+        <input type="text" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="John Doe">
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Email address</label>
+        <input type="email" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="you@example.com">
+      </div>
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Password</label>
+        <input type="password" class="w-full bg-transparent border border-gray-700 text-[#FAFAF5] px-4 py-3 rounded-md focus:outline-none focus:border-[#C9A84C] transition-colors placeholder-gray-600" placeholder="Create a password">
+      </div>
+      <button type="button" class="w-full mt-4 bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#FAFAF5] transition-all duration-300">Create Account</button>
+    </form>
+
+  </div>
+</div>
+
+    `;
 
     // ── GSAP Horizontal Scroll ──
     const container = document.querySelector('#scroll-container');
@@ -867,35 +922,6 @@ function renderJoinRoom() {
     </div>`;
 }
 
-function renderLoginModal() {
-    return `
-    <div class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[5000] flex items-center justify-center p-4" style="animation: fadeIn 0.2s ease">
-        <div class="glass-panel w-full max-w-md p-8 bg-[#0D0D0D]/95 border-[#C9A84C]/20 relative">
-            <button data-action="close-login-modal" class="absolute top-5 right-5 text-[#FAFAF5]/40 hover:text-[#FAFAF5] p-2 transition-colors">
-                <span class="w-4 h-4">${I.x}</span>
-            </button>
-
-            <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.45em] uppercase font-medium block mb-3">Authentication</span>
-            <h2 class="font-display text-4xl mb-7 text-[#FAFAF5]">Login</h2>
-
-            <div class="mb-6">
-                <label class="text-[10px] font-bold tracking-[0.4em] text-[#FAFAF5]/40 uppercase block mb-3">Username</label>
-                <input id="ln-username" class="w-full bg-black/50 border border-[#C9A84C]/15 rounded-xl p-4 text-[#FAFAF5] focus:border-[#C9A84C] outline-none placeholder-[#FAFAF5]/25 text-sm transition-all" placeholder="Enter username">
-            </div>
-
-            <div class="mb-8">
-                <label class="text-[10px] font-bold tracking-[0.4em] text-[#FAFAF5]/40 uppercase block mb-3">Password</label>
-                <input id="ln-password" type="password" class="w-full bg-black/50 border border-[#C9A84C]/15 rounded-xl p-4 text-[#FAFAF5] focus:border-[#C9A84C] outline-none placeholder-[#FAFAF5]/25 text-sm transition-all" placeholder="Enter password">
-            </div>
-
-            <button data-action="confirm-login"
-                class="w-full py-4 rounded-xl bg-[#C9A84C] text-[#080808] font-bold flex justify-center items-center gap-2 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(201,168,76,0.35)] transition-all duration-300 tracking-wide">
-                Login to Hub
-            </button>
-        </div>
-    </div>`;
-}
-
 function renderCreateRoomModal() {
     return `
     <div class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[5000] flex items-center justify-center p-4" style="animation: fadeIn 0.2s ease">
@@ -1005,24 +1031,6 @@ document.addEventListener('click', async e => {
     }
     else if (action === 'create-room')  { S.showCreateModal = true;  renderAppShell(); }
     else if (action === 'close-modal')  { S.showCreateModal = false; renderAppShell(); }
-    else if (action === 'open-login-modal')  { S.showLoginModal = true;  render(); }
-    else if (action === 'close-login-modal')  { S.showLoginModal = false; render(); }
-    else if (action === 'confirm-login') {
-        const username = document.getElementById('ln-username')?.value;
-        const password = document.getElementById('ln-password')?.value;
-        
-        if (!username || !password) {
-            showNotif('Please enter username and password.');
-            return;
-        }
-        
-        // Simple authentication - store login info and redirect
-        lsSet('ch_login', { username, loginTime: Date.now() });
-        S.showLoginModal = false;
-        
-        // Redirect to hubpremier.html
-        window.location.href = 'hubpremier.html';
-    }
     else if (action === 'cr-interest')  { S.createRoomData.interest = el.dataset.val; renderAppShell(); }
     else if (action === 'confirm-create-room') {
         const rn = document.getElementById('cr-name')?.value;
@@ -1043,3 +1051,75 @@ document.addEventListener('click', async e => {
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 render();
+
+
+// DOM Elements
+const overlay = document.getElementById('auth-overlay');
+const panel = document.getElementById('auth-panel');
+const closeBtn = document.getElementById('close-auth');
+
+// Views & Tabs
+const viewLogin = document.getElementById('view-login');
+const viewSignup = document.getElementById('view-signup');
+const tabLogin = document.getElementById('tab-login');
+const tabSignup = document.getElementById('tab-signup');
+
+// GSAP Timeline setup
+const tl = gsap.timeline({ paused: true });
+tl.to(overlay, { autoAlpha: 1, duration: 0.4 })
+  .to(panel, { x: 0, duration: 0.5, ease: 'power4.out' }, '<');
+
+// Reusable classes for active/inactive tabs based on the new aesthetic
+const activeTabClasses = ['border-[#C9A84C]', 'text-[#C9A84C]'];
+const inactiveTabClasses = ['border-transparent', 'text-gray-500', 'hover:text-[#FAFAF5]'];
+
+function setAuthView(view) {
+  if (view === 'login') {
+    // Show Login, Hide Signup
+    viewLogin.classList.remove('hidden');
+    viewSignup.classList.add('hidden');
+    
+    // Style Login Tab as Active
+    tabLogin.classList.add(...activeTabClasses);
+    tabLogin.classList.remove(...inactiveTabClasses);
+    
+    // Style Signup Tab as Inactive
+    tabSignup.classList.remove(...activeTabClasses);
+    tabSignup.classList.add(...inactiveTabClasses);
+    
+  } else if (view === 'signup') {
+    // Show Signup, Hide Login
+    viewSignup.classList.remove('hidden');
+    viewLogin.classList.add('hidden');
+    
+    // Style Signup Tab as Active
+    tabSignup.classList.add(...activeTabClasses);
+    tabSignup.classList.remove(...inactiveTabClasses);
+    
+    // Style Login Tab as Inactive
+    tabLogin.classList.remove(...activeTabClasses);
+    tabLogin.classList.add(...inactiveTabClasses);
+  }
+}
+
+// 1. Listen for clicks on the trigger buttons
+document.querySelectorAll('[data-auth-trigger]').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    // Determine which button was clicked ('login' or 'signup')
+    const requestedView = e.currentTarget.dataset.authTrigger;
+    
+    // Set the correct view BEFORE animating in
+    setAuthView(requestedView);
+    
+    // Play the GSAP animation
+    tl.play();
+  });
+});
+
+// 2. Listen for clicks on the tabs inside the offcanvas
+tabLogin.addEventListener('click', () => setAuthView('login'));
+tabSignup.addEventListener('click', () => setAuthView('signup'));
+
+// 3. Close mechanics
+closeBtn.addEventListener('click', () => tl.reverse());
+overlay.addEventListener('click', () => tl.reverse());
