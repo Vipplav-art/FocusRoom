@@ -38,30 +38,34 @@ const I = {
 // ─── CONFIG & STATE ────────────────────────────────────────────────────────────
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
+// Kinetica Design Token
+const GOLD = '#C9A84C';
+const PURPLE = '#9B7FD4';
+
 const ROOMS = [
-    { id:'quiet', name:'Silent Zone', desc:'Library-grade focus. Zero tolerance for distraction.', icon:'book', color:'text-cyan-400', bg:'bg-cyan-500/10' },
-    { id:'deep-work', name:'Deep Work', desc:'The hardest problems deserve unbroken attention.', icon:'cpu', color:'text-indigo-400', bg:'bg-indigo-500/10' },
-    { id:'exam-blitz', name:'Exam Blitz', desc:'High-intensity MCQ grind. Competitive exam mode.', icon:'target', color:'text-red-400', bg:'bg-red-500/10' },
-    { id:'revision', name:'Revision Room', desc:'Reinforce what you know. Spaced repetition friendly.', icon:'refresh', color:'text-emerald-400', bg:'bg-emerald-500/10' },
-    { id:'code-lab', name:'Code Lab', desc:'For programmers, DSA grinders and CS students.', icon:'cpu', color:'text-amber-400', bg:'bg-amber-500/10' },
-    { id:'chill', name:'Chill & Study', desc:'Light material, podcasts, reading. Low pressure mode.', icon:'headphones', color:'text-purple-400', bg:'bg-purple-500/10' },
+    { id:'quiet',     name:'Silent Zone',   desc:'Library-grade focus. Zero tolerance for distraction.',      icon:'book',       color:'text-[#C9A84C]',   bg:'bg-[#C9A84C]/10'  },
+    { id:'deep-work', name:'Deep Work',     desc:'The hardest problems deserve unbroken attention.',           icon:'cpu',        color:'text-[#9B7FD4]',   bg:'bg-[#9B7FD4]/10'  },
+    { id:'exam-blitz',name:'Exam Blitz',    desc:'High-intensity MCQ grind. Competitive exam mode.',           icon:'target',     color:'text-red-400',     bg:'bg-red-500/10'    },
+    { id:'revision',  name:'Revision Room', desc:'Reinforce what you know. Spaced repetition friendly.',       icon:'refresh',    color:'text-emerald-400', bg:'bg-emerald-500/10'},
+    { id:'code-lab',  name:'Code Lab',      desc:'For programmers, DSA grinders and CS students.',             icon:'cpu',        color:'text-amber-400',   bg:'bg-amber-500/10'  },
+    { id:'chill',     name:'Chill & Study', desc:'Light material, podcasts, reading. Low pressure mode.',     icon:'headphones', color:'text-purple-400',  bg:'bg-purple-500/10' },
 ];
 
 const INTEREST_TAGS = ['Mathematics','Physics','Chemistry','Biology','History','Geography','Economics','Literature','Computer Science','Law','Medicine','Engineering','UPSC','JEE','NEET','GATE','Languages','Business'];
 
 const S = {
-    screen: 'landing', // 'landing', 'setup', 'app', 'session', 'accountability'
+    screen: 'landing',
     activeNav: 'rooms',
     user: null,
     sessions: [],
     leaderboard: [],
-    
+
     setupStep: 0,
     setupData: { name: '', examType: '', studyStyle: '' },
 
     selectedRoom: null,
     goal: '',
-    timer: 25*60,
+    timer: 25 * 60,
     timerRunning: false,
     pomPhase: 'work',
     pomCount: 0,
@@ -84,7 +88,7 @@ let timerIv = null;
 let notifTO = null;
 let landingScrollTween = null;
 
-// ─── LIQUID PARTICLE CURSOR ──────────────────────────────────────────────────
+// ─── LIQUID PARTICLE CURSOR (Gold Edition) ───────────────────────────────────
 function initLiquidCursor() {
     const container = document.getElementById('cursor-container');
     const numTrails = 12;
@@ -93,32 +97,23 @@ function initLiquidCursor() {
     for (let i = 0; i < numTrails; i++) {
         const div = document.createElement('div');
         div.className = 'cursor-trail';
-        // Size decreases for trail effect
-        const size = 30 - (i * 2);
-        div.style.width = `${size}px`;
-        div.style.height = `${size}px`;
-        // Opacity mapping
-        div.style.opacity = 1 - (i / numTrails);
+        const size = 28 - (i * 1.8);
+        div.style.width  = `${Math.max(size, 4)}px`;
+        div.style.height = `${Math.max(size, 4)}px`;
+        div.style.opacity = (1 - (i / numTrails)) * 0.85;
         container.appendChild(div);
         trails.push(div);
     }
 
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    let pos = [];
-    for (let i = 0; i < numTrails; i++) pos.push({ x: mouse.x, y: mouse.y });
+    let pos = Array.from({ length: numTrails }, () => ({ x: mouse.x, y: mouse.y }));
 
-    window.addEventListener('mousemove', (e) => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-    });
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
     gsap.ticker.add(() => {
-        // Leader follows mouse strictly
         pos[0].x += (mouse.x - pos[0].x) * 0.4;
         pos[0].y += (mouse.y - pos[0].y) * 0.4;
         gsap.set(trails[0], { x: pos[0].x, y: pos[0].y });
-
-        // Followers follow the one ahead of them
         for (let i = 1; i < numTrails; i++) {
             pos[i].x += (pos[i - 1].x - pos[i].x) * 0.35;
             pos[i].y += (pos[i - 1].y - pos[i].y) * 0.35;
@@ -142,8 +137,7 @@ function stopAudio() {
     if (sourceNode) { try { sourceNode.stop(); } catch(e){} sourceNode = null; }
 }
 function startAudio(type) {
-    ensureAudio();
-    stopAudio();
+    ensureAudio(); stopAudio();
     const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 3, audioCtx.sampleRate);
     const data = buf.getChannelData(0);
     for (let i = 0; i < data.length; i++) {
@@ -152,17 +146,15 @@ function startAudio(type) {
         else data[i] = (Math.random()*2-1) * 0.5;
     }
     sourceNode = audioCtx.createBufferSource();
-    sourceNode.buffer = buf;
-    sourceNode.loop = true;
-    sourceNode.connect(gainNode);
-    sourceNode.start();
+    sourceNode.buffer = buf; sourceNode.loop = true;
+    sourceNode.connect(gainNode); sourceNode.start();
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
-const lsGet = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+const lsGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
 const fmt = s => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
-const getJoinRooms = () => (lsGet('ch_join_rooms') || []).filter(r => Date.now() - r.createdAt < 4 * 60 * 60 * 1000);
+const getJoinRooms = () => (lsGet('ch_join_rooms') || []).filter(r => Date.now() - r.createdAt < 4*60*60*1000);
 
 function showNotif(msg) {
     S.notification = msg;
@@ -171,169 +163,250 @@ function showNotif(msg) {
     if (!el) {
         el = document.createElement('div');
         el.id = 'notif-el';
-        el.className = 'fixed top-6 right-6 bg-zinc-900 border border-cyan-500/50 rounded-xl px-5 py-3 text-sm shadow-[0_0_20px_rgba(0,212,255,0.2)] z-[10000] flex items-center gap-3 transition-all duration-300 translate-x-0 opacity-100';
+        el.className = 'fixed top-6 right-6 bg-[#0D0D0D] border border-[#C9A84C]/30 rounded-xl px-5 py-3 text-sm shadow-[0_0_24px_rgba(201,168,76,0.12)] z-[10000] flex items-center gap-3 transition-all duration-300 translate-x-0 opacity-100';
         document.body.appendChild(el);
     }
-    el.innerHTML = `<span class="text-cyan-400 w-4 h-4">${I.bolt}</span>${msg}`;
-    notifTO = setTimeout(() => { 
-        if(el) { el.classList.add('opacity-0', 'translate-x-4'); setTimeout(() => el.remove(), 300); }
+    el.innerHTML = `<span class="text-[#C9A84C] w-4 h-4 shrink-0">${I.bolt}</span><span class="text-[#FAFAF5]/90">${msg}</span>`;
+    notifTO = setTimeout(() => {
+        if (el) { el.classList.add('opacity-0', 'translate-x-4'); setTimeout(() => el.remove(), 300); }
     }, 4000);
 }
 
 // ─── RENDER DISPATCH ──────────────────────────────────────────────────────────
 const app = document.getElementById('app');
 function render() {
-    if (S.screen === 'landing') renderLanding();
-    else if (S.screen === 'setup') renderSetup();
-    else if (S.screen === 'session') renderSession();
+    if (S.screen === 'landing')       renderLanding();
+    else if (S.screen === 'setup')    renderSetup();
+    else if (S.screen === 'session')  renderSession();
     else if (S.screen === 'accountability') renderAccountability();
     else renderAppShell();
 }
 
-// ─── VIEW: LANDING (HORIZONTAL GSAP) ──────────────────────────────────────────
+// ─── VIEW: LANDING — KINETICA HORIZONTAL ──────────────────────────────────────
 function renderLanding() {
-    // Structure similar to UX Studio (horizontal scroll spy)
     app.innerHTML = `
-    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 md:px-16 py-6 text-white mix-blend-difference">
+    <!-- ─── Kinetica Nav ─── -->
+    <nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 md:px-16 py-5 bg-[#080808]/85 backdrop-blur-md border-b border-[#C9A84C]/10">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-white text-black flex items-center justify-center">${I.bolt}</div>
-            <span class="font-bold text-xl tracking-tighter">CORTEX HUB</span>
+            <div class="w-8 h-8 rounded-lg bg-[#C9A84C] text-[#080808] flex items-center justify-center">${I.bolt}</div>
+            <span class="font-bold text-lg tracking-[0.08em] text-[#FAFAF5]">CORTEX HUB</span>
         </div>
-        <ul class="hidden md:flex gap-8 font-medium uppercase text-sm tracking-widest text-white/60">
-            <li><a href="#" class="nav-link transition-colors hover:text-white" data-index="0">Focus</a></li>
-            <li><a href="#" class="nav-link transition-colors hover:text-white" data-index="1">Prove It</a></li>
-            <li><a href="#" class="nav-link transition-colors hover:text-white" data-index="2">Live Rooms</a></li>
-            <li><a href="#" class="nav-link transition-colors hover:text-white" data-index="3">Join</a></li>
+        <ul class="hidden md:flex gap-8 font-medium uppercase text-xs tracking-[0.3em] text-[#FAFAF5]/40">
+            <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="0">Focus</a></li>
+            <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="1">Prove It</a></li>
+            <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="2">Live Rooms</a></li>
+            <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="3">Join</a></li>
         </ul>
-        <button data-action="start" class="bg-white text-black px-6 py-2 rounded-full font-bold uppercase tracking-wide hover:scale-105 transition-transform">Enter Hub</button>
+        <button data-action="start" class="border border-[#C9A84C] text-[#C9A84C] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#C9A84C] hover:text-[#080808] transition-all duration-300">Enter Hub</button>
     </nav>
 
-    <section id="horizontal" class="h-screen overflow-hidden bg-black">
+    <!-- ─── Horizontal Panels ─── -->
+    <section id="horizontal" class="h-screen overflow-hidden bg-[#080808]">
         <div id="scroll-container" class="flex h-screen w-max">
-            
-            <div class="panel w-screen h-screen shrink-0 bg-black text-white flex flex-col items-center justify-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.1),transparent_50%)]"></div>
-                <h1 class="text-[12vw] font-display leading-none tracking-tight">FOCUS.</h1>
-                <p class="mt-4 text-xl md:text-2xl text-white/60 font-light max-w-2xl text-center px-6">The study platform that actually holds you accountable. No shortcuts.</p>
+
+            <!-- Panel 01: FOCUS -->
+            <div class="panel w-screen h-screen shrink-0 bg-[#080808] text-[#FAFAF5] flex flex-col items-center justify-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.07),transparent_60%)]"></div>
+                <div class="panel-vline left-[12%]"></div>
+                <div class="panel-vline right-[12%]"></div>
+                <div class="panel-hline top-[15%]"></div>
+                <div class="panel-hline bottom-[15%]"></div>
+                <span class="text-[#C9A84C]/50 text-[10px] tracking-[0.5em] uppercase font-medium mb-8 relative z-10">01 — Focus</span>
+                <h1 class="text-[13vw] font-display leading-none tracking-tight relative z-10">FOCUS.</h1>
+                <div class="w-12 h-[1px] bg-[#C9A84C] mt-8 mb-8 relative z-10"></div>
+                <p class="text-lg text-[#FAFAF5]/40 font-light max-w-xl text-center px-6 leading-relaxed relative z-10">The study platform that actually holds you accountable. No shortcuts, no excuses.</p>
             </div>
 
-            <div class="panel w-screen h-screen shrink-0 bg-zinc-950 text-white flex flex-col items-center justify-center border-l border-white/10 relative">
-                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(108,92,231,0.1),transparent_50%)]"></div>
-                <h1 class="text-[12vw] font-display leading-none tracking-tight">PROVE IT.</h1>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-5xl px-6">
-                    <div class="glass-panel p-8 text-center"><div class="text-cyan-400 mb-4 flex justify-center">${I.robot}</div><h3 class="font-bold text-xl mb-2">AI Accountability</h3><p class="text-white/60">Every session graded by AI.</p></div>
-                    <div class="glass-panel p-8 text-center"><div class="text-indigo-400 mb-4 flex justify-center">${I.clock}</div><h3 class="font-bold text-xl mb-2">Pomodoro Native</h3><p class="text-white/60">Built-in 25+5 focus cycles.</p></div>
-                    <div class="glass-panel p-8 text-center"><div class="text-emerald-400 mb-4 flex justify-center">${I.trophy}</div><h3 class="font-bold text-xl mb-2">Live Leaderboard</h3><p class="text-white/60">Compete globally.</p></div>
+            <!-- Panel 02: PROVE IT -->
+            <div class="panel w-screen h-screen shrink-0 bg-[#0A0A0A] text-[#FAFAF5] flex flex-col items-center justify-center border-l border-[#C9A84C]/10 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(155,127,212,0.05),transparent_60%)]"></div>
+                <span class="text-[#C9A84C]/50 text-[10px] tracking-[0.5em] uppercase font-medium mb-8 relative z-10">02 — Prove</span>
+                <h1 class="text-[13vw] font-display leading-none tracking-tight relative z-10">PROVE IT.</h1>
+                <div class="w-12 h-[1px] bg-[#C9A84C] mt-8 mb-10 relative z-10"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl px-6 relative z-10">
+                    <div class="glass-panel p-8 text-center">
+                        <div class="text-[#C9A84C] mb-4 flex justify-center w-8 h-8 mx-auto">${I.robot}</div>
+                        <h3 class="font-bold text-lg mb-2 tracking-wide">AI Accountability</h3>
+                        <p class="text-[#FAFAF5]/40 text-sm">Every session graded by AI.</p>
+                    </div>
+                    <div class="glass-panel p-8 text-center">
+                        <div class="text-[#9B7FD4] mb-4 flex justify-center w-8 h-8 mx-auto">${I.clock}</div>
+                        <h3 class="font-bold text-lg mb-2 tracking-wide">Pomodoro Native</h3>
+                        <p class="text-[#FAFAF5]/40 text-sm">Built-in 25+5 focus cycles.</p>
+                    </div>
+                    <div class="glass-panel p-8 text-center">
+                        <div class="text-emerald-400 mb-4 flex justify-center w-8 h-8 mx-auto">${I.trophy}</div>
+                        <h3 class="font-bold text-lg mb-2 tracking-wide">Live Leaderboard</h3>
+                        <p class="text-[#FAFAF5]/40 text-sm">Compete globally.</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="panel w-screen h-screen shrink-0 bg-neutral-900 text-white flex flex-col items-center justify-center border-l border-white/10">
-                <h1 class="text-[12vw] font-display leading-none tracking-tight">LIVE ROOMS</h1>
-                <p class="mt-4 text-xl text-white/60">Study live with peers. JEE, NEET, UPSC, & More.</p>
+            <!-- Panel 03: LIVE ROOMS -->
+            <div class="panel w-screen h-screen shrink-0 bg-[#0C0C0C] text-[#FAFAF5] flex flex-col items-center justify-center border-l border-[#C9A84C]/10 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_50%,rgba(201,168,76,0.04),transparent_50%)]"></div>
+                <div class="panel-vline left-[12%]"></div>
+                <div class="panel-vline right-[12%]"></div>
+                <span class="text-[#C9A84C]/50 text-[10px] tracking-[0.5em] uppercase font-medium mb-8 relative z-10">03 — Rooms</span>
+                <h1 class="text-[13vw] font-display leading-none tracking-tight relative z-10">LIVE ROOMS</h1>
+                <div class="w-12 h-[1px] bg-[#C9A84C] mt-8 mb-8 relative z-10"></div>
+                <p class="text-lg text-[#FAFAF5]/40 relative z-10">Study live with peers. JEE, NEET, UPSC, & More.</p>
             </div>
 
-            <div class="panel w-screen h-screen shrink-0 bg-white text-black flex flex-col items-center justify-center border-l border-black/10">
-                <h1 class="text-[12vw] font-display leading-none tracking-tight">GROW.</h1>
-                <button data-action="start" class="mt-8 bg-black text-white px-10 py-4 rounded-full font-bold text-xl hover:scale-105 transition-transform flex items-center gap-3">
-                    Launch Cortex Hub ${I.arrowR}
+            <!-- Panel 04: GROW -->
+            <div class="panel w-screen h-screen shrink-0 bg-[#080808] text-[#FAFAF5] flex flex-col items-center justify-center border-l border-[#C9A84C]/10 relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.06),transparent_55%)]"></div>
+                <div class="panel-hline top-[15%]"></div>
+                <div class="panel-hline bottom-[15%]"></div>
+                <span class="text-[#C9A84C]/50 text-[10px] tracking-[0.5em] uppercase font-medium mb-8 relative z-10">04 — Grow</span>
+                <h1 class="text-[13vw] font-display leading-none tracking-tight relative z-10">GROW.</h1>
+                <div class="w-12 h-[1px] bg-[#C9A84C] mt-8 mb-10 relative z-10"></div>
+                <button data-action="start" class="bg-[#C9A84C] text-[#080808] px-10 py-4 rounded-full font-bold text-lg hover:scale-105 hover:shadow-[0_0_30px_rgba(201,168,76,0.4)] transition-all duration-300 flex items-center gap-3 relative z-10">
+                    Launch Cortex Hub <span class="w-5 h-5">${I.arrowR}</span>
                 </button>
             </div>
 
         </div>
     </section>`;
 
-    // Initialize Horizontal GSAP Scroll
-    const container = document.querySelector("#scroll-container");
-    const panels = gsap.utils.toArray(".panel");
-    const navLinks = gsap.utils.toArray(".nav-link");
+    // ── GSAP Horizontal Scroll ──
+    const container = document.querySelector('#scroll-container');
+    const panels    = gsap.utils.toArray('.panel');
+    const navLinks  = gsap.utils.toArray('.nav-link');
 
-    // Clear previous ScrollTriggers if re-rendering
     ScrollTrigger.getAll().forEach(t => t.kill());
 
     landingScrollTween = gsap.to(panels, {
         xPercent: -100 * (panels.length - 1),
-        ease: "none",
+        ease: 'none',
         scrollTrigger: {
-            trigger: "#horizontal",
+            trigger: '#horizontal',
             pin: true,
             scrub: 1,
-            end: () => "+=" + (container.offsetWidth - window.innerWidth),
-            onUpdate: (self) => {
-                const currentIndex = Math.round(self.progress * (panels.length - 1));
-                navLinks.forEach((link, i) => {
-                    if (i === currentIndex) link.classList.add("active");
-                    else link.classList.remove("active");
+            end: () => '+=' + (container.offsetWidth - window.innerWidth),
+            onUpdate(self) {
+                const idx = Math.round(self.progress * (panels.length - 1));
+                navLinks.forEach((l, i) => {
+                    i === idx ? l.classList.add('active') : l.classList.remove('active');
                 });
             }
         }
     });
 
-    navLinks.forEach((link) => {
-        link.addEventListener("click", (e) => {
+    navLinks.forEach(link => {
+        link.addEventListener('click', e => {
             e.preventDefault();
-            const index = parseInt(link.getAttribute("data-index"));
+            const index = parseInt(link.getAttribute('data-index'));
             const totalScroll = container.offsetWidth - window.innerWidth;
             const targetPos = landingScrollTween.scrollTrigger.start + (index / (panels.length - 1)) * totalScroll;
-            gsap.to(window, { duration: 1, scrollTo: targetPos, ease: "power2.inOut" });
+            gsap.to(window, { duration: 1, scrollTo: targetPos, ease: 'power2.inOut' });
         });
     });
 }
 
 // ─── VIEW: SETUP ──────────────────────────────────────────────────────────────
 function renderSetup() {
-    ScrollTrigger.getAll().forEach(t => t.kill()); // Kill scroll effects
-    window.scrollTo(0,0);
+    ScrollTrigger.getAll().forEach(t => t.kill());
+    window.scrollTo(0, 0);
 
     const d = S.setupData;
     const step = S.setupStep;
 
+    const examOpts = ['JEE','UPSC','NEET','College','GATE','Custom'];
+    const styleOpts = [
+        { id:'visual',   icon: I.eye,     title:'Visual Learner',  desc:'Diagrams & structured notes' },
+        { id:'revision', icon: I.refresh, title:'Revision Mode',   desc:'Repeat & reinforce concepts' },
+        { id:'problem',  icon: I.target,  title:'Problem Solver',  desc:'Practice questions & mocks' }
+    ];
+
     const steps = [
-        { title: "What's your name?", ok: d.name.trim().length > 1, 
-          body: `<input id="inp-name" value="${d.name}" placeholder="Enter your name..." class="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-lg focus:border-cyan-400 focus:outline-none transition-colors">` },
-        { title: 'What are you preparing for?', ok: !!d.examType, 
-          body: `<div class="grid grid-cols-2 gap-3">${['JEE','UPSC','NEET','College','GATE','Custom'].map(e => 
-            `<button class="p-4 rounded-xl border transition-all ${d.examType===e ? 'bg-cyan-500/20 border-cyan-400 text-cyan-400' : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'}" data-action="exam" data-val="${e}">${e}</button>`).join('')}</div>` },
-        { title: 'How do you study best?', ok: !!d.studyStyle, 
-          body: `<div class="flex flex-col gap-3">${[
-            { id:'visual', icon: I.eye, title:'Visual Learner', desc:'Diagrams & structured notes' },
-            { id:'revision', icon: I.refresh, title:'Revision Mode', desc:'Repeat & reinforce concepts' },
-            { id:'problem', icon: I.target, title:'Problem Solver', desc:'Practice questions & mocks' }
-          ].map(s => 
-            `<button class="flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${d.studyStyle===s.id ? 'bg-indigo-500/20 border-indigo-400' : 'bg-white/5 border-white/10 hover:bg-white/10'}" data-action="style" data-val="${s.id}">
-                <div class="w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${d.studyStyle===s.id ? 'bg-indigo-500/30 text-indigo-400' : 'bg-white/5 text-white/50'}">${s.icon}</div>
-                <div><div class="font-bold text-lg">${s.title}</div><div class="text-sm text-white/50">${s.desc}</div></div>
-            </button>`).join('')}</div>` }
+        {
+            title: "What's your name?",
+            ok: d.name.trim().length > 1,
+            body: `<input id="inp-name" value="${d.name}" placeholder="Enter your name…"
+                class="w-full bg-[#FAFAF5]/5 border border-[#C9A84C]/20 rounded-xl px-5 py-4 text-lg focus:border-[#C9A84C] focus:shadow-[0_0_0_1px_rgba(201,168,76,0.25)] outline-none transition-all text-[#FAFAF5] placeholder-[#FAFAF5]/30">`
+        },
+        {
+            title: 'What are you preparing for?',
+            ok: !!d.examType,
+            body: `<div class="grid grid-cols-2 gap-3">
+                ${examOpts.map(e => `
+                <button class="p-4 rounded-xl border text-sm font-semibold tracking-wide transition-all ${d.examType===e
+                    ? 'bg-[#C9A84C]/15 border-[#C9A84C] text-[#C9A84C] shadow-[0_0_12px_rgba(201,168,76,0.15)]'
+                    : 'bg-[#FAFAF5]/5 border-[#FAFAF5]/10 text-[#FAFAF5]/60 hover:bg-[#FAFAF5]/8 hover:text-[#FAFAF5]'}"
+                    data-action="exam" data-val="${e}">${e}</button>`).join('')}
+            </div>`
+        },
+        {
+            title: 'How do you study best?',
+            ok: !!d.studyStyle,
+            body: `<div class="flex flex-col gap-3">
+                ${styleOpts.map(s => `
+                <button class="flex items-center gap-4 p-4 rounded-xl border text-left transition-all ${d.studyStyle===s.id
+                    ? 'bg-[#C9A84C]/12 border-[#C9A84C] shadow-[0_0_12px_rgba(201,168,76,0.12)]'
+                    : 'bg-[#FAFAF5]/5 border-[#FAFAF5]/10 hover:bg-[#FAFAF5]/8'}"
+                    data-action="style" data-val="${s.id}">
+                    <div class="w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${d.studyStyle===s.id
+                        ? 'bg-[#C9A84C]/25 text-[#C9A84C]'
+                        : 'bg-[#FAFAF5]/8 text-[#FAFAF5]/40'}">${s.icon}</div>
+                    <div>
+                        <div class="font-bold text-lg text-[#FAFAF5]">${s.title}</div>
+                        <div class="text-sm text-[#FAFAF5]/40 mt-0.5">${s.desc}</div>
+                    </div>
+                </button>`).join('')}
+            </div>`
+        }
     ];
 
     const cur = steps[step];
+
     app.innerHTML = `
-    <div class="min-h-screen bg-black flex items-center justify-center p-6">
-        <div class="w-full max-w-md animate-[fadeIn_0.5s_ease]">
+    <div class="min-h-screen bg-[#080808] flex items-center justify-center p-6 relative">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_40%_50%,rgba(201,168,76,0.04),transparent_60%)]"></div>
+        <div class="w-full max-w-md relative z-10" style="animation: fadeIn 0.5s ease">
             <div class="flex items-center gap-3 mb-10">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 flex items-center justify-center text-white">${I.bolt}</div>
-                <span class="font-display text-2xl tracking-wide">CORTEX HUB</span>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#9B7FD4] flex items-center justify-center text-[#080808]">${I.bolt}</div>
+                <span class="font-display text-2xl tracking-[0.08em] text-[#FAFAF5]">CORTEX HUB</span>
             </div>
-            <div class="flex gap-2 mb-8">
-                ${steps.map((_,i) => `<div class="flex-1 h-1 rounded-full ${i<=step ? 'bg-gradient-to-r from-cyan-400 to-indigo-500' : 'bg-white/10'}"></div>`).join('')}
+
+            <!-- Progress -->
+            <div class="flex gap-2 mb-10">
+                ${steps.map((_, i) => `
+                <div class="flex-1 h-[2px] rounded-full ${i <= step
+                    ? 'bg-gradient-to-r from-[#C9A84C] to-[#9B7FD4]'
+                    : 'bg-[#FAFAF5]/10'}"></div>`).join('')}
             </div>
-            <h2 class="font-display text-4xl mb-8">${cur.title}</h2>
+
+            <div class="mb-2">
+                <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.4em] uppercase">Step ${step + 1} of ${steps.length}</span>
+            </div>
+            <h2 class="font-display text-5xl mb-8 text-[#FAFAF5]">${cur.title}</h2>
+
             ${cur.body}
-            <button id="setup-next" data-action="setup-next" ${cur.ok?'':'disabled'} 
-                class="w-full mt-8 p-4 rounded-xl font-bold flex justify-center items-center gap-2 transition-all ${cur.ok ? 'bg-white text-black hover:scale-[1.02]' : 'bg-white/10 text-white/30 cursor-not-allowed'}">
-                ${step < steps.length-1 ? `Continue ${I.arrowR}` : `${I.bolt} Enter Cortex Hub`}
+
+            <button id="setup-next" data-action="setup-next" ${cur.ok ? '' : 'disabled'}
+                class="w-full mt-8 p-4 rounded-xl font-bold flex justify-center items-center gap-2 transition-all tracking-wide ${cur.ok
+                    ? 'bg-[#C9A84C] text-[#080808] hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(201,168,76,0.3)]'
+                    : 'bg-[#FAFAF5]/8 text-[#FAFAF5]/25 cursor-not-allowed'}">
+                ${step < steps.length - 1 ? `Continue <span class="w-5 h-5">${I.arrowR}</span>` : `<span class="w-5 h-5">${I.bolt}</span> Enter Cortex Hub`}
             </button>
-            ${step > 0 ? `<button data-action="setup-back" class="w-full mt-4 p-3 text-sm text-white/50 hover:text-white flex justify-center items-center gap-2">${I.arrowL} Back</button>` : ''}
+
+            ${step > 0 ? `<button data-action="setup-back" class="w-full mt-4 p-3 text-sm text-[#FAFAF5]/40 hover:text-[#FAFAF5] flex justify-center items-center gap-2 transition-colors">
+                <span class="w-5 h-5">${I.arrowL}</span> Back
+            </button>` : ''}
         </div>
     </div>`;
 
     const nameInp = document.getElementById('inp-name');
-    if(nameInp) {
+    if (nameInp) {
         nameInp.addEventListener('input', e => {
             S.setupData.name = e.target.value;
             const ok = S.setupData.name.trim().length > 1;
             const btn = document.getElementById('setup-next');
             btn.disabled = !ok;
-            btn.className = `w-full mt-8 p-4 rounded-xl font-bold flex justify-center items-center gap-2 transition-all ${ok ? 'bg-white text-black hover:scale-[1.02]' : 'bg-white/10 text-white/30 cursor-not-allowed'}`;
+            btn.className = `w-full mt-8 p-4 rounded-xl font-bold flex justify-center items-center gap-2 transition-all tracking-wide ${ok
+                ? 'bg-[#C9A84C] text-[#080808] hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(201,168,76,0.3)]'
+                : 'bg-[#FAFAF5]/8 text-[#FAFAF5]/25 cursor-not-allowed'}`;
         });
         nameInp.focus();
     }
@@ -342,52 +415,70 @@ function renderSetup() {
 // ─── VIEW: APP SHELL ──────────────────────────────────────────────────────────
 function renderAppShell() {
     ScrollTrigger.getAll().forEach(t => t.kill());
-    window.scrollTo(0,0);
-    document.body.style.overflow = 'hidden'; // Make app shell full height, scroll inside main
+    window.scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
 
     const navItems = [
-        { id:'rooms', icon: I.grid, label:'Rooms' },
-        { id:'join-room', icon: I.video, label:'Join Room' },
-        { id:'dashboard', icon: I.chart, label:'Dashboard' },
+        { id:'rooms',     icon: I.grid,  label:'Rooms'     },
+        { id:'join-room', icon: I.video, label:'Join Room'  },
+        { id:'dashboard', icon: I.chart, label:'Dashboard'  },
     ];
 
     let content = '';
-    if (S.activeNav === 'rooms' && !S.selectedRoom) content = renderRooms();
-    if (S.activeNav === 'goalset' && S.selectedRoom) content = renderGoalSet();
-    if (S.activeNav === 'join-room') content = renderJoinRoom();
-    if (S.activeNav === 'dashboard') content = renderDashboard();
+    if (S.activeNav === 'rooms'    && !S.selectedRoom) content = renderRooms();
+    if (S.activeNav === 'goalset'  &&  S.selectedRoom) content = renderGoalSet();
+    if (S.activeNav === 'join-room')                   content = renderJoinRoom();
+    if (S.activeNav === 'dashboard')                   content = renderDashboard();
 
     app.innerHTML = `
-    <div class="flex h-screen bg-[#050505] text-white overflow-hidden">
-        <nav class="w-20 md:w-64 border-r border-white/10 flex flex-col p-4 bg-black/50 z-20 shrink-0">
+    <div class="flex h-screen bg-[#080808] text-[#FAFAF5] overflow-hidden">
+
+        <!-- Sidebar -->
+        <nav class="w-20 md:w-64 border-r border-[#C9A84C]/10 flex flex-col p-4 bg-[#080808] z-20 shrink-0 relative">
+            <!-- Subtle vertical gold accent -->
+            <div class="absolute right-0 top-1/4 bottom-1/4 w-[1px] bg-gradient-to-b from-transparent via-[#C9A84C]/15 to-transparent pointer-events-none"></div>
+
             <div class="flex items-center gap-3 mb-10 md:px-2">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(0,212,255,0.4)]">${I.bolt}</div>
-                <span class="font-display text-2xl hidden md:block">CORTEX</span>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#C9A84C] to-[#9B7FD4] flex items-center justify-center shrink-0 shadow-[0_0_18px_rgba(201,168,76,0.35)]">${I.bolt}</div>
+                <div class="hidden md:block">
+                    <div class="font-display text-2xl leading-none text-[#FAFAF5]">CORTEX</div>
+                    <div class="text-[9px] tracking-[0.35em] text-[#C9A84C]/60 uppercase mt-0.5">Hub</div>
+                </div>
             </div>
-            <div class="flex flex-col gap-2">
+
+            <div class="flex flex-col gap-1">
                 ${navItems.map(n => `
-                <button class="flex items-center gap-4 p-3 md:px-4 rounded-xl transition-all ${S.activeNav===n.id || (S.activeNav==='goalset'&&n.id==='rooms') ? 'bg-cyan-500/10 text-cyan-400' : 'text-white/60 hover:bg-white/5 hover:text-white'}" data-action="nav" data-nav="${n.id}">
-                    <div class="w-6 h-6 shrink-0">${n.icon}</div>
-                    <span class="font-medium hidden md:block">${n.label}</span>
+                <button class="flex items-center gap-4 p-3 md:px-4 rounded-xl transition-all text-sm font-semibold ${
+                    S.activeNav === n.id || (S.activeNav === 'goalset' && n.id === 'rooms')
+                        ? 'bg-[#C9A84C]/12 text-[#C9A84C] border border-[#C9A84C]/20'
+                        : 'text-[#FAFAF5]/50 hover:bg-[#FAFAF5]/5 hover:text-[#FAFAF5] border border-transparent'
+                }" data-action="nav" data-nav="${n.id}">
+                    <div class="w-5 h-5 shrink-0">${n.icon}</div>
+                    <span class="hidden md:block">${n.label}</span>
                 </button>`).join('')}
             </div>
-            <div class="mt-auto pt-4 border-t border-white/10 md:px-2 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-lg shrink-0 border-2 border-indigo-500/30">
-                    ${(S.user?.name?.[0]||'U').toUpperCase()}
+
+            <!-- User avatar -->
+            <div class="mt-auto pt-4 border-t border-[#C9A84C]/10 md:px-2 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#9B7FD4] to-purple-700 flex items-center justify-center font-bold shrink-0 border border-[#9B7FD4]/30 text-[#FAFAF5]">
+                    ${(S.user?.name?.[0] || 'U').toUpperCase()}
                 </div>
-                <div class="hidden md:block truncate text-sm font-medium">${S.user?.name || 'User'}</div>
+                <div class="hidden md:block">
+                    <div class="text-sm font-semibold text-[#FAFAF5] truncate">${S.user?.name || 'User'}</div>
+                    <div class="text-[10px] text-[#C9A84C]/60 tracking-widest uppercase">${S.user?.examType || 'Scholar'}</div>
+                </div>
             </div>
         </nav>
 
-        <main class="flex-1 overflow-y-auto relative" id="mc">
-            <div class="max-w-5xl mx-auto p-6 md:p-12 pb-24 animate-[fadeIn_0.3s_ease]">
+        <!-- Main content -->
+        <main class="flex-1 overflow-y-auto relative bg-[#080808]" id="mc">
+            <div class="max-w-5xl mx-auto p-6 md:p-12 pb-24" style="animation: fadeIn 0.3s ease">
                 ${content}
             </div>
         </main>
     </div>
     ${S.showCreateModal ? renderCreateRoomModal() : ''}`;
 
-    // Rebind inputs
     const filterInp = document.getElementById('jr-filter');
     if (filterInp) filterInp.addEventListener('input', e => { S.joinRoomFilter = e.target.value; renderAppShell(); });
     const rnInput = document.getElementById('cr-name');
@@ -397,18 +488,21 @@ function renderAppShell() {
 // ─── PARTIAL: ROOMS ───────────────────────────────────────────────────────────
 function renderRooms() {
     return `
-    <div class="mb-10">
-        <h2 class="font-display text-5xl mb-2">FOCUS ARENAS</h2>
-        <p class="text-white/60">Choose an environment that matches your cognitive load.</p>
+    <div class="mb-12">
+        <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.5em] uppercase font-medium block mb-3">Choose your arena</span>
+        <h2 class="font-display text-6xl mb-2 text-[#FAFAF5]">FOCUS ARENAS</h2>
+        <p class="text-[#FAFAF5]/40 text-sm">Choose an environment that matches your cognitive load.</p>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         ${ROOMS.map(room => `
-        <button class="glass-panel p-6 text-left hover:-translate-y-1 transition-all group ${room.bg} border-transparent hover:border-current ${room.color}" data-action="select-room" data-room="${room.id}">
-            <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-5 ${room.color}">${I[room.icon]}</div>
-            <h3 class="font-bold text-xl text-white mb-2">${room.name}</h3>
-            <p class="text-sm text-white/60 mb-6 leading-relaxed">${room.desc}</p>
-            <div class="flex items-center gap-2 text-xs text-white/40">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse"></span>
+        <button class="glass-panel p-6 text-left hover:-translate-y-1.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] transition-all duration-300 group ${room.bg} relative overflow-hidden" data-action="select-room" data-room="${room.id}">
+            <!-- Corner accent -->
+            <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl ${room.bg} opacity-60 rounded-bl-full pointer-events-none"></div>
+            <div class="w-12 h-12 rounded-xl bg-[#FAFAF5]/8 flex items-center justify-center mb-5 ${room.color}">${I[room.icon]}</div>
+            <h3 class="font-bold text-lg text-[#FAFAF5] mb-2 tracking-wide">${room.name}</h3>
+            <p class="text-sm text-[#FAFAF5]/50 mb-6 leading-relaxed">${room.desc}</p>
+            <div class="flex items-center gap-2 text-xs text-[#FAFAF5]/35 font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse"></span>
                 ${Math.floor(Math.random()*20)+5} studying now
             </div>
         </button>`).join('')}
@@ -420,99 +514,154 @@ function renderGoalSet() {
     const room = S.selectedRoom;
     return `
     <div class="max-w-2xl mx-auto">
-        <button class="text-white/50 hover:text-white flex items-center gap-2 mb-8 text-sm transition-colors" data-action="back-rooms">${I.arrowL} Back to Arenas</button>
-        
-        <div class="glass-panel p-6 mb-6 ${room.bg} border-${room.color.split('-')[1]}-500/30 flex items-center gap-5">
-            <div class="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center ${room.color} shrink-0">${I[room.icon]}</div>
+        <button class="text-[#FAFAF5]/40 hover:text-[#C9A84C] flex items-center gap-2 mb-10 text-sm transition-colors font-medium" data-action="back-rooms">
+            <span class="w-5 h-5">${I.arrowL}</span> Back to Arenas
+        </button>
+
+        <!-- Room identity card -->
+        <div class="glass-panel p-6 mb-6 ${room.bg} flex items-center gap-5">
+            <div class="w-14 h-14 rounded-xl bg-[#FAFAF5]/8 flex items-center justify-center ${room.color} shrink-0">${I[room.icon]}</div>
             <div>
-                <h2 class="font-display text-2xl">${room.name}</h2>
-                <p class="text-sm text-white/60">${room.desc}</p>
+                <div class="text-[#C9A84C]/60 text-[9px] tracking-[0.45em] uppercase font-medium mb-1">Selected Arena</div>
+                <h2 class="font-display text-2xl text-[#FAFAF5]">${room.name}</h2>
+                <p class="text-xs text-[#FAFAF5]/40 mt-0.5">${room.desc}</p>
             </div>
         </div>
 
-        <div class="glass-panel p-8 mb-6">
-            <div class="flex items-center gap-2 text-xs font-bold tracking-widest text-white/50 uppercase mb-4">${I.target} Set Intent</div>
-            <textarea id="goal-inp" rows="3" class="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-cyan-400 focus:outline-none resize-none" placeholder="What exactly will you accomplish in this session?"></textarea>
+        <!-- Intent -->
+        <div class="glass-panel p-8 mb-5">
+            <div class="flex items-center gap-2 text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/60 uppercase mb-4">
+                <span class="w-4 h-4">${I.target}</span> Set Intent
+            </div>
+            <textarea id="goal-inp" rows="3" class="w-full bg-black/40 border border-[#C9A84C]/15 rounded-xl p-4 text-[#FAFAF5] focus:border-[#C9A84C] focus:shadow-[0_0_0_1px_rgba(201,168,76,0.15)] outline-none resize-none placeholder-[#FAFAF5]/25 transition-all"
+                placeholder="What exactly will you accomplish in this session?"></textarea>
         </div>
 
+        <!-- Timer mode -->
         <div class="glass-panel p-8 mb-8">
-            <div class="flex items-center gap-2 text-xs font-bold tracking-widest text-white/50 uppercase mb-4">${I.clock} Timer Mode</div>
+            <div class="flex items-center gap-2 text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/60 uppercase mb-5">
+                <span class="w-4 h-4">${I.clock}</span> Timer Mode
+            </div>
             <div class="flex gap-4">
-                <button class="flex-1 py-3 rounded-xl border flex justify-center items-center gap-2 transition-all ${S.timerMode==='pomodoro'?'bg-cyan-500/20 border-cyan-400 text-cyan-400':'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'}" data-action="timer-mode" data-val="pomodoro">${I.clock} Pomodoro (25m)</button>
-                <button class="flex-1 py-3 rounded-xl border flex justify-center items-center gap-2 transition-all ${S.timerMode==='custom'?'bg-cyan-500/20 border-cyan-400 text-cyan-400':'bg-white/5 border-white/10 text-white/60 hover:bg-white/10'}" data-action="timer-mode" data-val="custom">${I.edit} Custom</button>
+                <button class="flex-1 py-3 rounded-xl border flex justify-center items-center gap-2 transition-all text-sm font-semibold ${S.timerMode==='pomodoro'
+                    ? 'bg-[#C9A84C]/12 border-[#C9A84C] text-[#C9A84C]'
+                    : 'bg-[#FAFAF5]/5 border-[#FAFAF5]/10 text-[#FAFAF5]/50 hover:bg-[#FAFAF5]/8'}"
+                    data-action="timer-mode" data-val="pomodoro">
+                    <span class="w-4 h-4">${I.clock}</span> Pomodoro (25m)
+                </button>
+                <button class="flex-1 py-3 rounded-xl border flex justify-center items-center gap-2 transition-all text-sm font-semibold ${S.timerMode==='custom'
+                    ? 'bg-[#C9A84C]/12 border-[#C9A84C] text-[#C9A84C]'
+                    : 'bg-[#FAFAF5]/5 border-[#FAFAF5]/10 text-[#FAFAF5]/50 hover:bg-[#FAFAF5]/8'}"
+                    data-action="timer-mode" data-val="custom">
+                    <span class="w-4 h-4">${I.edit}</span> Custom
+                </button>
             </div>
             ${S.timerMode === 'custom' ? `
-            <div class="mt-6 flex items-center gap-4 bg-black/40 p-4 rounded-xl border border-white/10 w-max">
-                <input type="number" id="custom-time" value="${S.customTime}" min="1" max="180" class="w-16 bg-transparent text-2xl font-bold text-center focus:outline-none">
-                <span class="text-white/50">minutes</span>
+            <div class="mt-5 flex items-center gap-4 bg-black/40 p-4 rounded-xl border border-[#C9A84C]/15 w-max">
+                <input type="number" id="custom-time" value="${S.customTime}" min="1" max="180"
+                    class="w-16 bg-transparent text-2xl font-bold text-center text-[#C9A84C] focus:outline-none">
+                <span class="text-[#FAFAF5]/40 text-sm">minutes</span>
             </div>` : ''}
         </div>
 
-        <button class="w-full py-4 rounded-xl bg-white text-black font-bold text-lg flex justify-center items-center gap-3 hover:scale-[1.02] transition-transform" id="start-btn" data-action="start-session">
-            ${I.play} Start Deep Work
+        <button id="start-btn" data-action="start-session"
+            class="w-full py-4 rounded-xl bg-[#C9A84C] text-[#080808] font-bold text-lg flex justify-center items-center gap-3 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(201,168,76,0.35)] transition-all duration-300 tracking-wide">
+            <span class="w-5 h-5">${I.play}</span> Start Deep Work
         </button>
     </div>`;
 }
 
 // ─── VIEW: SESSION (TIMER) ────────────────────────────────────────────────────
 function renderSession() {
+    const isWork = S.pomPhase === 'work';
+    const phaseColor = isWork ? 'text-[#C9A84C]' : 'text-emerald-400';
+
     app.innerHTML = `
-    <div class="h-screen w-full flex flex-col items-center justify-center relative p-6">
-        <div class="w-full max-w-xl animate-[fadeIn_0.5s_ease]">
+    <div class="h-screen w-full flex flex-col items-center justify-center relative p-6 bg-[#080808]">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.04),transparent_60%)]"></div>
+
+        <div class="w-full max-w-xl relative z-10" style="animation: fadeIn 0.5s ease">
+            <!-- Header -->
             <div class="flex justify-between items-center mb-12">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center ${S.selectedRoom?.color||'text-cyan-400'}">${I[S.selectedRoom?.icon||'grid']}</div>
+                    <div class="w-12 h-12 rounded-xl bg-[#FAFAF5]/6 flex items-center justify-center ${S.selectedRoom?.color || 'text-[#C9A84C]'}">${I[S.selectedRoom?.icon || 'grid']}</div>
                     <div>
-                        <h2 class="font-bold text-xl">${S.selectedRoom?.name||'Focus'}</h2>
-                        <div class="text-sm text-white/50 flex gap-2"><span id="ph" class="${S.pomPhase==='work'?'text-cyan-400':'text-emerald-400'}">${S.pomPhase==='work'?'Deep Work':'Rest'}</span></div>
+                        <h2 class="font-bold text-lg text-[#FAFAF5]">${S.selectedRoom?.name || 'Focus'}</h2>
+                        <div class="text-xs font-medium tracking-widest uppercase flex gap-2 mt-0.5">
+                            <span id="ph" class="${phaseColor}">${isWork ? 'Deep Work' : 'Rest'}</span>
+                            ${S.pomCount > 0 ? `<span class="text-[#FAFAF5]/30">· ${S.pomCount} done</span>` : ''}
+                        </div>
                     </div>
                 </div>
-                <button data-action="end-session" class="px-4 py-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-colors flex items-center gap-2 text-sm font-bold">
-                    ${I.stop} End
+                <button data-action="end-session" class="px-4 py-2 rounded-lg bg-red-500/8 text-red-400 border border-red-500/25 hover:bg-red-500/16 transition-colors flex items-center gap-2 text-xs font-bold tracking-widest uppercase">
+                    <span class="w-4 h-4">${I.stop}</span> End
                 </button>
             </div>
 
+            <!-- Timer ring -->
             <div class="flex justify-center mb-12 relative">
                 <svg class="timer-svg" width="280" height="280" viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"/>
-                    <circle id="tc" cx="100" cy="100" r="88" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" class="${S.pomPhase==='work'?'text-cyan-400':'text-emerald-400'} transition-all duration-1000 ease-linear"/>
+                    <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="5"/>
+                    <circle id="tc" cx="100" cy="100" r="88" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"
+                        class="${phaseColor} transition-all duration-1000 ease-linear"/>
                 </svg>
-                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <div id="td" class="font-display text-7xl tracking-wider ${S.pomPhase==='work'?'text-cyan-400':'text-emerald-400'} drop-shadow-[0_0_15px_currentColor]">${fmt(S.timer)}</div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                    <div id="td" class="font-display text-7xl tracking-wider ${phaseColor} drop-shadow-[0_0_18px_currentColor]">${fmt(S.timer)}</div>
+                    <div class="text-[#FAFAF5]/30 text-xs tracking-[0.35em] uppercase">${isWork ? 'Focus' : 'Rest'}</div>
                 </div>
             </div>
 
+            <!-- Play/Pause -->
             <div class="flex justify-center mb-10">
-                <button id="play-pause" data-action="toggle-timer" class="px-10 py-4 rounded-full font-bold text-lg flex items-center gap-3 transition-all ${S.timerRunning ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-white text-black hover:scale-105'}">
-                    ${S.timerRunning ? I.pause : I.play} ${S.timerRunning ? 'Pause' : 'Resume'}
+                <button id="play-pause" data-action="toggle-timer"
+                    class="px-10 py-4 rounded-full font-bold text-sm tracking-widest uppercase flex items-center gap-3 transition-all duration-300 ${S.timerRunning
+                        ? 'bg-[#FAFAF5]/8 text-[#FAFAF5] hover:bg-[#FAFAF5]/12 border border-[#FAFAF5]/15'
+                        : 'bg-[#C9A84C] text-[#080808] hover:scale-105 hover:shadow-[0_0_20px_rgba(201,168,76,0.4)]'}">
+                    <span class="w-5 h-5">${S.timerRunning ? I.pause : I.play}</span>
+                    ${S.timerRunning ? 'Pause' : 'Resume'}
                 </button>
             </div>
 
-            <div class="glass-panel p-6 mb-6">
-                <div class="text-xs font-bold tracking-widest text-white/50 uppercase mb-2">${I.target} Current Goal</div>
-                <div class="text-white/90 font-medium">${S.goal}</div>
+            <!-- Goal & Controls row -->
+            <div class="glass-panel p-5 mb-5">
+                <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-2 flex items-center gap-2">
+                    <span class="w-4 h-4">${I.target}</span> Current Goal
+                </div>
+                <div class="text-[#FAFAF5]/80 font-medium text-sm">${S.goal}</div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <div class="glass-panel p-6">
-                    <div class="text-xs font-bold tracking-widest text-white/50 uppercase mb-4 flex items-center gap-2">${I.headphones} Ambient</div>
-                    <div class="flex flex-col gap-2">
+                <!-- Ambient -->
+                <div class="glass-panel p-5">
+                    <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-4 flex items-center gap-2">
+                        <span class="w-4 h-4">${I.headphones}</span> Ambient
+                    </div>
+                    <div class="flex flex-col gap-1">
                         ${[['rain','Rain',I.rain],['cafe','Cafe',I.coffee],['white','White Noise',I.wave]].map(([id,l,icon]) => `
-                            <button class="ambient-btn flex items-center gap-3 p-2 rounded-lg text-sm text-left transition-colors ${S.ambient===id?'bg-indigo-500/20 text-indigo-400':'text-white/60 hover:bg-white/10'}" data-action="ambient" data-val="${id}">
-                                <div class="w-5 h-5">${icon}</div> ${l} ${S.ambient===id?'●':''}
-                            </button>`).join('')}
+                        <button class="ambient-btn flex items-center gap-3 p-2 rounded-lg text-xs text-left transition-colors ${S.ambient===id
+                            ? 'bg-[#C9A84C]/12 text-[#C9A84C] border border-[#C9A84C]/20'
+                            : 'text-[#FAFAF5]/50 hover:bg-[#FAFAF5]/5'}"
+                            data-action="ambient" data-val="${id}">
+                            <div class="w-4 h-4">${icon}</div> ${l} ${S.ambient===id ? '●' : ''}
+                        </button>`).join('')}
                     </div>
                 </div>
-                <div class="glass-panel p-6">
-                    <div class="text-xs font-bold tracking-widest text-white/50 uppercase mb-4 flex items-center gap-2">${I.users} Peers</div>
-                    <div class="flex -space-x-2 mb-3">
-                        ${['A','R','K'].map((l,i) => `<div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 border-black" style="background:hsl(${i*70+200},50%,40%)">${l}</div>`).join('')}
+                <!-- Peers -->
+                <div class="glass-panel p-5">
+                    <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-4 flex items-center gap-2">
+                        <span class="w-4 h-4">${I.users}</span> Peers
                     </div>
-                    <div class="text-xs text-white/50">+8 others</div>
+                    <div class="flex -space-x-2 mb-3">
+                        ${['A','R','K'].map((l,i) => `
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 border-[#080808] text-[#FAFAF5]"
+                            style="background:hsl(${i*70+200},40%,35%)">${l}</div>`).join('')}
+                    </div>
+                    <div class="text-xs text-[#FAFAF5]/35">+8 others focusing</div>
                 </div>
             </div>
         </div>
     </div>`;
+
     updateTimerDOM();
 }
 
@@ -525,10 +674,10 @@ function startTimer() {
         if (S.timer <= 0) {
             if (S.timerMode === 'pomodoro') {
                 S.pomPhase = S.pomPhase === 'work' ? 'break' : 'work';
-                if(S.pomPhase === 'break') S.pomCount++;
+                if (S.pomPhase === 'break') S.pomCount++;
                 S.timer = S.pomPhase === 'work' ? 25*60 : 5*60;
-                showNotif(S.pomPhase==='break' ? '🎉 Pomodoro done! Break time.' : '💪 Break over! Focus.');
-                renderSession(); // Re-render for color changes
+                showNotif(S.pomPhase === 'break' ? '🎉 Pomodoro done! Break time.' : '💪 Break over! Focus.');
+                renderSession();
             } else {
                 S.timerRunning = false;
                 showNotif('⏰ Session complete!');
@@ -539,11 +688,14 @@ function startTimer() {
 }
 
 function updateTimerDOM() {
-    const td = document.getElementById('td'), tc = document.getElementById('tc');
+    const td = document.getElementById('td');
+    const tc = document.getElementById('tc');
     if (td) td.textContent = fmt(S.timer);
     if (tc) {
-        const total = S.timerMode === 'pomodoro' ? (S.pomPhase === 'work' ? 25*60 : 5*60) : S.customTime*60;
-        const prog = Math.min((total - S.timer)/total, 1);
+        const total = S.timerMode === 'pomodoro'
+            ? (S.pomPhase === 'work' ? 25*60 : 5*60)
+            : S.customTime * 60;
+        const prog = Math.min((total - S.timer) / total, 1);
         tc.style.strokeDasharray = 2 * Math.PI * 88;
         tc.style.strokeDashoffset = (2 * Math.PI * 88) * (1 - prog);
     }
@@ -551,28 +703,38 @@ function updateTimerDOM() {
 
 // ─── VIEW: ACCOUNTABILITY ─────────────────────────────────────────────────────
 function renderAccountability() {
-    const dur = S.sessionStart ? Math.round((Date.now()-S.sessionStart)/60000) : S.customTime;
-    
+    const dur = S.sessionStart ? Math.round((Date.now() - S.sessionStart) / 60000) : S.customTime;
+
     app.innerHTML = `
-    <div class="min-h-screen flex items-center justify-center p-6 bg-[#050505]">
-        <div class="w-full max-w-2xl animate-[fadeIn_0.5s_ease]">
-            <div class="text-center mb-10">
-                <h1 class="font-display text-6xl mb-4 text-white">PROVE YOUR WORK</h1>
-                <p class="text-white/60 text-lg">You studied for <span class="text-white font-bold">${dur} minutes</span>. What did you accomplish?</p>
-            </div>
-            
-            <div class="glass-panel p-6 mb-6">
-                <div class="text-xs font-bold tracking-widest text-white/50 uppercase mb-2">Stated Goal</div>
-                <div class="p-4 bg-cyan-500/10 border-l-4 border-cyan-400 rounded-r-xl font-medium">${S.goal}</div>
+    <div class="min-h-screen flex items-center justify-center p-6 bg-[#080808] relative">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,168,76,0.05),transparent_60%)]"></div>
+        <div class="w-full max-w-2xl relative z-10" style="animation: fadeIn 0.5s ease">
+
+            <div class="text-center mb-12">
+                <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.5em] uppercase font-medium block mb-5">Session Complete</span>
+                <h1 class="font-display text-7xl mb-4 text-[#FAFAF5]">PROVE YOUR WORK</h1>
+                <p class="text-[#FAFAF5]/50 text-lg">You studied for <span class="text-[#C9A84C] font-bold">${dur} minutes</span>. What did you accomplish?</p>
             </div>
 
+            <!-- Stated goal -->
+            <div class="glass-panel p-6 mb-5">
+                <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-3">Stated Goal</div>
+                <div class="p-4 bg-[#C9A84C]/8 border-l-4 border-[#C9A84C] rounded-r-xl font-medium text-[#FAFAF5]/90">${S.goal}</div>
+            </div>
+
+            <!-- Proof input -->
             <div class="glass-panel p-8 mb-8">
-                <div class="text-xs font-bold tracking-widest text-white/50 uppercase mb-4 flex items-center gap-2">${I.edit} Execution Proof</div>
-                <textarea id="proof-inp" rows="5" class="w-full bg-black/40 border border-white/10 rounded-xl p-5 text-white focus:border-cyan-400 focus:outline-none resize-none" placeholder="Be honest. AI will evaluate this. e.g., 'Completed 20 physics problems...'"></textarea>
+                <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-4 flex items-center gap-2">
+                    <span class="w-4 h-4">${I.edit}</span> Execution Proof
+                </div>
+                <textarea id="proof-inp" rows="5"
+                    class="w-full bg-black/40 border border-[#C9A84C]/15 rounded-xl p-5 text-[#FAFAF5] focus:border-[#C9A84C] focus:shadow-[0_0_0_1px_rgba(201,168,76,0.12)] outline-none resize-none placeholder-[#FAFAF5]/25 transition-all"
+                    placeholder="Be honest. AI will evaluate this. e.g., 'Completed 20 physics problems from HC Verma…'"></textarea>
             </div>
 
-            <button id="submit-btn" data-action="submit-proof" class="w-full py-5 rounded-xl bg-white text-black font-bold text-lg flex justify-center items-center gap-3 hover:scale-[1.02] transition-transform">
-                ${I.robot} Submit for AI Review
+            <button id="submit-btn" data-action="submit-proof"
+                class="w-full py-5 rounded-xl bg-[#C9A84C] text-[#080808] font-bold text-lg flex justify-center items-center gap-3 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(201,168,76,0.35)] transition-all duration-300 tracking-wide">
+                <span class="w-5 h-5">${I.robot}</span> Submit for AI Review
             </button>
         </div>
     </div>`;
@@ -580,126 +742,157 @@ function renderAccountability() {
 
 // ─── VIEW: DASHBOARD ──────────────────────────────────────────────────────────
 function renderDashboard() {
-    const sDone = S.sessions.filter(s=>s.status==='completed');
-    const hrs = Math.round(sDone.reduce((a,c)=>a+(c.duration||0),0)/60*10)/10;
-    
+    const sDone = S.sessions.filter(s => s.status === 'completed');
+    const hrs   = Math.round(sDone.reduce((a, c) => a + (c.duration || 0), 0) / 60 * 10) / 10;
+
     return `
-    <div class="mb-10">
-        <h2 class="font-display text-5xl mb-2">DASHBOARD</h2>
+    <div class="mb-12">
+        <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.5em] uppercase font-medium block mb-3">Your Progress</span>
+        <h2 class="font-display text-6xl mb-3 text-[#FAFAF5]">DASHBOARD</h2>
         <div class="flex items-center gap-3">
-            <span class="px-3 py-1 bg-amber-500/20 text-amber-400 rounded-md text-xs font-bold border border-amber-500/30">🔥 ${S.user?.streak||1} Day Streak</span>
-            <span class="text-white/50 text-sm">Cortex Scholar Rank</span>
+            <span class="px-3 py-1 bg-[#C9A84C]/12 text-[#C9A84C] rounded-md text-xs font-bold border border-[#C9A84C]/25 tracking-wide">🔥 ${S.user?.streak || 1} Day Streak</span>
+            <span class="text-[#FAFAF5]/35 text-xs tracking-wide">Cortex Scholar Rank</span>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="glass-panel p-6 border-cyan-500/30">
-            <div class="w-10 h-10 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-4">${I.clock}</div>
-            <div class="font-display text-4xl text-cyan-400 mb-1">${hrs}h</div>
-            <div class="text-sm text-white/50 font-bold uppercase tracking-wider">Total Focus</div>
+    <!-- Stat cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <div class="glass-panel p-6 border border-[#C9A84C]/20">
+            <div class="w-10 h-10 rounded-lg bg-[#C9A84C]/15 text-[#C9A84C] flex items-center justify-center mb-5 w-5 h-5">${I.clock}</div>
+            <div class="font-display text-4xl text-[#C9A84C] mb-1">${hrs} hr</div>
+            <div class="text-xs text-[#FAFAF5]/40 font-bold uppercase tracking-[0.3em]">Total Focus</div>
         </div>
-        <div class="glass-panel p-6 border-emerald-500/30">
-            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">${I.check}</div>
+        <div class="glass-panel p-6 border border-emerald-500/20">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center mb-5 w-5 h-5">${I.check}</div>
             <div class="font-display text-4xl text-emerald-400 mb-1">${sDone.length}</div>
-            <div class="text-sm text-white/50 font-bold uppercase tracking-wider">Sessions</div>
+            <div class="text-xs text-[#FAFAF5]/40 font-bold uppercase tracking-[0.3em]">Sessions</div>
         </div>
-        <div class="glass-panel p-6 border-indigo-500/30">
-            <div class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4">${I.robot}</div>
-            <div class="font-display text-4xl text-indigo-400 mb-1">92%</div>
-            <div class="text-sm text-white/50 font-bold uppercase tracking-wider">AI Avg Score</div>
+        <div class="glass-panel p-6 border border-[#9B7FD4]/20">
+            <div class="w-10 h-10 rounded-lg bg-[#9B7FD4]/15 text-[#9B7FD4] flex items-center justify-center mb-5 w-5 h-5">${I.robot}</div>
+            <div class="font-display text-4xl text-[#9B7FD4] mb-1">92%</div>
+            <div class="text-xs text-[#FAFAF5]/40 font-bold uppercase tracking-[0.3em]">AI Avg Score</div>
         </div>
     </div>
 
-    <div class="glass-panel p-8 mb-8">
-        <div class="text-xs font-bold tracking-widest text-white/50 uppercase mb-6 flex items-center gap-2">${I.edit} Recent Sessions</div>
-        <div class="flex flex-col gap-4">
-            ${S.sessions.length===0 ? '<p class="text-white/40 text-center py-8">No sessions yet.</p>' : 
-              S.sessions.slice(0,5).map(s => `
-                <div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${s.status==='completed'?'bg-emerald-500/20 text-emerald-400':'bg-red-500/20 text-red-400'}">${s.status==='completed'?I.check:I.xcirc}</div>
-                    <div class="flex-1 min-w-0">
-                        <div class="font-bold truncate">${s.goal}</div>
-                        <div class="text-xs text-white/50 mt-1">${s.room} · ${s.duration}m</div>
+    <!-- Recent sessions -->
+    <div class="glass-panel p-8">
+        <div class="text-[10px] font-bold tracking-[0.4em] text-[#C9A84C]/50 uppercase mb-6 flex items-center gap-2">
+            <span class="w-4 h-4">${I.edit}</span> Recent Sessions
+        </div>
+        <div class="flex flex-col gap-3">
+            ${S.sessions.length === 0
+                ? '<p class="text-[#FAFAF5]/25 text-center py-10 font-medium">No sessions yet. Start your first focus arena.</p>'
+                : S.sessions.slice(0, 5).map(s => `
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-[#FAFAF5]/3 hover:bg-[#FAFAF5]/5 transition-colors border border-transparent hover:border-[#C9A84C]/10">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${s.status === 'completed'
+                        ? 'bg-emerald-500/15 text-emerald-400'
+                        : 'bg-red-500/15 text-red-400'}">
+                        <span class="w-5 h-5">${s.status === 'completed' ? I.check : I.xcirc}</span>
                     </div>
-                    <div class="text-xs text-white/40">${new Date().toLocaleDateString()}</div>
-                </div>
-              `).join('')}
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-sm text-[#FAFAF5] truncate">${s.goal}</div>
+                        <div class="text-xs text-[#FAFAF5]/35 mt-1">${s.room} · ${s.duration}m</div>
+                    </div>
+                    <div class="text-xs text-[#FAFAF5]/25">${new Date().toLocaleDateString()}</div>
+                </div>`).join('')}
         </div>
     </div>`;
 }
 
 // ─── VIEW: JOIN ROOM ──────────────────────────────────────────────────────────
 function renderJoinRoom() {
-    const all = getJoinRooms();
-    const filter = S.joinRoomFilter.toLowerCase();
+    const all      = getJoinRooms();
+    const filter   = S.joinRoomFilter.toLowerCase();
     const filtered = filter ? all.filter(r => r.name.toLowerCase().includes(filter) || r.interest.toLowerCase().includes(filter)) : all;
 
     return `
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
         <div>
-            <h2 class="font-display text-5xl mb-2">LIVE ROOMS</h2>
-            <p class="text-white/60">Study live via ZegoCloud.</p>
+            <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.5em] uppercase font-medium block mb-3">Collaborative Focus</span>
+            <h2 class="font-display text-6xl text-[#FAFAF5]">LIVE ROOMS</h2>
+            <p class="text-[#FAFAF5]/40 text-sm mt-2">Study live with peers via ZegoCloud.</p>
         </div>
-        <button data-action="create-room" class="bg-white text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-transform">
-            ${I.plus} Create Room
+        <button data-action="create-room"
+            class="bg-[#C9A84C] text-[#080808] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-105 hover:shadow-[0_0_20px_rgba(201,168,76,0.35)] transition-all duration-300 text-sm tracking-wide shrink-0">
+            <span class="w-4 h-4">${I.plus}</span> Create Room
         </button>
     </div>
 
-    <div class="relative mb-6">
-        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 w-5 h-5">${I.hash}</div>
-        <input id="jr-filter" value="${S.joinRoomFilter}" placeholder="Search topics..." class="w-full bg-glass-panel border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white focus:border-cyan-400 bg-white/5 backdrop-blur-md outline-none">
+    <!-- Search -->
+    <div class="relative mb-5">
+        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-[#FAFAF5]/30 w-4 h-4">${I.hash}</div>
+        <input id="jr-filter" value="${S.joinRoomFilter}" placeholder="Search topics or interests…"
+            class="w-full bg-[#FAFAF5]/4 border border-[#C9A84C]/15 rounded-xl py-4 pl-11 pr-4 text-[#FAFAF5] placeholder-[#FAFAF5]/25 focus:border-[#C9A84C] outline-none transition-all text-sm">
     </div>
 
+    <!-- Filter chips -->
     <div class="flex flex-wrap gap-2 mb-8">
-        <button class="px-4 py-2 rounded-full text-sm font-medium border transition-colors ${S.joinRoomFilter===''?'bg-cyan-500/20 border-cyan-400 text-cyan-400':'bg-transparent border-white/20 text-white/60 hover:border-white/50'}" data-action="jr-filter" data-val="">All</button>
-        ${INTEREST_TAGS.map(t => `<button class="px-4 py-2 rounded-full text-sm font-medium border transition-colors ${S.joinRoomFilter===t?'bg-cyan-500/20 border-cyan-400 text-cyan-400':'bg-transparent border-white/20 text-white/60 hover:border-white/50'}" data-action="jr-filter" data-val="${t}">${t}</button>`).join('')}
+        <button class="px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${S.joinRoomFilter === ''
+            ? 'bg-[#C9A84C]/15 border-[#C9A84C] text-[#C9A84C]'
+            : 'bg-transparent border-[#FAFAF5]/15 text-[#FAFAF5]/45 hover:border-[#FAFAF5]/35'}"
+            data-action="jr-filter" data-val="">All</button>
+        ${INTEREST_TAGS.map(t => `
+        <button class="px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${S.joinRoomFilter === t
+            ? 'bg-[#C9A84C]/15 border-[#C9A84C] text-[#C9A84C]'
+            : 'bg-transparent border-[#FAFAF5]/15 text-[#FAFAF5]/45 hover:border-[#FAFAF5]/35'}"
+            data-action="jr-filter" data-val="${t}">${t}</button>`).join('')}
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        ${filtered.length === 0 ? `<div class="col-span-full text-center py-20 text-white/40 font-display text-2xl tracking-widest">No rooms active. Create one.</div>` : 
-        filtered.map(r => `
-            <div class="glass-panel p-6 flex flex-col relative overflow-hidden group">
-                <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-cyan-500/20 to-transparent rounded-bl-full"></div>
-                <div class="inline-block px-3 py-1 bg-white/10 rounded-full text-xs font-bold w-max mb-4 border border-white/10">${r.interest}</div>
-                <h3 class="font-bold text-xl mb-1">${r.name}</h3>
-                <p class="text-sm text-white/50 mb-6 flex-1">${r.topic||'General study'}</p>
-                <div class="flex items-center justify-between mb-4">
+    <!-- Room grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        ${filtered.length === 0
+            ? `<div class="col-span-full text-center py-20 text-[#FAFAF5]/25 font-display text-3xl tracking-widest">No rooms active.<br><span class="text-[#C9A84C]/40 text-lg">Create one above.</span></div>`
+            : filtered.map(r => `
+            <div class="glass-panel p-6 flex flex-col relative overflow-hidden hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#C9A84C]/8 to-transparent rounded-bl-full pointer-events-none"></div>
+                <div class="inline-block px-3 py-1 bg-[#C9A84C]/10 rounded-full text-[10px] font-bold w-max mb-4 border border-[#C9A84C]/20 text-[#C9A84C] tracking-widest uppercase">${r.interest}</div>
+                <h3 class="font-bold text-lg mb-1 text-[#FAFAF5]">${r.name}</h3>
+                <p class="text-xs text-[#FAFAF5]/40 mb-6 flex-1">${r.topic || 'General study'}</p>
+                <div class="flex items-center justify-between mb-5">
                     <div class="flex -space-x-2">
-                        <div class="w-8 h-8 rounded-full bg-cyan-600 border-2 border-black flex items-center justify-center text-xs font-bold">A</div>
+                        <div class="w-8 h-8 rounded-full bg-[#C9A84C]/30 border-2 border-[#080808] flex items-center justify-center text-xs font-bold text-[#C9A84C]">A</div>
                     </div>
                     <div class="flex items-center gap-2 text-xs text-emerald-400 font-bold tracking-widest uppercase">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Live
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
                     </div>
                 </div>
-                <button class="w-full py-3 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-bold flex justify-center items-center gap-2 hover:bg-cyan-500/20 transition-colors" data-action="join-room">
-                    ${I.video} Join Call
+                <button class="w-full py-3 rounded-xl bg-[#C9A84C]/10 text-[#C9A84C] border border-[#C9A84C]/25 font-bold flex justify-center items-center gap-2 hover:bg-[#C9A84C]/18 transition-colors text-sm" data-action="join-room">
+                    <span class="w-4 h-4">${I.video}</span> Join Call
                 </button>
-            </div>
-        `).join('')}
+            </div>`).join('')}
     </div>`;
 }
 
 function renderCreateRoomModal() {
     return `
-    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[5000] flex items-center justify-center p-4 animate-[fadeIn_0.2s_ease]">
-        <div class="glass-panel w-full max-w-md p-8 bg-zinc-950/90 relative">
-            <button data-action="close-modal" class="absolute top-6 right-6 text-white/50 hover:text-white p-2">${I.x}</button>
-            <h2 class="font-display text-4xl mb-6">Create Arena</h2>
-            
-            <div class="mb-5">
-                <label class="text-xs font-bold tracking-widest text-white/50 uppercase block mb-2">Room Name</label>
-                <input id="cr-name" class="w-full bg-black/50 border border-white/10 rounded-xl p-4 text-white focus:border-cyan-400 outline-none" placeholder="e.g. Physics Grind">
+    <div class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[5000] flex items-center justify-center p-4" style="animation: fadeIn 0.2s ease">
+        <div class="glass-panel w-full max-w-md p-8 bg-[#0D0D0D]/95 border-[#C9A84C]/20 relative">
+            <button data-action="close-modal" class="absolute top-5 right-5 text-[#FAFAF5]/40 hover:text-[#FAFAF5] p-2 transition-colors">
+                <span class="w-4 h-4">${I.x}</span>
+            </button>
+
+            <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.45em] uppercase font-medium block mb-3">New Collaboration</span>
+            <h2 class="font-display text-4xl mb-7 text-[#FAFAF5]">Create Arena</h2>
+
+            <div class="mb-6">
+                <label class="text-[10px] font-bold tracking-[0.4em] text-[#FAFAF5]/40 uppercase block mb-3">Room Name</label>
+                <input id="cr-name" class="w-full bg-black/50 border border-[#C9A84C]/15 rounded-xl p-4 text-[#FAFAF5] focus:border-[#C9A84C] outline-none placeholder-[#FAFAF5]/25 text-sm transition-all" placeholder="e.g. Physics Grind">
             </div>
-            
+
             <div class="mb-8">
-                <label class="text-xs font-bold tracking-widest text-white/50 uppercase block mb-2">Interest</label>
-                <div class="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                    ${INTEREST_TAGS.map(t => `<button class="px-3 py-1 rounded-full text-xs font-medium border ${S.createRoomData.interest===t?'bg-cyan-500/20 border-cyan-400 text-cyan-400':'border-white/10 text-white/60'}" data-action="cr-interest" data-val="${t}">${t}</button>`).join('')}
+                <label class="text-[10px] font-bold tracking-[0.4em] text-[#FAFAF5]/40 uppercase block mb-3">Interest Tag</label>
+                <div class="flex flex-wrap gap-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar">
+                    ${INTEREST_TAGS.map(t => `
+                    <button class="px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${S.createRoomData.interest === t
+                        ? 'bg-[#C9A84C]/15 border-[#C9A84C] text-[#C9A84C]'
+                        : 'border-[#FAFAF5]/12 text-[#FAFAF5]/45 hover:border-[#C9A84C]/30'}"
+                        data-action="cr-interest" data-val="${t}">${t}</button>`).join('')}
                 </div>
             </div>
 
-            <button data-action="confirm-create-room" class="w-full py-4 rounded-xl bg-white text-black font-bold flex justify-center items-center gap-2 hover:scale-[1.02] transition-transform">
-                ${I.plus} Launch Room
+            <button data-action="confirm-create-room"
+                class="w-full py-4 rounded-xl bg-[#C9A84C] text-[#080808] font-bold flex justify-center items-center gap-2 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(201,168,76,0.35)] transition-all duration-300 tracking-wide">
+                <span class="w-5 h-5">${I.plus}</span> Launch Room
             </button>
         </div>
     </div>`;
@@ -713,12 +906,12 @@ document.addEventListener('click', async e => {
 
     if (action === 'start') {
         const u = lsGet('ch_user');
-        if (u) { S.user = u; S.screen = 'app'; S.activeNav = 'rooms'; render(); } 
-        else { S.screen = 'setup'; render(); }
+        if (u) { S.user = u; S.screen = 'app'; S.activeNav = 'rooms'; render(); }
+        else    { S.screen = 'setup'; render(); }
     }
-    else if (action === 'exam') { S.setupData.examType = el.dataset.val; renderSetup(); }
+    else if (action === 'exam')  { S.setupData.examType  = el.dataset.val; renderSetup(); }
     else if (action === 'style') { S.setupData.studyStyle = el.dataset.val; renderSetup(); }
-    else if (action === 'setup-back') { if(S.setupStep > 0) { S.setupStep--; renderSetup(); } }
+    else if (action === 'setup-back') { if (S.setupStep > 0) { S.setupStep--; renderSetup(); } }
     else if (action === 'setup-next') {
         if (S.setupStep < 2) { S.setupStep++; renderSetup(); }
         else {
@@ -727,29 +920,28 @@ document.addEventListener('click', async e => {
             S.screen = 'app'; S.activeNav = 'rooms'; render();
         }
     }
-    else if (action === 'nav') { S.activeNav = el.dataset.nav; S.selectedRoom = null; renderAppShell(); }
-    else if (action === 'select-room') { S.selectedRoom = ROOMS.find(r=>r.id===el.dataset.room); S.activeNav = 'goalset'; renderAppShell(); }
+    else if (action === 'nav')        { S.activeNav = el.dataset.nav; S.selectedRoom = null; renderAppShell(); }
+    else if (action === 'select-room'){ S.selectedRoom = ROOMS.find(r => r.id === el.dataset.room); S.activeNav = 'goalset'; renderAppShell(); }
     else if (action === 'back-rooms') { S.selectedRoom = null; S.activeNav = 'rooms'; renderAppShell(); }
     else if (action === 'timer-mode') { S.timerMode = el.dataset.val; renderAppShell(); }
     else if (action === 'start-session') {
         const g = document.getElementById('goal-inp');
-        if(g) S.goal = g.value;
-        if(!S.goal) { showNotif('Please set an intent.'); return; }
-        
+        if (g) S.goal = g.value;
+        if (!S.goal) { showNotif('Please set an intent first.'); return; }
+        if (S.timerMode === 'custom') S.customTime = parseInt(document.getElementById('custom-time')?.value) || 25;
         S.sessionStart = Date.now();
-        S.timerMode === 'custom' ? S.customTime = parseInt(document.getElementById('custom-time').value)||25 : null;
         S.timer = S.timerMode === 'pomodoro' ? 25*60 : S.customTime*60;
         S.timerRunning = true; S.pomPhase = 'work'; S.pomCount = 0;
         S.screen = 'session'; render(); startTimer();
     }
     else if (action === 'toggle-timer') {
         S.timerRunning = !S.timerRunning;
-        renderSession(); // Re-render to update button state
+        renderSession();
         S.timerRunning ? startTimer() : clearInterval(timerIv);
     }
     else if (action === 'ambient') {
         const t = el.dataset.val;
-        if (S.ambient === t) { stopAudio(); S.ambient = null; } 
+        if (S.ambient === t) { stopAudio(); S.ambient = null; }
         else { startAudio(t); S.ambient = t; }
         renderSession();
     }
@@ -759,50 +951,44 @@ document.addEventListener('click', async e => {
     }
     else if (action === 'submit-proof') {
         const p = document.getElementById('proof-inp');
-        if(p) S.proof = p.value;
-        if(!S.proof) { showNotif('Provide proof.'); return; }
-        
+        if (p) S.proof = p.value;
+        if (!S.proof) { showNotif('Provide proof of your work.'); return; }
         const btn = document.getElementById('submit-btn');
-        btn.innerHTML = 'Analyzing...';
+        btn.innerHTML = '<span class="animate-pulse">Analyzing with AI…</span>';
         btn.disabled = true;
-        
-        // Mock AI Evaluation
         setTimeout(() => {
             const passed = S.proof.length > 20;
             S.sessions.unshift({
-                room: S.selectedRoom?.name || 'Focus',
-                goal: S.goal,
-                duration: S.sessionStart ? Math.round((Date.now()-S.sessionStart)/60000) : S.customTime,
-                status: passed ? 'completed' : 'failed',
+                room:      S.selectedRoom?.name || 'Focus',
+                goal:      S.goal,
+                duration:  S.sessionStart ? Math.round((Date.now()-S.sessionStart)/60000) : S.customTime,
+                status:    passed ? 'completed' : 'failed',
                 createdAt: Date.now()
             });
             S.goal = ''; S.proof = ''; S.selectedRoom = null;
-            S.screen = 'app'; S.activeNav = 'dashboard';
-            render();
-            showNotif(passed ? 'Session verified and logged! 🏆' : 'Session recorded, but lack of proof noted.');
+            S.screen = 'app'; S.activeNav = 'dashboard'; render();
+            showNotif(passed ? 'Session verified and logged! 🏆' : 'Session recorded — proof insufficient.');
         }, 1500);
     }
-    else if (action === 'create-room') { S.showCreateModal = true; renderAppShell(); }
-    else if (action === 'close-modal') { S.showCreateModal = false; renderAppShell(); }
-    else if (action === 'cr-interest') { S.createRoomData.interest = el.dataset.val; renderAppShell(); }
+    else if (action === 'create-room')  { S.showCreateModal = true;  renderAppShell(); }
+    else if (action === 'close-modal')  { S.showCreateModal = false; renderAppShell(); }
+    else if (action === 'cr-interest')  { S.createRoomData.interest = el.dataset.val; renderAppShell(); }
     else if (action === 'confirm-create-room') {
         const rn = document.getElementById('cr-name')?.value;
-        if(!rn || !S.createRoomData.interest) { showNotif('Fill all fields'); return; }
+        if (!rn || !S.createRoomData.interest) { showNotif('Fill in all fields.'); return; }
         const r = getJoinRooms();
         r.unshift({ roomId: Date.now(), name: rn, interest: S.createRoomData.interest, createdAt: Date.now() });
         lsSet('ch_join_rooms', r);
-        S.showCreateModal = false;
-        renderAppShell();
+        S.showCreateModal = false; renderAppShell();
         showNotif('Room created successfully!');
     }
     else if (action === 'join-room') {
-        showNotif('ZegoCloud Integration required to join call.');
+        showNotif('ZegoCloud integration required to join call.');
     }
     else if (action === 'jr-filter') {
-        S.joinRoomFilter = el.dataset.val;
-        renderAppShell();
+        S.joinRoomFilter = el.dataset.val; renderAppShell();
     }
 });
 
-// Boot
+// ─── Boot ─────────────────────────────────────────────────────────────────────
 render();
