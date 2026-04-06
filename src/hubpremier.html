@@ -380,6 +380,97 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:80px 48p
 #notif.hide{opacity:0;transform:translateX(12px);}
 #notif .notif-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;}
 
+/* ── LEADERBOARD ─── */
+.lb-carousel-wrap{overflow:hidden;position:relative;}
+.lb-carousel{display:flex;gap:1px;background:var(--border);overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+.lb-carousel::-webkit-scrollbar{display:none;}
+.lb-card{background:var(--bg2);padding:28px 24px;min-width:220px;flex-shrink:0;position:relative;border-bottom:3px solid transparent;transition:all .3s;cursor:none;}
+.lb-card.gold-rank{border-bottom-color:#FFD700;}
+.lb-card.silver-rank{border-bottom-color:#C0C0C0;}
+.lb-card.bronze-rank{border-bottom-color:#CD7F32;}
+.lb-card.me{border-bottom-color:var(--gold);background:rgba(201,168,76,0.04);}
+.lb-rank-num{font-family:var(--font-display);font-size:56px;font-weight:300;line-height:1;letter-spacing:-.04em;color:var(--border2);margin-bottom:6px;}
+.lb-card.gold-rank .lb-rank-num{color:rgba(255,215,0,0.25);}
+.lb-card.silver-rank .lb-rank-num{color:rgba(192,192,192,0.2);}
+.lb-card.bronze-rank .lb-rank-num{color:rgba(205,127,50,0.2);}
+.lb-card.me .lb-rank-num{color:rgba(201,168,76,0.2);}
+.lb-medal{font-size:18px;position:absolute;top:20px;right:20px;}
+.lb-uname{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.lb-uexam{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+.lb-stats{display:flex;flex-direction:column;gap:5px;}
+.lb-stat-row{display:flex;justify-content:space-between;align-items:center;font-family:var(--font-mono);font-size:10px;color:var(--muted);}
+.lb-stat-row strong{color:var(--text);font-weight:400;}
+.lb-nav-btns{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.lb-nav-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--muted2);font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:8px 18px;cursor:none;transition:all .2s;}
+.lb-nav-btn:hover{border-color:var(--border2);color:var(--text);}
+.lb-position-badge{font-family:var(--font-mono);font-size:11px;color:var(--muted);letter-spacing:.06em;}
+.lb-carousel-dots{display:flex;gap:6px;justify-content:center;margin-top:14px;}
+.lb-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);cursor:none;transition:all .2s;}
+.lb-dot.active{background:var(--gold);width:20px;border-radius:3px;}
+
+/* ── STUDY HOURS GRAPH ─── */
+.study-graph-wrap{background:var(--bg2);border:1px solid var(--border);padding:24px;margin-top:8px;}
+.graph-canvas{display:flex;align-items:flex-end;gap:6px;height:120px;margin-bottom:8px;padding:0 2px;}
+.graph-bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;height:100%;}
+.g-bar-outer{flex:1;display:flex;align-items:flex-end;width:100%;}
+.g-bar{width:100%;border-radius:2px 2px 0 0;transition:height .4s ease;min-height:2px;position:relative;}
+.g-bar.empty{background:rgba(255,255,255,0.04);border:1px solid var(--border);}
+.g-bar.has-data{background:rgba(201,168,76,0.35);border:1px solid rgba(201,168,76,0.45);}
+.g-bar.today-bar{background:var(--gold);border:1px solid var(--gold2);}
+.g-bar-tip{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:9px;color:var(--gold);white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;}
+.g-bar:hover .g-bar-tip{opacity:1;}
+.g-bar.has-data:hover,.g-bar.today-bar:hover{background:var(--gold2);}
+.g-date-label{font-family:var(--font-mono);font-size:8px;color:var(--muted);letter-spacing:.03em;text-align:center;white-space:nowrap;}
+.graph-no-data{display:flex;align-items:center;justify-content:center;height:80px;font-family:var(--font-display);font-size:18px;font-weight:300;color:var(--border2);}
+
+/* ── CONTRIBUTION HEATMAP ─── */
+.contrib-section{background:var(--bg2);border:1px solid var(--border);padding:24px;margin-top:8px;overflow-x:auto;}
+.contrib-inner{min-width:660px;}
+.contrib-month-row{display:flex;gap:2px;margin-bottom:4px;padding-left:28px;}
+.contrib-month-lbl{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;flex:none;}
+.contrib-body{display:flex;gap:8px;align-items:flex-start;}
+.contrib-day-labels{display:flex;flex-direction:column;gap:2px;padding-top:0;}
+.contrib-day-lbl{font-family:var(--font-mono);font-size:9px;color:var(--muted);height:13px;line-height:13px;width:24px;}
+.contrib-weeks{display:flex;gap:2px;}
+.contrib-week{display:flex;flex-direction:column;gap:2px;}
+.c-cell{width:13px;height:13px;border-radius:2px;background:rgba(255,255,255,0.04);position:relative;cursor:none;transition:transform .1s;}
+.c-cell:hover{transform:scale(1.3);z-index:5;}
+.c-cell.l1{background:rgba(201,168,76,0.18);}
+.c-cell.l2{background:rgba(201,168,76,0.38);}
+.c-cell.l3{background:rgba(201,168,76,0.65);}
+.c-cell.l4{background:var(--gold);}
+.c-cell.future{background:transparent;border:none;}
+.contrib-tooltip{display:none;position:fixed;background:var(--bg3);border:1px solid var(--border2);padding:6px 10px;font-family:var(--font-mono);font-size:10px;color:var(--text);z-index:999;pointer-events:none;white-space:nowrap;}
+.contrib-legend{display:flex;align-items:center;gap:6px;margin-top:12px;justify-content:flex-end;}
+.contrib-legend-label{font-family:var(--font-mono);font-size:9px;color:var(--muted);}
+.c-leg{width:13px;height:13px;border-radius:2px;}
+
+/* ── BADGES ─── */
+.badges-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+.badge-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 12px;min-width:88px;background:var(--bg2);border:1px solid var(--border);position:relative;transition:all .3s;}
+.badge-item.earned{border-color:rgba(201,168,76,0.35);background:rgba(201,168,76,0.05);}
+.badge-item.locked{opacity:.3;filter:grayscale(1);}
+.badge-emoji{font-size:26px;line-height:1;}
+.badge-name{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);text-align:center;}
+.badge-item.earned .badge-name{color:var(--gold);}
+.badge-cond{font-family:var(--font-mono);font-size:8px;color:var(--muted);text-align:center;line-height:1.4;margin-top:2px;}
+.badge-new{position:absolute;top:-6px;right:-6px;background:var(--gold);color:var(--bg);font-family:var(--font-mono);font-size:8px;letter-spacing:.06em;padding:2px 5px;border-radius:2px;}
+
+/* ── ARENA SCORES ─── */
+.score-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);transition:background .2s;}
+.score-row:last-child{border-bottom:none;}
+.score-row:hover{background:rgba(255,255,255,0.02);}
+.score-grade-box{width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;font-weight:700;flex-shrink:0;border-radius:2px;}
+.score-grade-box.grA{background:rgba(74,222,128,0.1);color:#4ade80;border:1px solid rgba(74,222,128,0.2);}
+.score-grade-box.grB{background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid rgba(201,168,76,0.2);}
+.score-grade-box.grC{background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.2);}
+.score-grade-box.grD{background:rgba(248,113,113,0.1);color:#f87171;border:1px solid rgba(248,113,113,0.2);}
+.score-info{flex:1;min-width:0;}
+.score-goal-txt{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.score-meta-txt{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:.04em;}
+.score-pts-val{font-family:var(--font-display);font-size:24px;font-weight:300;color:var(--gold);flex-shrink:0;letter-spacing:-.02em;}
+.score-pts-label{font-family:var(--font-mono);font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:2px;text-align:right;}
+
 /* ── RESPONSIVE ─── */
 @media (max-width:1100px){
   .arenas-grid{grid-template-columns:repeat(2,1fr);}
@@ -450,7 +541,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:80px 48p
     <div class="hero-stats">
       <div class="stat"><span class="stat-num">6</span><span class="stat-label">Arenas</span></div>
       <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Focus</span></div>
-      <div class="stat"><span class="stat-num">AI</span><span class="stat-label">Graded</span></div>
+      <div class="stat"><span class="stat-num">A+</span><span class="stat-label">Graded</span></div>
     </div>
   </div>
 </section>
@@ -927,6 +1018,10 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:80px 48p
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       Dashboard
     </button>
+    <button class="app-nav-item wide" data-nav="leaderboard" id="nav-leaderboard">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      Leaderboard
+    </button>
 
     <div class="app-user wide">
       <div class="app-avatar" id="app-avatar">U</div>
@@ -997,8 +1092,50 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:80px 48p
         <h1 class="app-page-title"><em>Dashboard</em></h1>
       </div>
       <div class="dash-stats" id="dash-stats"></div>
-      <div class="field-label" style="margin-bottom:16px;">Recent sessions</div>
+
+      <!-- Study Hours Graph -->
+      <div class="field-label" style="margin-bottom:8px;margin-top:8px;">Study Hours — Last 14 Days</div>
+      <div class="study-graph-wrap" id="study-graph-wrap"></div>
+
+      <!-- Contribution Heatmap -->
+      <div class="field-label" style="margin-bottom:8px;margin-top:32px;">Activity Heatmap — This Year</div>
+      <div class="contrib-section" id="contrib-section"></div>
+      <div id="contrib-tooltip" class="contrib-tooltip"></div>
+
+      <!-- Badges -->
+      <div class="field-label" style="margin-bottom:8px;margin-top:32px;">Badges &amp; Streaks</div>
+      <div class="badges-row" id="badges-row"></div>
+
+      <!-- Arena Scores -->
+      <div class="field-label" style="margin-bottom:8px;margin-top:32px;">Arena Assignment Scores</div>
+      <div class="sessions-list" id="arena-scores-list"></div>
+
+      <!-- Recent sessions -->
+      <div class="field-label" style="margin-bottom:16px;margin-top:32px;">Recent Sessions</div>
       <div class="sessions-list" id="sessions-list"></div>
+    </div>
+
+    <!-- LEADERBOARD VIEW -->
+    <div id="view-leaderboard" class="app-content" style="display:none;">
+      <div class="app-page-header">
+        <div class="app-page-label">Global Rankings</div>
+        <h1 class="app-page-title">Leader<em>board</em></h1>
+      </div>
+      <div class="lb-nav-btns">
+        <button class="lb-nav-btn" id="lb-prev">← Prev</button>
+        <div class="lb-position-badge" id="lb-my-rank"></div>
+        <button class="lb-nav-btn" id="lb-next">Next →</button>
+      </div>
+      <div class="lb-carousel-wrap">
+        <div class="lb-carousel" id="lb-carousel"></div>
+      </div>
+      <div class="lb-carousel-dots" id="lb-dots"></div>
+
+      <!-- This week's stats panel -->
+      <div style="margin-top:40px;">
+        <div class="field-label" style="margin-bottom:16px;">Your Performance This Week</div>
+        <div class="dash-stats" id="lb-my-stats"></div>
+      </div>
     </div>
   </main>
 
@@ -1371,7 +1508,7 @@ function renderSetup() {
 // ─── APP NAV ──────────────────────────────────────────────────────────────────
 function setActiveNav(nav) {
   S.activeNav = nav;
-  ['rooms','join','dashboard'].forEach(n => {
+  ['rooms','join','dashboard','leaderboard'].forEach(n => {
     const btn = document.getElementById('nav-'+n);
     const view = document.getElementById('view-'+n);
     if (btn) btn.classList.toggle('active', n===nav);
@@ -1381,10 +1518,13 @@ function setActiveNav(nav) {
   if (nav === 'rooms') renderRoomsGrid();
   if (nav === 'join') renderJoinRooms();
   if (nav === 'dashboard') renderDashboard();
+  if (nav === 'leaderboard') renderLeaderboard();
 }
 
 document.querySelectorAll('[data-nav]').forEach(btn => {
   btn.addEventListener('click', () => setActiveNav(btn.dataset.nav));
+  btn.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));
+  btn.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));
 });
 
 // ─── ROOMS GRID ───────────────────────────────────────────────────────────────
@@ -1564,11 +1704,19 @@ document.getElementById('submit-proof-btn').addEventListener('click', () => {
   setTimeout(() => {
     const passed = pv.length > 25;
     const dur = S.sessionStart ? Math.round((Date.now()-S.sessionStart)/60000) : (S.customTime||25);
+    // Score: based on proof detail (word count * effort weight) capped at 100
+    const words = pv.trim().split(/\s+/).length;
+    const baseScore = Math.min(100, Math.max(20, Math.round(words * 2.2 + dur * 0.4)));
+    const score = passed ? Math.min(100, baseScore + Math.floor(Math.random()*8)) : Math.max(20, baseScore - 15);
+    const grade = score >= 88 ? 'A' : score >= 74 ? 'B' : score >= 58 ? 'C' : 'D';
+    const today = new Date().toISOString().slice(0,10);
     S.sessions.unshift({
       room: S.selectedRoom?.name || 'Focus',
       goal: S.goal, duration: dur,
       status: passed ? 'completed' : 'needs_review',
       date: new Date().toLocaleDateString('en-IN'),
+      isoDate: today,
+      score, grade,
     });
     lsSet('cx_sessions', S.sessions);
     S.goal = ''; S.proof = ''; S.selectedRoom = null;
@@ -1679,6 +1827,11 @@ function renderDashboard() {
     </div>
   `;
 
+  renderStudyGraph();
+  renderContribHeatmap();
+  renderBadges();
+  renderArenaScores();
+
   const sl = document.getElementById('sessions-list');
   if (!S.sessions.length) {
     sl.innerHTML = `<div style="padding:48px;text-align:center;font-family:var(--font-display);font-size:28px;font-weight:300;color:var(--border2);">No sessions yet.<br><span style="font-size:16px;color:var(--muted);">Start your first arena.</span></div>`;
@@ -1695,6 +1848,331 @@ function renderDashboard() {
     `).join('');
   }
 }
+
+// ─── STUDY HOURS GRAPH (real data only) ──────────────────────────────────────
+function renderStudyGraph() {
+  const wrap = document.getElementById('study-graph-wrap');
+  // Build last 14 days
+  const days = [];
+  const now = new Date();
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const iso = d.toISOString().slice(0,10);
+    const label = d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'}).replace(' ','<br>');
+    const shortLabel = ['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()];
+    days.push({ iso, label: shortLabel, isToday: i===0 });
+  }
+
+  // Sum hours per day from real sessions
+  const dayMap = {};
+  S.sessions.forEach(s => {
+    const key = s.isoDate || '';
+    if (key) dayMap[key] = (dayMap[key]||0) + (s.duration||0)/60;
+  });
+
+  const maxH = Math.max(...days.map(d => dayMap[d.iso]||0), 0.5);
+
+  const hasAnyData = days.some(d => dayMap[d.iso]);
+
+  if (!hasAnyData) {
+    wrap.innerHTML = `<div class="graph-no-data">No sessions yet — start studying to see your graph!</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="graph-canvas" id="graph-canvas"></div>
+    <div style="display:flex;justify-content:space-between;padding:0 2px;">
+      ${days.map(d=>`<div style="flex:1;text-align:center;font-family:var(--font-mono);font-size:9px;color:${d.isToday?'var(--gold)':'var(--muted)'};letter-spacing:.03em;">${d.label}</div>`).join('')}
+    </div>
+  `;
+
+  const canvas = document.getElementById('graph-canvas');
+  days.forEach(d => {
+    const h = dayMap[d.iso] || 0;
+    const pct = maxH > 0 ? (h / maxH * 100) : 0;
+    const cls = d.isToday ? 'today-bar' : h > 0 ? 'has-data' : 'empty';
+    const col = document.createElement('div');
+    col.className = 'graph-bar-col';
+    col.innerHTML = `
+      <div class="g-bar-outer">
+        <div class="g-bar ${cls}" style="height:${Math.max(pct,2)}%;">
+          ${h > 0 ? `<div class="g-bar-tip">${h.toFixed(1)}h</div>` : ''}
+        </div>
+      </div>
+    `;
+    canvas.appendChild(col);
+  });
+}
+
+// ─── CONTRIBUTION HEATMAP (GitHub style, real data) ──────────────────────────
+function renderContribHeatmap() {
+  const section = document.getElementById('contrib-section');
+
+  // Build 52 weeks of data
+  const today = new Date(); today.setHours(0,0,0,0);
+  const startDate = new Date(today);
+  // Go back to last Sunday 52 weeks ago
+  startDate.setDate(startDate.getDate() - 364 - startDate.getDay());
+
+  // Map isoDate → hours from real sessions
+  const hoursMap = {};
+  S.sessions.forEach(s => {
+    if (s.isoDate) hoursMap[s.isoDate] = (hoursMap[s.isoDate]||0) + (s.duration||0)/60;
+  });
+
+  const getLevel = h => h <= 0 ? '' : h < 1 ? 'l1' : h < 2 ? 'l2' : h < 3 ? 'l3' : 'l4';
+
+  // Build weeks array
+  const weeks = [];
+  let cur = new Date(startDate);
+  while (cur <= today) {
+    const week = [];
+    for (let d = 0; d < 7; d++) {
+      const iso = cur.toISOString().slice(0,10);
+      const isFuture = cur > today;
+      week.push({ iso, isFuture, h: hoursMap[iso]||0, dow: d });
+      cur.setDate(cur.getDate() + 1);
+    }
+    weeks.push(week);
+  }
+
+  // Month labels
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthLabels = [];
+  let lastMonth = -1;
+  weeks.forEach((w, wi) => {
+    const m = new Date(w[0].iso).getMonth();
+    if (m !== lastMonth) { monthLabels.push({ wi, label: monthNames[m] }); lastMonth = m; }
+    else monthLabels.push({ wi, label: '' });
+  });
+
+  const dayLabels = ['','Mon','','Wed','','Fri',''];
+
+  section.innerHTML = `
+    <div class="contrib-inner">
+      <div style="display:flex;gap:8px;align-items:flex-start;">
+        <div class="contrib-day-labels">
+          ${dayLabels.map(l=>`<div class="contrib-day-lbl">${l}</div>`).join('')}
+        </div>
+        <div style="overflow-x:auto;">
+          <div style="display:flex;gap:0;margin-bottom:4px;padding-left:2px;">
+            ${monthLabels.map(ml=>`<div style="width:15px;font-family:var(--font-mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;">${ml.label}</div>`).join('')}
+          </div>
+          <div class="contrib-weeks" id="contrib-weeks-grid"></div>
+        </div>
+      </div>
+      <div class="contrib-legend">
+        <span class="contrib-legend-label">Less</span>
+        <div class="c-leg" style="background:rgba(255,255,255,0.04);"></div>
+        <div class="c-leg c-cell l1"></div>
+        <div class="c-leg c-cell l2"></div>
+        <div class="c-leg c-cell l3"></div>
+        <div class="c-leg c-cell l4"></div>
+        <span class="contrib-legend-label">More</span>
+      </div>
+    </div>
+  `;
+
+  const grid = document.getElementById('contrib-weeks-grid');
+  const tooltip = document.getElementById('contrib-tooltip');
+
+  weeks.forEach(week => {
+    const wEl = document.createElement('div');
+    wEl.className = 'contrib-week';
+    week.forEach(day => {
+      const cell = document.createElement('div');
+      const lvl = getLevel(day.h);
+      cell.className = `c-cell${lvl?' '+lvl:''}${day.isFuture?' future':''}`;
+      cell.addEventListener('mouseenter', e => {
+        if (day.isFuture) return;
+        const label = day.h > 0 ? `${day.h.toFixed(1)}h on ${day.iso}` : `No study on ${day.iso}`;
+        tooltip.textContent = label;
+        tooltip.style.display = 'block';
+        tooltip.style.left = (e.clientX+10)+'px';
+        tooltip.style.top = (e.clientY-28)+'px';
+      });
+      cell.addEventListener('mousemove', e => {
+        tooltip.style.left = (e.clientX+10)+'px';
+        tooltip.style.top = (e.clientY-28)+'px';
+      });
+      cell.addEventListener('mouseleave', () => { tooltip.style.display='none'; });
+      wEl.appendChild(cell);
+    });
+    grid.appendChild(wEl);
+  });
+}
+
+// ─── BADGES ───────────────────────────────────────────────────────────────────
+function renderBadges() {
+  const streak = S.user?.streak || 1;
+  const done = S.sessions.filter(s=>s.status==='completed');
+  const totalHrs = done.reduce((a,c)=>a+(c.duration||0),0)/60;
+  const totalSessions = done.length;
+  const scores = done.filter(s=>s.score).map(s=>s.score);
+  const avgScore = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+  const hasA = done.some(s=>s.grade==='A');
+
+  const BADGES = [
+    { emoji:'🔥', name:'Ignition',    cond:'1-day streak',    earned: streak>=1,  tip:'Start your journey' },
+    { emoji:'⚡', name:'On Fire',     cond:'3-day streak',    earned: streak>=3,  tip:'3 days strong' },
+    { emoji:'🌟', name:'Week Warrior',cond:'7-day streak',    earned: streak>=7,  tip:'7 days unbroken' },
+    { emoji:'💎', name:'Diamond Mind',cond:'30-day streak',   earned: streak>=30, tip:'30-day legend' },
+    { emoji:'📚', name:'First Step',  cond:'1st session done',earned: totalSessions>=1, tip:'Completed first session' },
+    { emoji:'🎯', name:'Focused 10',  cond:'10 sessions',     earned: totalSessions>=10,tip:'10 sessions completed' },
+    { emoji:'🏆', name:'Century',     cond:'100 sessions',    earned: totalSessions>=100,tip:'100 sessions done' },
+    { emoji:'⏱️', name:'Hour Glass',  cond:'10 hrs studied',  earned: totalHrs>=10, tip:'10 total hours' },
+    { emoji:'🚀', name:'Deep Orbit',  cond:'50 hrs studied',  earned: totalHrs>=50, tip:'50 total hours' },
+    { emoji:'🥇', name:'Top Grade',   cond:'Score A on arena',earned: hasA,        tip:'Scored A on a session' },
+    { emoji:'📈', name:'High Scorer', cond:'Avg score ≥ 80',  earned: avgScore>=80, tip:`Avg score: ${avgScore}` },
+    { emoji:'🦉', name:'Night Owl',   cond:'Study after 10pm',earned: false,       tip:'Coming soon' },
+  ];
+
+  const container = document.getElementById('badges-row');
+  container.innerHTML = BADGES.map(b => `
+    <div class="badge-item ${b.earned?'earned':'locked'}">
+      <div class="badge-emoji">${b.emoji}</div>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-cond">${b.cond}</div>
+    </div>
+  `).join('');
+}
+
+// ─── ARENA SCORES ─────────────────────────────────────────────────────────────
+function renderArenaScores() {
+  const scored = S.sessions.filter(s=>s.score != null);
+  const el = document.getElementById('arena-scores-list');
+  if (!scored.length) {
+    el.innerHTML = `<div style="padding:40px;text-align:center;font-family:var(--font-display);font-size:22px;font-weight:300;color:var(--border2);">No scored sessions yet.<br><span style="font-size:14px;color:var(--muted);">Complete an arena to earn your first score.</span></div>`;
+    return;
+  }
+  el.innerHTML = scored.slice(0,10).map(s => {
+    const grCls = s.grade==='A'?'grA':s.grade==='B'?'grB':s.grade==='C'?'grC':'grD';
+    return `
+      <div class="score-row">
+        <div class="score-grade-box ${grCls}">${s.grade||'?'}</div>
+        <div class="score-info">
+          <div class="score-goal-txt">${s.goal}</div>
+          <div class="score-meta-txt">${s.room} · ${s.duration}m · ${s.date}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div class="score-pts-val">${s.score||0}</div>
+          <div class="score-pts-label">pts</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ─── LEADERBOARD ──────────────────────────────────────────────────────────────
+const LB_SEED = [
+  { name:'Aryan Mehta',  exam:'JEE',          hrs:47, sessions:32, streak:18 },
+  { name:'Riya Sharma',  exam:'UPSC',         hrs:41, sessions:28, streak:14 },
+  { name:'Karan Verma',  exam:'GATE',         hrs:36, sessions:23, streak:10 },
+  { name:'Priya Singh',  exam:'NEET',         hrs:30, sessions:19, streak:8  },
+  { name:'Dev Patel',    exam:'JEE',          hrs:26, sessions:15, streak:5  },
+  { name:'Ananya Roy',   exam:'UPSC',         hrs:22, sessions:13, streak:4  },
+  { name:'Rohit Kumar',  exam:'NEET',         hrs:18, sessions:10, streak:3  },
+  { name:'Simran Kaur',  exam:'College',      hrs:14, sessions:9,  streak:2  },
+];
+
+let lbPage = 0;
+const LB_PER_PAGE = 4;
+
+function getLeaderboardData() {
+  const done = S.sessions.filter(s=>s.status==='completed');
+  const myHrs = Math.round(done.reduce((a,c)=>a+(c.duration||0),0)/60*10)/10;
+  const me = {
+    name: S.user?.name || 'You',
+    exam: S.user?.examType || 'Custom',
+    hrs: myHrs,
+    sessions: done.length,
+    streak: S.user?.streak||1,
+    isMe: true,
+  };
+  return [...LB_SEED, me].sort((a,b)=>b.hrs-a.hrs);
+}
+
+function renderLeaderboard() {
+  const data = getLeaderboardData();
+  const me = data.findIndex(u=>u.isMe);
+  const totalPages = Math.ceil(data.length / LB_PER_PAGE);
+
+  const carousel = document.getElementById('lb-carousel');
+  const dotsEl = document.getElementById('lb-dots');
+  const myRankEl = document.getElementById('lb-my-rank');
+  const myStatsEl = document.getElementById('lb-my-stats');
+
+  const medals = ['🥇','🥈','🥉'];
+  const rankCls = ['gold-rank','silver-rank','bronze-rank'];
+
+  carousel.innerHTML = data.map((u,i) => `
+    <div class="lb-card ${u.isMe?'me':''} ${rankCls[i]||''}">
+      ${medals[i] ? `<div class="lb-medal">${medals[i]}</div>` : ''}
+      <div class="lb-rank-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="lb-uname">${u.name}${u.isMe?' <span style="color:var(--gold);font-size:11px;">(You)</span>':''}</div>
+      <div class="lb-uexam">${u.exam}</div>
+      <div class="lb-stats">
+        <div class="lb-stat-row">Hours studied <strong>${u.hrs}h</strong></div>
+        <div class="lb-stat-row">Sessions <strong>${u.sessions}</strong></div>
+        <div class="lb-stat-row">Streak <strong>${u.streak} 🔥</strong></div>
+      </div>
+    </div>
+  `).join('');
+
+  if (myRankEl) myRankEl.textContent = `Your rank: #${me+1} of ${data.length}`;
+
+  // Dots
+  dotsEl.innerHTML = Array.from({length:totalPages},(_,i)=>`<div class="lb-dot${i===lbPage?' active':''}" data-page="${i}"></div>`).join('');
+  dotsEl.querySelectorAll('.lb-dot').forEach(d => {
+    d.addEventListener('click',()=>{ lbPage=+d.dataset.page; scrollLbCarousel(); });
+  });
+
+  // My stats
+  if (myStatsEl) {
+    const myData = data[me];
+    const done = S.sessions.filter(s=>s.status==='completed');
+    const weekHrs = (() => {
+      const week = new Date(); week.setDate(week.getDate()-7);
+      return Math.round(done.filter(s=>s.isoDate && new Date(s.isoDate)>=week).reduce((a,c)=>a+(c.duration||0),0)/60*10)/10;
+    })();
+    myStatsEl.innerHTML = `
+      <div class="stat-box"><div class="stat-box-num"><span>#${me+1}</span></div><div class="stat-box-label">Global Rank</div></div>
+      <div class="stat-box"><div class="stat-box-num"><span>${weekHrs}</span>h</div><div class="stat-box-label">This Week</div></div>
+      <div class="stat-box"><div class="stat-box-num"><span>${myData.streak}</span> 🔥</div><div class="stat-box-label">Current Streak</div></div>
+    `;
+  }
+
+  // Scroll to page
+  scrollLbCarousel();
+
+  // Nav buttons
+  document.getElementById('lb-prev').onclick = () => { lbPage = Math.max(0, lbPage-1); scrollLbCarousel(); };
+  document.getElementById('lb-next').onclick = () => { lbPage = Math.min(totalPages-1, lbPage+1); scrollLbCarousel(); };
+}
+
+function scrollLbCarousel() {
+  const carousel = document.getElementById('lb-carousel');
+  const cardW = 221; // 220 min-width + 1 gap
+  carousel.scrollLeft = lbPage * LB_PER_PAGE * cardW;
+  document.querySelectorAll('.lb-dot').forEach((d,i) => d.classList.toggle('active', i===lbPage));
+}
+
+// Auto-scroll leaderboard
+let lbAutoScroll;
+function startLbAutoScroll() {
+  clearInterval(lbAutoScroll);
+  lbAutoScroll = setInterval(() => {
+    if (document.getElementById('view-leaderboard')?.style.display !== 'none') {
+      const carousel = document.getElementById('lb-carousel');
+      const data = getLeaderboardData();
+      const totalPages = Math.ceil(data.length/LB_PER_PAGE);
+      lbPage = (lbPage+1)%totalPages;
+      scrollLbCarousel();
+    }
+  }, 3500);
+}
+startLbAutoScroll();
+
 
 // ─── LANDING CURSOR HOVER (add to all interactive) ───────────────────────────
 document.querySelectorAll('.pack-card,.price-card,.testi-card,.step,.arena-card').forEach(el => {
