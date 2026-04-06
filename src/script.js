@@ -78,6 +78,9 @@ const S = {
     createRoomData: { name: '', topic: '', interest: '' },
     activeJoinRoom: null,
 
+    showLoginModal: false,
+    loginData: { username: '', password: '' },
+
     proof: '',
     aiResult: null,
     ambient: null,
@@ -197,7 +200,7 @@ function renderLanding() {
             <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="2">Live Rooms</a></li>
             <li><a href="#" class="nav-link transition-colors hover:text-[#C9A84C]" data-index="3">Join</a></li>
         </ul>
-        <a href="hubpremier.html" class="border border-[#C9A84C] text-[#C9A84C] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#C9A84C] hover:text-[#080808] transition-all duration-300">Enter Hub</a>
+        <a href="javascript:void(0)" data-action="open-login-modal" class="border border-[#C9A84C] text-[#C9A84C] px-6 py-2 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-[#C9A84C] hover:text-[#080808] transition-all duration-300">Login</a>
     </nav>
 
     <!-- ─── Horizontal Panels ─── -->
@@ -267,7 +270,8 @@ function renderLanding() {
             </div>
 
         </div>
-    </section>`;
+    </section>
+    ${S.showLoginModal ? renderLoginModal() : ''}`;
 
     // ── GSAP Horizontal Scroll ──
     const container = document.querySelector('#scroll-container');
@@ -863,6 +867,35 @@ function renderJoinRoom() {
     </div>`;
 }
 
+function renderLoginModal() {
+    return `
+    <div class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[5000] flex items-center justify-center p-4" style="animation: fadeIn 0.2s ease">
+        <div class="glass-panel w-full max-w-md p-8 bg-[#0D0D0D]/95 border-[#C9A84C]/20 relative">
+            <button data-action="close-login-modal" class="absolute top-5 right-5 text-[#FAFAF5]/40 hover:text-[#FAFAF5] p-2 transition-colors">
+                <span class="w-4 h-4">${I.x}</span>
+            </button>
+
+            <span class="text-[#C9A84C]/60 text-[10px] tracking-[0.45em] uppercase font-medium block mb-3">Authentication</span>
+            <h2 class="font-display text-4xl mb-7 text-[#FAFAF5]">Login</h2>
+
+            <div class="mb-6">
+                <label class="text-[10px] font-bold tracking-[0.4em] text-[#FAFAF5]/40 uppercase block mb-3">Username</label>
+                <input id="ln-username" class="w-full bg-black/50 border border-[#C9A84C]/15 rounded-xl p-4 text-[#FAFAF5] focus:border-[#C9A84C] outline-none placeholder-[#FAFAF5]/25 text-sm transition-all" placeholder="Enter username">
+            </div>
+
+            <div class="mb-8">
+                <label class="text-[10px] font-bold tracking-[0.4em] text-[#FAFAF5]/40 uppercase block mb-3">Password</label>
+                <input id="ln-password" type="password" class="w-full bg-black/50 border border-[#C9A84C]/15 rounded-xl p-4 text-[#FAFAF5] focus:border-[#C9A84C] outline-none placeholder-[#FAFAF5]/25 text-sm transition-all" placeholder="Enter password">
+            </div>
+
+            <button data-action="confirm-login"
+                class="w-full py-4 rounded-xl bg-[#C9A84C] text-[#080808] font-bold flex justify-center items-center gap-2 hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(201,168,76,0.35)] transition-all duration-300 tracking-wide">
+                Login to Hub
+            </button>
+        </div>
+    </div>`;
+}
+
 function renderCreateRoomModal() {
     return `
     <div class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[5000] flex items-center justify-center p-4" style="animation: fadeIn 0.2s ease">
@@ -972,6 +1005,24 @@ document.addEventListener('click', async e => {
     }
     else if (action === 'create-room')  { S.showCreateModal = true;  renderAppShell(); }
     else if (action === 'close-modal')  { S.showCreateModal = false; renderAppShell(); }
+    else if (action === 'open-login-modal')  { S.showLoginModal = true;  render(); }
+    else if (action === 'close-login-modal')  { S.showLoginModal = false; render(); }
+    else if (action === 'confirm-login') {
+        const username = document.getElementById('ln-username')?.value;
+        const password = document.getElementById('ln-password')?.value;
+        
+        if (!username || !password) {
+            showNotif('Please enter username and password.');
+            return;
+        }
+        
+        // Simple authentication - store login info and redirect
+        lsSet('ch_login', { username, loginTime: Date.now() });
+        S.showLoginModal = false;
+        
+        // Redirect to hubpremier.html
+        window.location.href = 'hubpremier.html';
+    }
     else if (action === 'cr-interest')  { S.createRoomData.interest = el.dataset.val; renderAppShell(); }
     else if (action === 'confirm-create-room') {
         const rn = document.getElementById('cr-name')?.value;
